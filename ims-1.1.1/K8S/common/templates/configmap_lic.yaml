@@ -1,0 +1,52 @@
+{{- if or ( eq .Values.global.create "AllExceptPVCPV" ) ( eq .Values.global.create "All" ) }}
+
+{{- if not .Values.container }}
+
+  {{- if .Values.global.licenseConfigMap }}
+  {{- if .Values.global.licenseConfigMapShared }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ .Release.Name }}-common-license"
+  labels:
+    release: "{{ .Release.Name }}"
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    heritage: "{{ .Release.Service }}"
+data:
+  {{- if .Values.global.licenseFile }}
+  license.config: |-
+{{ .Values.global.licenseFile | indent 4 }}
+  {{- end }}
+
+  {{- end }}
+  {{- end }}
+
+{{- else }}
+
+  {{- if .Values.global.licenseConfigMap }}
+  {{- if .Values.global.licenseConfigMapShared }}
+    {{- if eq .Values.global.licenseConfigMapShared false }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ .Release.Name }}-{{ .Values.container.serverName | camelcase | lower }}-license"
+  labels:
+    release: "{{ .Release.Name }}"
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    heritage: "{{ .Release.Service }}"
+data:
+  {{- if .Values.global.licenseFile }}
+  license.config: |-
+  {{ toYaml .Values.global.licenseFile | indent 4 }}
+  {{- end }}
+
+    {{- end }}
+
+  {{- end }}
+  {{- end }}
+
+{{- end }}
+
+{{- end }}

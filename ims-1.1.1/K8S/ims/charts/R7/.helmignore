@@ -1,0 +1,35 @@
+# Patterns to ignore when building packages.
+# This supports shell glob matching, relative path matching, and
+# negation (prefixed with !). Only one pattern per line.
+.DS_Store
+# Common VCS dirs
+.git/
+.gitignore
+.bzr/
+.bzrignore
+.hg/
+.hgignore
+.svn/
+helmignore
+# Common backup files
+*.swp
+*.bak
+*.tmp
+*~
+# Various IDEs
+.project
+.idea/
+*.tmproj
+.vscode/
+# eIUM configuration, jar
+eium/
+# eIUM scripts, tools
+# eIUM images 
+images
+# yaml backup
+templates/*.yaml_
+# nfvd 
+nfvd 
+# temporal 
+tmp
+scripts

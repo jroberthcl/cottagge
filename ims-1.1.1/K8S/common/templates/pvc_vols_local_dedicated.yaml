@@ -1,0 +1,79 @@
+{{- if or ( eq .Values.global.create "OnlyPVCPV" ) ( eq .Values.global.create "All" ) }}
+
+{{- if eq .Values.global.persistentVolume.enabled true }}
+{{- if .Values.container }}
+
+{{$replicas:= include "container.replicas" . }}
+{{- if ne $replicas "0" }}
+
+{{- if .Values.container.persistentVolume }}
+{{- if .Values.container.persistentVolume.enabled }}
+{{- if eq .Values.container.persistentVolume.enabled true }}
+
+    {{- $helmDebug := .Values.global.helmDebug }}
+    {{- $servername := .Values.container.serverName | camelcase | lower }}
+    {{- $releasename:= .Release.Name }}
+    {{- $releasenamespace := .Release.Namespace }}
+    {{- $releaseservice:= .Release.Service }}
+    {{- $chartname := .Chart.Name }}
+    {{- $chartversion := .Chart.Version}}
+    {{- $persistentVolumeGlobal:= .Values.global.persistentVolume }}
+    {{- $persistentVolumeLocal := .Values.container.persistentVolume }}
+    {{- range .Values.container.persistentVolume.mounts }}
+      {{- $root:= . }}
+      {{- $numb:=( index $root 0 ) }}
+      {{- $size:=( index $root 2 ) }}
+      {{- $scls:=( index $root 3 ) }}
+      {{- $ldir:=( index $root 5 ) }}
+      {{- $bind:=( index $root 7 ) }}
+      {{- $acce:=( index $root 8 ) }}
+      {{- $shar:=( index $root 9 | lower ) }}
+       {{- if eq $shar "dedicated" }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: "pvc-l{{ $numb}}-{{ $releasename }}-{{ $servername }}"
+  labels:
+    app: "{{ .Release.Name | lower }}-{{ .Values.container.serverName | lower }}"
+    app.kubernetes.io/instance: {{ $releasename }}
+    release: {{ $releasename }}
+    helm.sh/chart: {{ $chartname }}-{{ $chartversion }}
+    app.kubernetes.io/managed-by: {{ $releaseservice }}
+spec:
+  {{- if $helmDebug }}
+    {{- if eq $helmDebug true }}
+    #DEBUG: $persistentVolumeClaim(pvc-l{{ $numb}}-{{ $servername }}) {{ $root }},{{ $numb }},{{ $size }},{{ $scls }},{{ $ldir }},{{ $bind }},{{ $acce }},{{ $shar }}
+    {{- end }}
+  {{- end }}
+
+  accessModes:
+    - {{ $acce }}
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: {{ $size }}
+
+#Override
+{{- $scls:=default $scls $persistentVolumeGlobal.storageClassOverride }}
+{{- $scls:=default $scls $persistentVolumeLocal.storageClassOverride }}
+  storageClassName: {{ $scls }}
+
+       {{- if $bind }}
+  volumeName: "pv-l{{ $numb }}-{ $servername }}"
+       {{- end }}
+
+       {{- end }}
+    {{- end }}
+
+
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{- end }}
+
+{{- end }}
+{{- end }}
+
+{{- end }}

@@ -1,0 +1,49 @@
+{{- if or ( eq .Values.global.create "AllExceptPVCPV" ) ( eq .Values.global.create "All" ) }}
+
+{{- if .Values.container }}
+{{- if .Values.container.serverName  }}
+
+{{$replicas:= include "container.replicas" . }}
+{{- if ne $replicas "0" }}
+
+  {{- if .Values.container.configMap }}
+    {{- if .Values.container.configMap.enabled }}
+    {{- if eq .Values.container.configMap.enabled true }}
+      {{- $servername:= .Values.container.serverName | camelcase | lower }}
+      {{- $releasename:= .Release.Name }}
+      {{- $releaseservice:= .Release.Service }}
+      {{- $chartname:= .Chart.Name }}
+      {{- $chartversion:= .Chart.Version }}
+      {{- $files:= .Files }}
+      {{- range .Values.container.configMap.mounts }}
+        {{- $root:= . }}
+        {{- $numb:=( index $root 0 ) }}
+        {{- $name:=( index $root 1 ) }}
+        {{- $ldir:=( index $root 2 ) }}
+        {{- $cdir:=( index $root 3 ) }}
+        {{- $file:=( index $root 4 ) }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ $releasename }}-{{ $servername }}-map-l{{ $numb }}-cm"
+  labels:
+    app: "{{ .Release.Name | lower }}-{{ .Values.container.serverName | lower }}"
+    chart: "{{ $chartname }}-{{ $chartversion }}"
+    release: "{{ $releasename }}"
+    heritage: "{{ $releaseservice }}"
+binaryData:
+  {{ $file }}: |-
+    {{ $files.Get $ldir | b64enc }}
+
+      {{- end }}
+    {{- end }}
+    {{- end }}
+  {{- end }}
+
+{{- end }}
+
+{{- end }}
+{{- end }}
+
+{{- end }}

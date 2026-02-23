@@ -1,0 +1,1486 @@
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://www.hp.com/usage/nme/nmeschema/IMSR10"
+    xmlns:this="http://www.hp.com/usage/nme/nmeschema/IMSR10"
+    xmlns:nme="http://www.hp.com/usage/nme/nmeschema">
+
+    <import namespace="http://www.hp.com/usage/nme/nmeschema" />
+
+    <complexType name="File">
+        <sequence>
+            <element name="header" type="this:FileHeader" />
+            <element name="records">
+                <complexType>
+                    <sequence>
+                        <element type="this:Record" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="FileHeader">
+        <sequence>
+            <element name="fileLength" type="nme:long" />
+            <element name="headerLength" type="nme:long" />
+        </sequence>
+    </complexType>
+
+    <complexType name="Record">
+        <sequence>
+            <element name="header" type="this:RecordHeader" />
+            <element name="iMSRecord" type="this:IMSRecord" />
+        </sequence>
+    </complexType>
+
+    <complexType name="RecordHeader">
+        <sequence>
+            <element name="recordLength" type="nme:long" />
+            <element name="releaseIdentifier" type="nme:long" />
+            <element name="versionIdentifier" type="nme:long" />
+            <element name="dataRecordFormat" type="nme:long" />
+            <element name="TSNumber" type="nme:long" />
+            <element name="releaseIdentifierExtension" type="nme:long" />
+        </sequence>
+    </complexType>
+
+    <complexType name="IPTextRepresentedAddress">
+        <sequence>
+            <element name="iPTextV4Address" type="nme:string" />
+            <element name="iPTextV6Address" type="nme:string" />
+        </sequence>
+    </complexType>
+
+    <complexType name="AccessNetworkChargingPhysicalAccessID">
+        <sequence>
+            <element name="accessNetworkChargingPhysicalAccessIDValue" type="nme:byte-array" minOccurs="0" />
+            <element name="accessNetworkChargingPhysicalAccessIDRealm" type="nme:byte-array" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="InvolvedParty">
+        <sequence>
+            <element name="sIP_URI" type="nme:string" />
+            <element name="tEL_URI" type="nme:string" />
+        </sequence>
+    </complexType>
+
+    <complexType name="ServedPartyIPAddress">
+        <sequence>
+            <element name="iPBinaryAddress_iPBinV4Address" type="nme:byte-array" minOccurs="0" />
+            <element name="iPBinaryAddress_iPBinV6Address" type="nme:byte-array" minOccurs="0" />
+            <element name="iPTextRepresentedAddress_iPTextV4Address" type="nme:string" minOccurs="0" />
+            <element name="iPTextRepresentedAddress_iPTextV6Address" type="nme:string" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="QoS_Information">
+        <sequence>
+            <element name="qoS_Class_Identifier" type="nme:long" minOccurs="0" />
+            <element name="max_Requested_Bandwidth_UL" type="nme:long" minOccurs="0" />
+            <element name="max_Requested_Bandwidth_DL" type="nme:long" minOccurs="0" />
+            <element name="guaranteed_Bitrate_UL" type="nme:long" minOccurs="0" />
+            <element name="guaranteed_Bitrate_DL" type="nme:long" minOccurs="0" />
+            <element name="bearer_Identifier" type="nme:long" minOccurs="0" />
+            <element name="allocation_Retention_Priority" type="nme:long" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="S_CSCF_Information">
+        <sequence>
+            <element name="mandatoryCapabilities" type="this:S_CSCF_Information_generatedType_0" minOccurs="0" />
+            <element name="optionalCapabilities" type="this:S_CSCF_Information_generatedType_1" minOccurs="0" />
+            <element name="serverName" type="nme:string" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="S_CSCF_Information_generatedType_1">
+        <sequence>
+            <element name="S_CSCF_Information_generatedType_1" type="nme:string-array" />
+        </sequence>
+    </complexType>
+
+    <complexType name="S_CSCF_Information_generatedType_0">
+        <sequence>
+            <element name="S_CSCF_Information_generatedType_0" type="nme:string-array" />
+        </sequence>
+    </complexType>
+
+    <complexType name="ICSCFRecord">
+        <sequence>
+            <element name="recordType" type="nme:long" />
+            <element name="retransmission" type="nme:int" minOccurs="0" />
+            <element name="sIP_Method" type="nme:string" minOccurs="0" />
+            <element name="role_of_Node" type="nme:long" minOccurs="0" />
+            <element name="nodeAddress" type="this:NodeAddress" minOccurs="0" />
+            <element name="session_Id" type="nme:string" minOccurs="0" />
+            <element name="list_Of_Calling_Party_Address" type="this:ListOfInvolvedParties" minOccurs="0" />
+            <element name="called_Party_Address" type="this:InvolvedParty" minOccurs="0" />
+            <element name="serviceRequestTimeStamp" type="nme:byte-array" minOccurs="0" />
+            <element name="interOperatorIdentifiers" type="this:InterOperatorIdentifiers" minOccurs="0" />
+            <element name="localRecordSequenceNumber" type="nme:long" minOccurs="0" />
+            <element name="causeForRecordClosing" type="nme:long" minOccurs="0" />
+            <element name="incomplete_CDR_Indication" type="this:Incomplete_CDR_Indication" minOccurs="0" />
+            <element name="iMS_Charging_Identifier" type="nme:byte-array" minOccurs="0" />
+            <element name="serviceReasonReturnCode" type="nme:string" minOccurs="0" />
+            <element name="recordExtensions" type="this:ManagementExtensions" minOccurs="0" />
+            <element name="expiresInformation" type="nme:long" minOccurs="0" />
+            <element name="list_Of_Associated_URI" type="this:ListOfInvolvedParties" minOccurs="0" />
+            <element name="event" type="nme:string" minOccurs="0" />
+            <element name="accessNetworkInformation" type="nme:byte-array" minOccurs="0" />
+            <element name="serviceContextID" type="nme:string" minOccurs="0" />
+            <element name="numberPortabilityRouting" type="nme:string" minOccurs="0" />
+            <element name="carrierSelectRouting" type="nme:string" minOccurs="0" />
+            <element name="sessionPriority" type="nme:long" minOccurs="0" />
+            <element name="serviceRequestTimeStampFraction" type="nme:long" minOccurs="0" />
+            <element name="userLocationInformation" type="nme:byte-array" minOccurs="0" />
+            <element name="mSTimeZone" type="nme:byte-array" minOccurs="0" />
+            <element name="listOfReasonHeader" type="this:ListOfReasonHeader" minOccurs="0" />
+            <element name="s_CSCF_Information" type="this:S_CSCF_Information" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="TariffInformation">
+        <sequence>
+            <element name="currencyCode" type="nme:long" />
+            <element name="scaleFactor" type="nme:double" />
+            <element name="rateElements" type="this:TariffInformation_generatedType_2" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="TariffInformation_generatedType_2">
+        <sequence>
+            <element name="TariffInformation_generatedType_2">
+                <complexType>
+                    <sequence>
+                        <element type="this:RateElement" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="ServiceSpecificInfo">
+        <sequence>
+            <element name="serviceSpecificData" type="nme:string" minOccurs="0" />
+            <element name="serviceSpecificType" type="nme:long" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="InterOperatorIdentifierlist">
+        <sequence>
+            <element name="InterOperatorIdentifierlist">
+                <complexType>
+                    <sequence>
+                        <element type="this:InterOperatorIdentifiers" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="MGCFInfo">
+        <sequence>
+            <element name="aCMTimestamp" type="nme:string" minOccurs="0" />
+            <element name="callReleaseDirection" type="nme:long" minOccurs="0" />
+            <element name="numberOfFaxPages" type="nme:long" minOccurs="0" />
+            <element name="qoSData" type="this:QoSData" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="PsExtension">
+        <sequence>
+            <element name="callAnswerStatus" type="nme:long" minOccurs="0" />
+            <element name="qoS_Information" type="this:QoS_Information" minOccurs="0" />
+            <element name="userEquipmentInfo" type="this:UserEquipmentInfo" minOccurs="0" />
+            <element name="threeGPP2_BSID" type="nme:byte-array" minOccurs="0" />
+            <element name="servedPartyIPAddress" type="this:IPAddressCustom" minOccurs="0" />
+            <element name="userLocationInformation" type="nme:byte-array" minOccurs="0" />
+            <element name="mSTimeZone" type="nme:byte-array" minOccurs="0" />
+            <element name="charging_group_ID" type="nme:string" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="PCSCFRecord">
+        <sequence>
+            <element name="recordType" type="nme:long" />
+            <element name="retransmission" type="nme:int" minOccurs="0" />
+            <element name="sIP_Method" type="nme:string" minOccurs="0" />
+            <element name="role_of_Node" type="nme:long" minOccurs="0" />
+            <element name="nodeAddress" type="this:NodeAddress" minOccurs="0" />
+            <element name="session_Id" type="nme:string" minOccurs="0" />
+            <element name="list_Of_Calling_Party_Address" type="this:ListOfInvolvedParties" minOccurs="0" />
+            <element name="called_Party_Address" type="this:InvolvedParty" minOccurs="0" />
+            <element name="serviceRequestTimeStamp" type="nme:byte-array" minOccurs="0" />
+            <element name="serviceDeliveryStartTimeStamp" type="nme:byte-array" minOccurs="0" />
+            <element name="serviceDeliveryEndTimeStamp" type="nme:byte-array" minOccurs="0" />
+            <element name="recordOpeningTime" type="nme:byte-array" minOccurs="0" />
+            <element name="recordClosureTime" type="nme:byte-array" minOccurs="0" />
+            <element name="interOperatorIdentifiers" type="this:InterOperatorIdentifiers" minOccurs="0" />
+            <element name="localRecordSequenceNumber" type="nme:long" minOccurs="0" />
+            <element name="recordSequenceNumber" type="nme:long" minOccurs="0" />
+            <element name="causeForRecordClosing" type="nme:long" minOccurs="0" />
+            <element name="incomplete_CDR_Indication" type="this:Incomplete_CDR_Indication" minOccurs="0" />
+            <element name="iMS_Charging_Identifier" type="nme:byte-array" minOccurs="0" />
+            <element name="list_Of_SDP_Media_Components" type="this:PCSCFRecord_generatedType_3" minOccurs="0" />
+            <element name="gGSNaddress" type="this:NodeAddress" minOccurs="0" />
+            <element name="serviceReasonReturnCode" type="nme:string" minOccurs="0" />
+            <element name="list_Of_Message_Bodies" type="this:PCSCFRecord_generatedType_4" minOccurs="0" />
+            <element name="recordExtensions" type="this:ManagementExtensions" minOccurs="0" />
+            <element name="expiresInformation" type="nme:long" minOccurs="0" />
+            <element name="list_Of_Associated_URI" type="this:ListOfInvolvedParties" minOccurs="0" />
+            <element name="event" type="nme:string" minOccurs="0" />
+            <element name="accessNetworkInformation" type="nme:byte-array" minOccurs="0" />
+            <element name="serviceContextID" type="nme:string" minOccurs="0" />
+            <element name="list_of_subscription_ID" type="this:PCSCFRecord_generatedType_5" minOccurs="0" />
+            <element name="list_Of_Early_SDP_Media_Components" type="this:PCSCFRecord_generatedType_6" minOccurs="0" />
+            <element name="iMSCommunicationServiceIdentifier" type="nme:byte-array" minOccurs="0" />
+            <element name="sessionPriority" type="nme:long" minOccurs="0" />
+            <element name="serviceRequestTimeStampFraction" type="nme:long" minOccurs="0" />
+            <element name="serviceDeliveryStartTimeStampFraction" type="nme:long" minOccurs="0" />
+            <element name="serviceDeliveryEndTimeStampFraction" type="nme:long" minOccurs="0" />
+            <element name="list_of_Requested_Party_Address" type="this:ListOfInvolvedParties" minOccurs="0" />
+            <element name="list_Of_Called_Asserted_Identity" type="this:ListOfInvolvedParties" minOccurs="0" />
+            <element name="userLocationInformation" type="nme:byte-array" minOccurs="0" />
+            <element name="mSTimeZone" type="nme:byte-array" minOccurs="0" />
+            <element name="servedPartyIPAddress" type="this:IPAddressCustom" minOccurs="0" />
+            <element name="iMSVisitedNetworkIdentifier" type="nme:byte-array" minOccurs="0" />
+            <element name="listOfReasonHeader" type="this:ListOfReasonHeader" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="PCSCFRecord_generatedType_3">
+        <sequence>
+            <element name="PCSCFRecord_generatedType_3">
+                <complexType>
+                    <sequence>
+                        <element type="this:Media_Components_List" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="PCSCFRecord_generatedType_4">
+        <sequence>
+            <element name="PCSCFRecord_generatedType_4">
+                <complexType>
+                    <sequence>
+                        <element type="this:MessageBody" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="PCSCFRecord_generatedType_5">
+        <sequence>
+            <element name="PCSCFRecord_generatedType_5">
+                <complexType>
+                    <sequence>
+                        <element type="this:SubscriptionID" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="PCSCFRecord_generatedType_6">
+        <sequence>
+            <element name="PCSCFRecord_generatedType_6">
+                <complexType>
+                    <sequence>
+                        <element type="this:Early_Media_Components_List" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="Virtual_Group_Call_Control">
+        <sequence>
+            <element name="virtual_Group_ID" type="nme:long" minOccurs="0" />
+            <element name="reason" type="nme:string" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="ListOfInvolvedParties">
+        <sequence>
+            <element name="ListOfInvolvedParties">
+                <complexType>
+                    <sequence>
+                        <element type="this:InvolvedParty" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="TrunkGroupID">
+        <sequence>
+            <element name="incoming" type="nme:string" />
+            <element name="outgoing" type="nme:string" />
+        </sequence>
+    </complexType>
+
+    <complexType name="ManagementExtensions">
+        <sequence>
+            <element name="ManagementExtensions">
+                <complexType>
+                    <sequence>
+                        <element type="this:ManagementExtension" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="TransmissionMedium">
+        <sequence>
+            <element name="tMR" type="nme:byte-array" minOccurs="0" />
+            <element name="tMU" type="nme:byte-array" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="ApplicationServersInformation">
+        <sequence>
+            <element name="applicationServersInvolved" type="this:NodeAddress" minOccurs="0" />
+            <element name="applicationProvidedCalledParties" type="this:ApplicationServersInformation_generatedType_7" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="ApplicationServersInformation_generatedType_7">
+        <sequence>
+            <element name="ApplicationServersInformation_generatedType_7">
+                <complexType>
+                    <sequence>
+                        <element type="this:InvolvedParty" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="ASRecord">
+        <sequence>
+            <element name="recordType" type="nme:long" />
+            <element name="retransmission" type="nme:int" minOccurs="0" />
+            <element name="sIP_Method" type="nme:string" minOccurs="0" />
+            <element name="role_of_Node" type="nme:long" minOccurs="0" />
+            <element name="nodeAddress" type="this:NodeAddress" minOccurs="0" />
+            <element name="session_Id" type="nme:string" minOccurs="0" />
+            <element name="list_Of_Calling_Party_Address" type="this:ListOfInvolvedParties" minOccurs="0" />
+            <element name="called_Party_Address" type="this:InvolvedParty" minOccurs="0" />
+            <element name="privateUserID" type="nme:string" minOccurs="0" />
+            <element name="serviceRequestTimeStamp" type="nme:byte-array" minOccurs="0" />
+            <element name="serviceDeliveryStartTimeStamp" type="nme:byte-array" minOccurs="0" />
+            <element name="serviceDeliveryEndTimeStamp" type="nme:byte-array" minOccurs="0" />
+            <element name="recordOpeningTime" type="nme:byte-array" minOccurs="0" />
+            <element name="recordClosureTime" type="nme:byte-array" minOccurs="0" />
+            <element name="interOperatorIdentifiers" type="this:InterOperatorIdentifiers" minOccurs="0" />
+            <element name="localRecordSequenceNumber" type="nme:long" minOccurs="0" />
+            <element name="recordSequenceNumber" type="nme:long" minOccurs="0" />
+            <element name="causeForRecordClosing" type="nme:long" minOccurs="0" />
+            <element name="incomplete_CDR_Indication" type="this:Incomplete_CDR_Indication" minOccurs="0" />
+            <element name="iMS_Charging_Identifier" type="nme:byte-array" minOccurs="0" />
+            <element name="list_Of_SDP_Media_Components" type="this:ASRecord_generatedType_8" minOccurs="0" />
+            <element name="gGSNaddress" type="this:NodeAddress" minOccurs="0" />
+            <element name="serviceReasonReturnCode" type="nme:string" minOccurs="0" />
+            <element name="list_Of_Message_Bodies" type="this:ASRecord_generatedType_9" minOccurs="0" />
+            <element name="recordExtensions" type="this:ManagementExtensions" minOccurs="0" />
+            <element name="expiresInformation" type="nme:long" minOccurs="0" />
+            <element name="event" type="nme:string" minOccurs="0" />
+            <element name="accessNetworkInformation" type="nme:byte-array" minOccurs="0" />
+            <element name="serviceContextID" type="nme:string" minOccurs="0" />
+            <element name="list_of_subscription_ID" type="this:ASRecord_generatedType_10" minOccurs="0" />
+            <element name="list_Of_Early_SDP_Media_Components" type="this:ASRecord_generatedType_11" minOccurs="0" />
+            <element name="iMSCommunicationServiceIdentifier" type="nme:byte-array" minOccurs="0" />
+            <element name="numberPortabilityRouting" type="nme:string" minOccurs="0" />
+            <element name="carrierSelectRouting" type="nme:string" minOccurs="0" />
+            <element name="sessionPriority" type="nme:long" minOccurs="0" />
+            <element name="serviceRequestTimeStampFraction" type="nme:long" minOccurs="0" />
+            <element name="serviceDeliveryStartTimeStampFraction" type="nme:long" minOccurs="0" />
+            <element name="serviceDeliveryEndTimeStampFraction" type="nme:long" minOccurs="0" />
+            <element name="list_of_Requested_Party_Address" type="this:ListOfInvolvedParties" minOccurs="0" />
+            <element name="online_charging_flag" type="nme:int" minOccurs="0" />
+            <element name="realTimeTariffInformation" type="this:ASRecord_generatedType_12" minOccurs="0" />
+            <element name="userLocationInformation" type="nme:byte-array" minOccurs="0" />
+            <element name="mSTimeZone" type="nme:byte-array" minOccurs="0" />
+            <element name="iMSVisitedNetworkIdentifier" type="nme:byte-array" minOccurs="0" />
+            <element name="listOfReasonHeader" type="this:ListOfReasonHeader" minOccurs="0" />
+            <element name="serviceSpecificInfo" type="this:ASRecord_generatedType_13" minOccurs="0" />
+            <element name="requested_Party_Address" type="this:InvolvedParty" minOccurs="0" />
+            <element name="list_Of_Called_Asserted_Identity" type="this:ListOfInvolvedParties" minOccurs="0" />
+            <element name="alternateChargedPartyAddress" type="nme:string" minOccurs="0" />
+            <element name="outgoingSessionId" type="nme:string" minOccurs="0" />
+            <element name="initialIMS_Charging_Identifier" type="nme:byte-array" minOccurs="0" />
+            <element name="tADS_Identifier" type="nme:long" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="ASRecord_generatedType_10">
+        <sequence>
+            <element name="ASRecord_generatedType_10">
+                <complexType>
+                    <sequence>
+                        <element type="this:SubscriptionID" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="ASRecord_generatedType_9">
+        <sequence>
+            <element name="ASRecord_generatedType_9">
+                <complexType>
+                    <sequence>
+                        <element type="this:MessageBody" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="ASRecord_generatedType_12">
+        <sequence>
+            <element name="ASRecord_generatedType_12">
+                <complexType>
+                    <sequence>
+                        <element type="this:RealTimeTariffInformation" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="ASRecord_generatedType_8">
+        <sequence>
+            <element name="ASRecord_generatedType_8">
+                <complexType>
+                    <sequence>
+                        <element type="this:Media_Components_List" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="ASRecord_generatedType_11">
+        <sequence>
+            <element name="ASRecord_generatedType_11">
+                <complexType>
+                    <sequence>
+                        <element type="this:Early_Media_Components_List" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="ASRecord_generatedType_13">
+        <sequence>
+            <element name="ASRecord_generatedType_13">
+                <complexType>
+                    <sequence>
+                        <element type="this:ServiceSpecificInfo" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="Event_Type">
+        <sequence>
+            <element name="event" type="nme:string" minOccurs="0" />
+            <element name="expiresInformation" type="nme:long" minOccurs="0" />
+            <element name="sIP_Method" type="nme:string" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="Cost_Information">
+        <sequence>
+            <element name="unit_Value" type="this:Unit_Value" minOccurs="0" />
+            <element name="currency_Code" type="nme:long" minOccurs="0" />
+            <element name="cost_Unit" type="nme:string" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="SDP_Media_Description">
+        <sequence>
+            <element name="SDP_Media_Description" type="nme:string-array" />
+        </sequence>
+    </complexType>
+
+    <complexType name="IMSRecord">
+        <sequence>
+            <element name="sCSCFRecord" type="this:SCSCFRecord" />
+            <element name="pCSCFRecord" type="this:PCSCFRecord" />
+            <element name="iCSCFRecord" type="this:ICSCFRecord" />
+            <element name="mRFCRecord" type="this:MRFCRecord" />
+            <element name="mGCFRecord" type="this:MGCFRecord" />
+            <element name="bGCFRecord" type="this:BGCFRecord" />
+            <element name="aSRecord" type="this:ASRecord" />
+            <element name="eCSCFRecord" type="this:ECSCFRecord" />
+            <element name="iBCFRecord" type="this:IBCFRecord" />
+        </sequence>
+    </complexType>
+
+    <complexType name="SubscriptionID">
+        <sequence>
+            <element name="subscriptionIDType" type="nme:long" />
+            <element name="subscriptionIDData" type="nme:string" />
+        </sequence>
+    </complexType>
+
+    <complexType name="IPAddressCustom">
+        <sequence>
+            <element name="iPBinaryAddress_iPBinV4Address" type="nme:byte-array" minOccurs="0" />
+            <element name="iPBinaryAddress_iPBinV6Address" type="nme:byte-array" minOccurs="0" />
+            <element name="iPTextRepresentedAddress_iPTextV4Address" type="nme:string" minOccurs="0" />
+            <element name="iPTextRepresentedAddress_iPTextV6Address" type="nme:string" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="MessageBody">
+        <sequence>
+            <element name="content_Type" type="nme:string" />
+            <element name="content_Disposition" type="nme:string" minOccurs="0" />
+            <element name="content_Length" type="nme:long" />
+            <element name="originator" type="this:InvolvedParty" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="IBCFRecord">
+        <sequence>
+            <element name="recordType" type="nme:long" />
+            <element name="retransmission" type="nme:int" minOccurs="0" />
+            <element name="sIP_Method" type="nme:string" minOccurs="0" />
+            <element name="role_of_Node" type="nme:long" minOccurs="0" />
+            <element name="nodeAddress" type="this:NodeAddress" minOccurs="0" />
+            <element name="session_Id" type="nme:string" minOccurs="0" />
+            <element name="list_Of_Calling_Party_Address" type="this:ListOfInvolvedParties" minOccurs="0" />
+            <element name="called_Party_Address" type="this:InvolvedParty" minOccurs="0" />
+            <element name="serviceRequestTimeStamp" type="nme:byte-array" minOccurs="0" />
+            <element name="serviceDeliveryStartTimeStamp" type="nme:byte-array" minOccurs="0" />
+            <element name="serviceDeliveryEndTimeStamp" type="nme:byte-array" minOccurs="0" />
+            <element name="recordOpeningTime" type="nme:byte-array" minOccurs="0" />
+            <element name="recordClosureTime" type="nme:byte-array" minOccurs="0" />
+            <element name="interOperatorIdentifiers" type="this:InterOperatorIdentifiers" minOccurs="0" />
+            <element name="localRecordSequenceNumber" type="nme:long" minOccurs="0" />
+            <element name="recordSequenceNumber" type="nme:long" minOccurs="0" />
+            <element name="causeForRecordClosing" type="nme:long" minOccurs="0" />
+            <element name="incomplete_CDR_Indication" type="this:Incomplete_CDR_Indication" minOccurs="0" />
+            <element name="iMS_Charging_Identifier" type="nme:byte-array" minOccurs="0" />
+            <element name="list_Of_SDP_Media_Components" type="this:IBCFRecord_generatedType_14" minOccurs="0" />
+            <element name="gGSNaddress" type="this:NodeAddress" minOccurs="0" />
+            <element name="serviceReasonReturnCode" type="nme:string" minOccurs="0" />
+            <element name="list_Of_Message_Bodies" type="this:IBCFRecord_generatedType_15" minOccurs="0" />
+            <element name="recordExtensions" type="this:ManagementExtensions" minOccurs="0" />
+            <element name="expiresInformation" type="nme:long" minOccurs="0" />
+            <element name="event" type="nme:string" minOccurs="0" />
+            <element name="accessNetworkInformation" type="nme:byte-array" minOccurs="0" />
+            <element name="serviceContextID" type="nme:string" minOccurs="0" />
+            <element name="list_of_subscription_ID" type="this:IBCFRecord_generatedType_16" minOccurs="0" />
+            <element name="list_Of_Early_SDP_Media_Components" type="this:IBCFRecord_generatedType_17" minOccurs="0" />
+            <element name="iMSCommunicationServiceIdentifier" type="nme:byte-array" minOccurs="0" />
+            <element name="sessionPriority" type="nme:long" minOccurs="0" />
+            <element name="serviceRequestTimeStampFraction" type="nme:long" minOccurs="0" />
+            <element name="serviceDeliveryStartTimeStampFraction" type="nme:long" minOccurs="0" />
+            <element name="serviceDeliveryEndTimeStampFraction" type="nme:long" minOccurs="0" />
+            <element name="list_of_Requested_Party_Address" type="this:ListOfInvolvedParties" minOccurs="0" />
+            <element name="list_Of_Called_Asserted_Identity" type="this:ListOfInvolvedParties" minOccurs="0" />
+            <element name="realTimeTariffInformation" type="this:IBCFRecord_generatedType_18" minOccurs="0" />
+            <element name="userLocationInformation" type="nme:byte-array" minOccurs="0" />
+            <element name="mSTimeZone" type="nme:byte-array" minOccurs="0" />
+            <element name="listOfReasonHeader" type="this:ListOfReasonHeader" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="IBCFRecord_generatedType_14">
+        <sequence>
+            <element name="IBCFRecord_generatedType_14">
+                <complexType>
+                    <sequence>
+                        <element type="this:Media_Components_List" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="IBCFRecord_generatedType_18">
+        <sequence>
+            <element name="IBCFRecord_generatedType_18">
+                <complexType>
+                    <sequence>
+                        <element type="this:RealTimeTariffInformation" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="IBCFRecord_generatedType_17">
+        <sequence>
+            <element name="IBCFRecord_generatedType_17">
+                <complexType>
+                    <sequence>
+                        <element type="this:Early_Media_Components_List" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="IBCFRecord_generatedType_16">
+        <sequence>
+            <element name="IBCFRecord_generatedType_16">
+                <complexType>
+                    <sequence>
+                        <element type="this:SubscriptionID" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="IBCFRecord_generatedType_15">
+        <sequence>
+            <element name="IBCFRecord_generatedType_15">
+                <complexType>
+                    <sequence>
+                        <element type="this:MessageBody" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="SCSCFRecord">
+        <sequence>
+            <element name="recordType" type="nme:long" />
+            <element name="retransmission" type="nme:int" minOccurs="0" />
+            <element name="sIP_Method" type="nme:string" minOccurs="0" />
+            <element name="role_of_Node" type="nme:long" minOccurs="0" />
+            <element name="nodeAddress" type="this:NodeAddress" minOccurs="0" />
+            <element name="session_Id" type="nme:string" minOccurs="0" />
+            <element name="list_Of_Calling_Party_Address" type="this:ListOfInvolvedParties" minOccurs="0" />
+            <element name="called_Party_Address" type="this:InvolvedParty" minOccurs="0" />
+            <element name="privateUserID" type="nme:string" minOccurs="0" />
+            <element name="serviceRequestTimeStamp" type="nme:byte-array" minOccurs="0" />
+            <element name="serviceDeliveryStartTimeStamp" type="nme:byte-array" minOccurs="0" />
+            <element name="serviceDeliveryEndTimeStamp" type="nme:byte-array" minOccurs="0" />
+            <element name="recordOpeningTime" type="nme:byte-array" minOccurs="0" />
+            <element name="recordClosureTime" type="nme:byte-array" minOccurs="0" />
+            <element name="interOperatorIdentifiers" type="this:InterOperatorIdentifierlist" minOccurs="0" />
+            <element name="localRecordSequenceNumber" type="nme:long" minOccurs="0" />
+            <element name="recordSequenceNumber" type="nme:long" minOccurs="0" />
+            <element name="causeForRecordClosing" type="nme:long" minOccurs="0" />
+            <element name="incomplete_CDR_Indication" type="this:Incomplete_CDR_Indication" minOccurs="0" />
+            <element name="iMS_Charging_Identifier" type="nme:byte-array" minOccurs="0" />
+            <element name="list_Of_SDP_Media_Components" type="this:SCSCFRecord_generatedType_19" minOccurs="0" />
+            <element name="gGSNaddress" type="this:NodeAddress" minOccurs="0" />
+            <element name="serviceReasonReturnCode" type="nme:string" minOccurs="0" />
+            <element name="list_Of_Message_Bodies" type="this:SCSCFRecord_generatedType_20" minOccurs="0" />
+            <element name="recordExtensions" type="this:ManagementExtensions" minOccurs="0" />
+            <element name="expiresInformation" type="nme:long" minOccurs="0" />
+            <element name="list_Of_Associated_URI" type="this:ListOfInvolvedParties" minOccurs="0" />
+            <element name="event" type="nme:string" minOccurs="0" />
+            <element name="accessNetworkInformation" type="nme:byte-array" minOccurs="0" />
+            <element name="serviceContextID" type="nme:string" minOccurs="0" />
+            <element name="list_of_subscription_ID" type="this:SCSCFRecord_generatedType_21" minOccurs="0" />
+            <element name="list_Of_Early_SDP_Media_Components" type="this:SCSCFRecord_generatedType_22" minOccurs="0" />
+            <element name="iMSCommunicationServiceIdentifier" type="nme:byte-array" minOccurs="0" />
+            <element name="numberPortabilityRouting" type="nme:string" minOccurs="0" />
+            <element name="carrierSelectRouting" type="nme:string" minOccurs="0" />
+            <element name="sessionPriority" type="nme:long" minOccurs="0" />
+            <element name="serviceRequestTimeStampFraction" type="nme:long" minOccurs="0" />
+            <element name="serviceDeliveryStartTimeStampFraction" type="nme:long" minOccurs="0" />
+            <element name="serviceDeliveryEndTimeStampFraction" type="nme:long" minOccurs="0" />
+            <element name="applicationServersInformation" type="this:SCSCFRecord_generatedType_23" minOccurs="0" />
+            <element name="requested_Party_Address" type="this:InvolvedParty" minOccurs="0" />
+            <element name="list_Of_Called_Asserted_Identity" type="this:ListOfInvolvedParties" minOccurs="0" />
+            <element name="online_charging_flag" type="nme:int" minOccurs="0" />
+            <element name="realTimeTariffInformation" type="this:SCSCFRecord_generatedType_24" minOccurs="0" />
+            <element name="userLocationInformation" type="nme:byte-array" minOccurs="0" />
+            <element name="mSTimeZone" type="nme:byte-array" minOccurs="0" />
+            <element name="iMSVisitedNetworkIdentifier" type="nme:byte-array" minOccurs="0" />
+            <element name="listOfReasonHeader" type="this:ListOfReasonHeader" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="SCSCFRecord_generatedType_24">
+        <sequence>
+            <element name="SCSCFRecord_generatedType_24">
+                <complexType>
+                    <sequence>
+                        <element type="this:RealTimeTariffInformation" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="SCSCFRecord_generatedType_19">
+        <sequence>
+            <element name="SCSCFRecord_generatedType_19">
+                <complexType>
+                    <sequence>
+                        <element type="this:Media_Components_List" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="SCSCFRecord_generatedType_20">
+        <sequence>
+            <element name="SCSCFRecord_generatedType_20">
+                <complexType>
+                    <sequence>
+                        <element type="this:MessageBody" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="SCSCFRecord_generatedType_21">
+        <sequence>
+            <element name="SCSCFRecord_generatedType_21">
+                <complexType>
+                    <sequence>
+                        <element type="this:SubscriptionID" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="SCSCFRecord_generatedType_22">
+        <sequence>
+            <element name="SCSCFRecord_generatedType_22">
+                <complexType>
+                    <sequence>
+                        <element type="this:Early_Media_Components_List" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="SCSCFRecord_generatedType_23">
+        <sequence>
+            <element name="SCSCFRecord_generatedType_23">
+                <complexType>
+                    <sequence>
+                        <element type="this:ApplicationServersInformation" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="MGCFRecord">
+        <sequence>
+            <element name="recordType" type="nme:long" />
+            <element name="retransmission" type="nme:int" minOccurs="0" />
+            <element name="sIP_Method" type="nme:string" minOccurs="0" />
+            <element name="role_of_Node" type="nme:long" minOccurs="0" />
+            <element name="nodeAddress" type="this:NodeAddress" minOccurs="0" />
+            <element name="session_Id" type="nme:string" minOccurs="0" />
+            <element name="list_Of_Calling_Party_Address" type="this:ListOfInvolvedParties" minOccurs="0" />
+            <element name="called_Party_Address" type="this:InvolvedParty" minOccurs="0" />
+            <element name="serviceRequestTimeStamp" type="nme:byte-array" minOccurs="0" />
+            <element name="serviceDeliveryStartTimeStamp" type="nme:byte-array" minOccurs="0" />
+            <element name="serviceDeliveryEndTimeStamp" type="nme:byte-array" minOccurs="0" />
+            <element name="recordOpeningTime" type="nme:byte-array" minOccurs="0" />
+            <element name="recordClosureTime" type="nme:byte-array" minOccurs="0" />
+            <element name="interOperatorIdentifiers" type="this:InterOperatorIdentifiers" minOccurs="0" />
+            <element name="localRecordSequenceNumber" type="nme:long" minOccurs="0" />
+            <element name="recordSequenceNumber" type="nme:long" minOccurs="0" />
+            <element name="causeForRecordClosing" type="nme:long" minOccurs="0" />
+            <element name="incomplete_CDR_Indication" type="this:Incomplete_CDR_Indication" minOccurs="0" />
+            <element name="iMS_Charging_Identifier" type="nme:byte-array" minOccurs="0" />
+            <element name="list_Of_SDP_Media_Components" type="this:MGCFRecord_generatedType_25" minOccurs="0" />
+            <element name="serviceReasonReturnCode" type="nme:string" minOccurs="0" />
+            <element name="recordExtensions" type="this:ManagementExtensions" minOccurs="0" />
+            <element name="expiresInformation" type="nme:long" minOccurs="0" />
+            <element name="event" type="nme:string" minOccurs="0" />
+            <element name="accessNetworkInformation" type="nme:byte-array" minOccurs="0" />
+            <element name="serviceContextID" type="nme:string" minOccurs="0" />
+            <element name="list_Of_Early_SDP_Media_Components" type="this:MGCFRecord_generatedType_26" minOccurs="0" />
+            <element name="numberPortabilityRouting" type="nme:string" minOccurs="0" />
+            <element name="carrierSelectRouting" type="nme:string" minOccurs="0" />
+            <element name="sessionPriority" type="nme:long" minOccurs="0" />
+            <element name="serviceRequestTimeStampFraction" type="nme:long" minOccurs="0" />
+            <element name="serviceDeliveryStartTimeStampFraction" type="nme:long" minOccurs="0" />
+            <element name="serviceDeliveryEndTimeStampFraction" type="nme:long" minOccurs="0" />
+            <element name="realTimeTariffInformation" type="this:MGCFRecord_generatedType_27" minOccurs="0" />
+            <element name="listOfReasonHeader" type="this:ListOfReasonHeader" minOccurs="0" />
+            <element name="trunkGroupID" type="this:TrunkGroupID" minOccurs="0" />
+            <element name="bearerService" type="this:TransmissionMedium" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="MGCFRecord_generatedType_27">
+        <sequence>
+            <element name="MGCFRecord_generatedType_27">
+                <complexType>
+                    <sequence>
+                        <element type="this:RealTimeTariffInformation" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="MGCFRecord_generatedType_26">
+        <sequence>
+            <element name="MGCFRecord_generatedType_26">
+                <complexType>
+                    <sequence>
+                        <element type="this:Early_Media_Components_List" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="MGCFRecord_generatedType_25">
+        <sequence>
+            <element name="MGCFRecord_generatedType_25">
+                <complexType>
+                    <sequence>
+                        <element type="this:Media_Components_List" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="MRFCRecord">
+        <sequence>
+            <element name="recordType" type="nme:long" />
+            <element name="retransmission" type="nme:int" minOccurs="0" />
+            <element name="sIP_Method" type="nme:string" minOccurs="0" />
+            <element name="nodeAddress" type="this:NodeAddress" minOccurs="0" />
+            <element name="session_Id" type="nme:string" minOccurs="0" />
+            <element name="list_Of_Calling_Party_Address" type="this:ListOfInvolvedParties" minOccurs="0" />
+            <element name="called_Party_Address" type="this:InvolvedParty" minOccurs="0" />
+            <element name="serviceRequestTimeStamp" type="nme:byte-array" minOccurs="0" />
+            <element name="serviceDeliveryStartTimeStamp" type="nme:byte-array" minOccurs="0" />
+            <element name="serviceDeliveryEndTimeStamp" type="nme:byte-array" minOccurs="0" />
+            <element name="recordOpeningTime" type="nme:byte-array" minOccurs="0" />
+            <element name="recordClosureTime" type="nme:byte-array" minOccurs="0" />
+            <element name="interOperatorIdentifiers" type="this:InterOperatorIdentifiers" minOccurs="0" />
+            <element name="localRecordSequenceNumber" type="nme:long" minOccurs="0" />
+            <element name="recordSequenceNumber" type="nme:long" minOccurs="0" />
+            <element name="causeForRecordClosing" type="nme:long" minOccurs="0" />
+            <element name="incomplete_CDR_Indication" type="this:Incomplete_CDR_Indication" minOccurs="0" />
+            <element name="iMS_Charging_Identifier" type="nme:byte-array" minOccurs="0" />
+            <element name="list_Of_SDP_Media_Components" type="this:MRFCRecord_generatedType_28" minOccurs="0" />
+            <element name="gGSNaddress" type="this:NodeAddress" minOccurs="0" />
+            <element name="serviceReasonReturnCode" type="nme:string" minOccurs="0" />
+            <element name="recordExtensions" type="this:ManagementExtensions" minOccurs="0" />
+            <element name="expiresInformation" type="nme:long" minOccurs="0" />
+            <element name="event" type="nme:string" minOccurs="0" />
+            <element name="accessNetworkInformation" type="nme:byte-array" minOccurs="0" />
+            <element name="serviceContextID" type="nme:string" minOccurs="0" />
+            <element name="list_of_subscription_ID" type="this:MRFCRecord_generatedType_29" minOccurs="0" />
+            <element name="list_Of_Early_SDP_Media_Components" type="this:MRFCRecord_generatedType_30" minOccurs="0" />
+            <element name="sessionPriority" type="nme:long" minOccurs="0" />
+            <element name="serviceRequestTimeStampFraction" type="nme:long" minOccurs="0" />
+            <element name="serviceDeliveryStartTimeStampFraction" type="nme:long" minOccurs="0" />
+            <element name="serviceDeliveryEndTimeStampFraction" type="nme:long" minOccurs="0" />
+            <element name="applicationServersInformation" type="this:MRFCRecord_generatedType_31" minOccurs="0" />
+            <element name="online_charging_flag" type="nme:int" minOccurs="0" />
+            <element name="userLocationInformation" type="nme:byte-array" minOccurs="0" />
+            <element name="mSTimeZone" type="nme:byte-array" minOccurs="0" />
+            <element name="listOfReasonHeader" type="this:ListOfReasonHeader" minOccurs="0" />
+            <element name="service_Id" type="nme:string" minOccurs="0" />
+            <element name="requested_Party_Address" type="this:InvolvedParty" minOccurs="0" />
+            <element name="list_Of_Called_Asserted_Identity" type="this:ListOfInvolvedParties" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="MRFCRecord_generatedType_28">
+        <sequence>
+            <element name="MRFCRecord_generatedType_28">
+                <complexType>
+                    <sequence>
+                        <element type="this:Media_Components_List" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="MRFCRecord_generatedType_31">
+        <sequence>
+            <element name="MRFCRecord_generatedType_31">
+                <complexType>
+                    <sequence>
+                        <element type="this:ApplicationServersInformation" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="MRFCRecord_generatedType_29">
+        <sequence>
+            <element name="MRFCRecord_generatedType_29">
+                <complexType>
+                    <sequence>
+                        <element type="this:SubscriptionID" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="MRFCRecord_generatedType_30">
+        <sequence>
+            <element name="MRFCRecord_generatedType_30">
+                <complexType>
+                    <sequence>
+                        <element type="this:Early_Media_Components_List" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="ECSCFRecord">
+        <sequence>
+            <element name="recordType" type="nme:long" />
+            <element name="retransmission" type="nme:int" minOccurs="0" />
+            <element name="sIP_Method" type="nme:string" minOccurs="0" />
+            <element name="role_of_Node" type="nme:long" minOccurs="0" />
+            <element name="nodeAddress" type="this:NodeAddress" minOccurs="0" />
+            <element name="session_Id" type="nme:string" minOccurs="0" />
+            <element name="list_Of_Calling_Party_Address" type="this:ListOfInvolvedParties" minOccurs="0" />
+            <element name="called_Party_Address" type="this:InvolvedParty" minOccurs="0" />
+            <element name="privateUserID" type="nme:string" minOccurs="0" />
+            <element name="serviceRequestTimeStamp" type="nme:byte-array" minOccurs="0" />
+            <element name="serviceDeliveryStartTimeStamp" type="nme:byte-array" minOccurs="0" />
+            <element name="serviceDeliveryEndTimeStamp" type="nme:byte-array" minOccurs="0" />
+            <element name="recordOpeningTime" type="nme:byte-array" minOccurs="0" />
+            <element name="recordClosureTime" type="nme:byte-array" minOccurs="0" />
+            <element name="interOperatorIdentifiers" type="this:InterOperatorIdentifierlist" minOccurs="0" />
+            <element name="localRecordSequenceNumber" type="nme:long" minOccurs="0" />
+            <element name="recordSequenceNumber" type="nme:long" minOccurs="0" />
+            <element name="causeForRecordClosing" type="nme:long" minOccurs="0" />
+            <element name="incomplete_CDR_Indication" type="this:Incomplete_CDR_Indication" minOccurs="0" />
+            <element name="iMS_Charging_Identifier" type="nme:byte-array" minOccurs="0" />
+            <element name="list_Of_SDP_Media_Components" type="this:ECSCFRecord_generatedType_32" minOccurs="0" />
+            <element name="gGSNaddress" type="this:NodeAddress" minOccurs="0" />
+            <element name="serviceReasonReturnCode" type="nme:string" minOccurs="0" />
+            <element name="list_Of_Message_Bodies" type="this:ECSCFRecord_generatedType_33" minOccurs="0" />
+            <element name="recordExtensions" type="this:ManagementExtensions" minOccurs="0" />
+            <element name="expiresInformation" type="nme:long" minOccurs="0" />
+            <element name="list_Of_Associated_URI" type="this:ListOfInvolvedParties" minOccurs="0" />
+            <element name="event" type="nme:string" minOccurs="0" />
+            <element name="accessNetworkInformation" type="nme:byte-array" minOccurs="0" />
+            <element name="serviceContextID" type="nme:string" minOccurs="0" />
+            <element name="list_of_subscription_ID" type="this:ECSCFRecord_generatedType_34" minOccurs="0" />
+            <element name="list_Of_Early_SDP_Media_Components" type="this:ECSCFRecord_generatedType_35" minOccurs="0" />
+            <element name="iMSCommunicationServiceIdentifier" type="nme:byte-array" minOccurs="0" />
+            <element name="numberPortabilityRouting" type="nme:string" minOccurs="0" />
+            <element name="carrierSelectRouting" type="nme:string" minOccurs="0" />
+            <element name="sessionPriority" type="nme:long" minOccurs="0" />
+            <element name="serviceRequestTimeStampFraction" type="nme:long" minOccurs="0" />
+            <element name="serviceDeliveryStartTimeStampFraction" type="nme:long" minOccurs="0" />
+            <element name="serviceDeliveryEndTimeStampFraction" type="nme:long" minOccurs="0" />
+            <element name="applicationServersInformation" type="this:ECSCFRecord_generatedType_36" minOccurs="0" />
+            <element name="requested_Party_Address" type="this:InvolvedParty" minOccurs="0" />
+            <element name="list_Of_Called_Asserted_Identity" type="this:ListOfInvolvedParties" minOccurs="0" />
+            <element name="userLocationInformation" type="nme:byte-array" minOccurs="0" />
+            <element name="mSTimeZone" type="nme:byte-array" minOccurs="0" />
+            <element name="listOfReasonHeader" type="this:ListOfReasonHeader" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="ECSCFRecord_generatedType_32">
+        <sequence>
+            <element name="ECSCFRecord_generatedType_32">
+                <complexType>
+                    <sequence>
+                        <element type="this:Media_Components_List" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="ECSCFRecord_generatedType_35">
+        <sequence>
+            <element name="ECSCFRecord_generatedType_35">
+                <complexType>
+                    <sequence>
+                        <element type="this:Early_Media_Components_List" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="ECSCFRecord_generatedType_36">
+        <sequence>
+            <element name="ECSCFRecord_generatedType_36">
+                <complexType>
+                    <sequence>
+                        <element type="this:ApplicationServersInformation" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="ECSCFRecord_generatedType_33">
+        <sequence>
+            <element name="ECSCFRecord_generatedType_33">
+                <complexType>
+                    <sequence>
+                        <element type="this:MessageBody" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="ECSCFRecord_generatedType_34">
+        <sequence>
+            <element name="ECSCFRecord_generatedType_34">
+                <complexType>
+                    <sequence>
+                        <element type="this:SubscriptionID" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="IPBinaryAddress">
+        <sequence>
+            <element name="iPBinV4Address" type="nme:byte-array" />
+            <element name="iPBinV6Address" type="nme:byte-array" />
+        </sequence>
+    </complexType>
+
+    <complexType name="NodeAddress">
+        <sequence>
+            <element name="iPAddress" type="this:IPAddressCustom" />
+            <element name="domainName" type="nme:string" />
+        </sequence>
+    </complexType>
+
+    <complexType name="RealTimeTariffInformation">
+        <sequence>
+            <element name="tariffInformation" type="this:TariffInformation" />
+            <element name="tariffXml" type="nme:string" />
+        </sequence>
+    </complexType>
+
+    <complexType name="AIN_Info">
+        <sequence>
+            <element name="aMAslpID" type="nme:string" />
+        </sequence>
+    </complexType>
+
+    <complexType name="BGCFRecord">
+        <sequence>
+            <element name="recordType" type="nme:long" />
+            <element name="retransmission" type="nme:int" minOccurs="0" />
+            <element name="sIP_Method" type="nme:string" minOccurs="0" />
+            <element name="role_of_Node" type="nme:long" minOccurs="0" />
+            <element name="nodeAddress" type="this:NodeAddress" minOccurs="0" />
+            <element name="session_Id" type="nme:string" minOccurs="0" />
+            <element name="list_Of_Calling_Party_Address" type="this:ListOfInvolvedParties" minOccurs="0" />
+            <element name="called_Party_Address" type="this:InvolvedParty" minOccurs="0" />
+            <element name="serviceRequestTimeStamp" type="nme:byte-array" minOccurs="0" />
+            <element name="serviceDeliveryStartTimeStamp" type="nme:byte-array" minOccurs="0" />
+            <element name="serviceDeliveryEndTimeStamp" type="nme:byte-array" minOccurs="0" />
+            <element name="recordOpeningTime" type="nme:byte-array" minOccurs="0" />
+            <element name="recordClosureTime" type="nme:byte-array" minOccurs="0" />
+            <element name="interOperatorIdentifiers" type="this:InterOperatorIdentifiers" minOccurs="0" />
+            <element name="localRecordSequenceNumber" type="nme:long" minOccurs="0" />
+            <element name="recordSequenceNumber" type="nme:long" minOccurs="0" />
+            <element name="causeForRecordClosing" type="nme:long" minOccurs="0" />
+            <element name="incomplete_CDR_Indication" type="this:Incomplete_CDR_Indication" minOccurs="0" />
+            <element name="iMS_Charging_Identifier" type="nme:byte-array" minOccurs="0" />
+            <element name="list_Of_SDP_Media_Components" type="this:BGCFRecord_generatedType_37" minOccurs="0" />
+            <element name="serviceReasonReturnCode" type="nme:string" minOccurs="0" />
+            <element name="recordExtensions" type="this:ManagementExtensions" minOccurs="0" />
+            <element name="expiresInformation" type="nme:long" minOccurs="0" />
+            <element name="event" type="nme:string" minOccurs="0" />
+            <element name="accessNetworkInformation" type="nme:byte-array" minOccurs="0" />
+            <element name="serviceContextID" type="nme:string" minOccurs="0" />
+            <element name="list_Of_Early_SDP_Media_Components" type="this:BGCFRecord_generatedType_38" minOccurs="0" />
+            <element name="numberPortabilityRouting" type="nme:string" minOccurs="0" />
+            <element name="carrierSelectRouting" type="nme:string" minOccurs="0" />
+            <element name="sessionPriority" type="nme:long" minOccurs="0" />
+            <element name="serviceRequestTimeStampFraction" type="nme:long" minOccurs="0" />
+            <element name="serviceDeliveryStartTimeStampFraction" type="nme:long" minOccurs="0" />
+            <element name="serviceDeliveryEndTimeStampFraction" type="nme:long" minOccurs="0" />
+            <element name="listOfReasonHeader" type="this:ListOfReasonHeader" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="BGCFRecord_generatedType_37">
+        <sequence>
+            <element name="BGCFRecord_generatedType_37">
+                <complexType>
+                    <sequence>
+                        <element type="this:Media_Components_List" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="BGCFRecord_generatedType_38">
+        <sequence>
+            <element name="BGCFRecord_generatedType_38">
+                <complexType>
+                    <sequence>
+                        <element type="this:Early_Media_Components_List" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="Mobile_ID">
+        <sequence>
+            <element name="calling_imsi" type="nme:string" minOccurs="0" />
+            <element name="calling_min" type="nme:string" minOccurs="0" />
+            <element name="called_imsi" type="nme:string" minOccurs="0" />
+            <element name="called_min" type="nme:string" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="SupplServiceInfo">
+        <sequence>
+            <element name="sS_Service_Type" type="nme:long" />
+            <element name="sS_Service_Mode" type="nme:long" minOccurs="0" />
+            <element name="sS_Service_Action" type="nme:long" minOccurs="0" />
+            <element name="service_ID" type="nme:string" minOccurs="0" />
+            <element name="associated_Number" type="nme:string" minOccurs="0" />
+            <element name="sS_Start_Date_and_Time" type="nme:byte-array" minOccurs="0" />
+            <element name="sS_End_Date_and_Time" type="nme:byte-array" minOccurs="0" />
+            <element name="sS_Name_Space" type="nme:string" minOccurs="0" />
+            <element name="sS_Precedence_Level" type="nme:long" minOccurs="0" />
+            <element name="sS_Service_Category" type="nme:long" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="ALURecordExtensions">
+        <sequence>
+            <element name="supplServiceInfos" type="this:ALURecordExtensions_generatedType_39" minOccurs="0" />
+            <element name="call_Type" type="nme:long" minOccurs="0" />
+            <element name="call_Direction" type="nme:long" minOccurs="0" />
+            <element name="mobile_ID" type="this:Mobile_ID" minOccurs="0" />
+            <element name="handover_Info" type="this:ALURecordExtensions_generatedType_40" minOccurs="0" />
+            <element name="roaming_Ind" type="nme:long" minOccurs="0" />
+            <element name="third_Party_Charging_Address" type="nme:string" minOccurs="0" />
+            <element name="ue_Local_Time_Offset" type="nme:string" minOccurs="0" />
+            <element name="mac_ID" type="nme:string" minOccurs="0" />
+            <element name="initial_Cell_Sector_Location" type="nme:string" minOccurs="0" />
+            <element name="last_Cell_Sector_Location" type="nme:string" minOccurs="0" />
+            <element name="rating_Result" type="this:RatingResult" minOccurs="0" />
+            <element name="ain_Info" type="this:AIN_Info" minOccurs="0" />
+            <element name="accessNetworkChargingPhysicalAccessID" type="this:AccessNetworkChargingPhysicalAccessID" minOccurs="0" />
+            <element name="mGCFInfo" type="this:MGCFInfo" minOccurs="0" />
+            <element name="callingPartyCategory" type="nme:string" minOccurs="0" />
+            <element name="advice_of_Charge" type="this:Advice_of_Charge" minOccurs="0" />
+            <element name="qoS_Statistic" type="this:QoS_Statistic" minOccurs="0" />
+            <element name="calling_Party_Number_Wholesale_ID" type="nme:string" minOccurs="0" />
+            <element name="called_Party_Number_Wholesale_ID" type="nme:string" minOccurs="0" />
+            <element name="virtual_Group_Call_Control" type="this:Virtual_Group_Call_Control" minOccurs="0" />
+            <element name="endReason" type="nme:string" minOccurs="0" />
+            <element name="emergency_Service_Routing_Number" type="nme:string" minOccurs="0" />
+            <element name="aLU_Service_Parameter_Info" type="this:ALURecordExtensions_generatedType_41" minOccurs="0" />
+            <element name="sIPRingingTimestamp" type="nme:byte-array" minOccurs="0" />
+            <element name="sIPRingingTimestampFraction" type="nme:long" minOccurs="0" />
+            <element name="psExtension" type="this:PsExtension" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="ALURecordExtensions_generatedType_39">
+        <sequence>
+            <element name="ALURecordExtensions_generatedType_39">
+                <complexType>
+                    <sequence>
+                        <element type="this:SupplServiceInfo" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="ALURecordExtensions_generatedType_41">
+        <sequence>
+            <element name="ALURecordExtensions_generatedType_41">
+                <complexType>
+                    <sequence>
+                        <element type="this:ALU_Service_Parameter_Info" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="ALURecordExtensions_generatedType_40">
+        <sequence>
+            <element name="ALURecordExtensions_generatedType_40">
+                <complexType>
+                    <sequence>
+                        <element type="this:Handover_Info" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="Early_Media_Components_List">
+        <sequence>
+            <element name="sDP_Offer_Timestamp" type="nme:byte-array" minOccurs="0" />
+            <element name="sDP_Answer_Timestamp" type="nme:byte-array" minOccurs="0" />
+            <element name="sDP_Media_Components" type="this:Early_Media_Components_List_generatedType_42" minOccurs="0" />
+            <element name="mediaInitiatorFlag" type="nme:int" minOccurs="0" />
+            <element name="sDP_Session_Description" type="this:Early_Media_Components_List_generatedType_43" minOccurs="0" />
+            <element name="sDP_Type" type="nme:long" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="Early_Media_Components_List_generatedType_43">
+        <sequence>
+            <element name="Early_Media_Components_List_generatedType_43" type="nme:string-array" />
+        </sequence>
+    </complexType>
+
+    <complexType name="Early_Media_Components_List_generatedType_42">
+        <sequence>
+            <element name="Early_Media_Components_List_generatedType_42">
+                <complexType>
+                    <sequence>
+                        <element type="this:SDP_Media_Component" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="UserEquipmentInfo">
+        <sequence>
+            <element name="userEquipmentValue" type="nme:byte-array" minOccurs="0" />
+            <element name="userEquipmentType" type="nme:long" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="Advice_of_Charge">
+        <sequence>
+            <element name="initial_Cost_Information" type="this:Cost_Information" minOccurs="0" />
+            <element name="initial_Time_Length" type="nme:long" minOccurs="0" />
+            <element name="cost_Information" type="this:Cost_Information" minOccurs="0" />
+            <element name="time_Length" type="nme:long" minOccurs="0" />
+            <element name="time_Granularity" type="nme:string" minOccurs="0" />
+            <element name="aOC_Types" type="nme:string" minOccurs="0" />
+            <element name="aOC_Result" type="nme:string" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="SDP_Media_Component">
+        <sequence>
+            <element name="sDP_Media_Name" type="nme:string" minOccurs="0" />
+            <element name="sDP_Media_Descriptions" type="this:SDP_Media_Description" minOccurs="0" />
+            <element name="accessCorrelationID_gPRS_Charging_Id" type="nme:long" minOccurs="0" />
+            <element name="accessCorrelationID_accessNetworkChargingIdentifier" type="nme:string" minOccurs="0" />
+            <element name="authorized_QoS" type="nme:string" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="ListOfReasonHeader">
+        <sequence>
+            <element name="ListOfReasonHeader" type="nme:string-array" />
+        </sequence>
+    </complexType>
+
+    <complexType name="Unit_Value">
+        <sequence>
+            <element name="value_Digits" type="nme:long" minOccurs="0" />
+            <element name="exponent" type="nme:long" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="RatingResult">
+        <sequence>
+            <element name="unit_Value" type="this:UnitValue" minOccurs="0" />
+            <element name="currency_Code" type="nme:long" minOccurs="0" />
+            <element name="cost_Unit" type="nme:string" minOccurs="0" />
+            <element name="result_Code" type="nme:long" minOccurs="0" />
+            <element name="rating_Action" type="nme:long" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="RateElement">
+        <sequence>
+            <element name="unitType" type="nme:long" />
+            <element name="unitValue" type="nme:double" />
+            <element name="unitCost" type="nme:double" />
+            <element name="unitQuotaThreshold" type="nme:double" />
+        </sequence>
+    </complexType>
+
+    <complexType name="QoS_Statistic">
+        <sequence>
+            <element name="network_Statistic" type="this:QoS_Statistic_generatedType_44" minOccurs="0" />
+            <element name="rTP_Statistic" type="this:QoS_Statistic_generatedType_45" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="QoS_Statistic_generatedType_45">
+        <sequence>
+            <element name="QoS_Statistic_generatedType_45">
+                <complexType>
+                    <sequence>
+                        <element type="this:BlobWrapper" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="QoS_Statistic_generatedType_44">
+        <sequence>
+            <element name="QoS_Statistic_generatedType_44">
+                <complexType>
+                    <sequence>
+                        <element type="this:BlobWrapper" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="ALU_Service_Parameter_Info">
+        <sequence>
+            <element name="service_Parameter_Type" type="nme:long" minOccurs="0" />
+            <element name="service_Parameter_OctetString_Value" type="nme:byte-array" minOccurs="0" />
+            <element name="service_Parameter_UTF8String_Value" type="nme:string" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="AccessCorrelationID">
+        <sequence>
+            <element name="gPRS_Charging_Id" type="nme:long" />
+            <element name="accessNetworkChargingIdentifier" type="nme:string" />
+        </sequence>
+    </complexType>
+
+    <complexType name="Incomplete_CDR_Indication">
+        <sequence>
+            <element name="aCRStartLost" type="nme:boolean" />
+            <element name="aCRInterimLost" type="nme:long" />
+            <element name="aCRStopLost" type="nme:boolean" />
+        </sequence>
+    </complexType>
+
+    <complexType name="InterOperatorIdentifiers">
+        <sequence>
+            <element name="originatingIOI" type="nme:string" minOccurs="0" />
+            <element name="terminatingIOI" type="nme:string" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="Handover_Info">
+        <sequence>
+            <element name="handover_timestamp" type="nme:byte-array" minOccurs="0" />
+            <element name="handover_Ind" type="nme:long" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="UnitValue">
+        <sequence>
+            <element name="value_Digits" type="nme:long" />
+            <element name="exponent" type="nme:long" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="QoSData">
+        <sequence>
+            <element name="packetSent" type="nme:long" minOccurs="0" />
+            <element name="packetReceived" type="nme:long" minOccurs="0" />
+            <element name="packetLost" type="nme:long" minOccurs="0" />
+            <element name="bytesSent" type="nme:long" minOccurs="0" />
+            <element name="bytesReceived" type="nme:long" minOccurs="0" />
+            <element name="interArrivalJitter" type="nme:long" minOccurs="0" />
+            <element name="iPNetworkRoundTripDelay" type="nme:long" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="Media_Components_List">
+        <sequence>
+            <element name="sIP_Request_Timestamp" type="nme:byte-array" minOccurs="0" />
+            <element name="sIP_Response_Timestamp" type="nme:byte-array" minOccurs="0" />
+            <element name="sDP_Media_Components" type="this:Media_Components_List_generatedType_46" minOccurs="0" />
+            <element name="mediaInitiatorFlag" type="nme:int" minOccurs="0" />
+            <element name="sDP_Session_Description" type="this:Media_Components_List_generatedType_47" minOccurs="0" />
+            <element name="mediaInitiatorParty" type="this:InvolvedParty" minOccurs="0" />
+            <element name="sIP_Request_Timestamp_Fraction" type="nme:long" minOccurs="0" />
+            <element name="sIP_Response_Timestamp_Fraction" type="nme:long" minOccurs="0" />
+            <element name="sDP_Type" type="nme:long" minOccurs="0" />
+            <element name="localGWInsertedIndication" type="nme:boolean" minOccurs="0" />
+            <element name="iPRealmDefaultIndication" type="nme:boolean" minOccurs="0" />
+            <element name="transcoderInsertedIndication" type="nme:boolean" minOccurs="0" />
+        </sequence>
+    </complexType>
+
+    <complexType name="Media_Components_List_generatedType_46">
+        <sequence>
+            <element name="Media_Components_List_generatedType_46">
+                <complexType>
+                    <sequence>
+                        <element type="this:SDP_Media_Component" name="value" maxOccurs="unbounded" />
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="Media_Components_List_generatedType_47">
+        <sequence>
+            <element name="Media_Components_List_generatedType_47" type="nme:string-array" />
+        </sequence>
+    </complexType>
+
+    <complexType name="ManagementExtension">
+        <sequence>
+            <element name="identifier" type="nme:string" />
+            <element name="significance" type="nme:boolean" />
+            <element name="information" type="this:InformationCustom" />
+        </sequence>
+    </complexType>
+
+    <complexType name="InformationCustom">
+        <sequence>
+            <element name="informationExtensions" type="this:InformationExtensions" />
+        </sequence>
+    </complexType>
+
+    <complexType name="InformationExtensions">
+        <sequence>
+            <element name="extensionProvider" type="nme:long" />
+            <element name="extensionVersion" type="nme:long" />
+            <element name="extensionData" type="this:ALURecordExtensions" />
+        </sequence>
+    </complexType>
+
+    <complexType name="BlobWrapper">
+        <sequence>
+            <element name="value" type="nme:byte-array" />
+        </sequence>
+    </complexType>
+</schema>

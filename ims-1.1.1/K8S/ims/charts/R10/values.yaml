@@ -1,0 +1,124 @@
+###############################################################
+# eIUM container templates
+# release: v1.0
+# hpe 2022
+###############################################################
+
+container:
+
+##  hostName: "iumhost"
+##  serverName: "R10"
+##  rc: "deployment"
+
+##  persistentVolume:
+##    createPV: true
+##    enabled: true
+##    mounts:
+    #  - [ 1, efs, 50Gi, efs-sc, Retain, /var/opt/SIU, /mnt/da04/dataset01/storage, true, ReadWriteOnce, dedicated, N/A ]
+
+  configMap:
+    enabled: true
+    mounts:
+    #  - [ 1, "example",  "files/example.txt",             "/tmp/example.txt" , "example.txt"
+
+  env:
+    EIUMREPO: "eium-repo"
+    NAMESPACE: "{{ .Release.Namespace }}"
+    CLUSTERDOMAIN: "{{ .Values.global.clusterdomain }}"
+    HOSTNAME: "{{ .Values.container.hostName }}"
+    SERVERNAME: "{{ .Values.container.serverName }}"
+
+    R10_NAME: "{{ .Values.container.serverName }}"
+    R10_STARTUP: "true"
+
+    APP_ADDITIONAL_OPTIONS: "{{ .Values.global.env.APP_ADDITIONAL_OPTIONS_SS }}"
+    EXIT_ON_PROCESS_FAILURE: "0"
+
+    READINESS_ATTEMPTS: "200"
+    READINESS_TIME_INTERVAL: "10"
+    LIVENESS_TIME_INTERVAL: "10"
+    DEACTIVATE_ON_FAILURE: "0"
+
+  service:
+    type: ClusterIP
+    name: eium-Server
+    ports:
+      metrics:
+        port: 5556
+        targetPort: 5556
+        name: http-metrics
+        protocol: TCP
+
+  ingress:
+    enabled: false
+    annotations: {}
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: chart-example.local
+        paths: []
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+
+## resources:
+##    limits:
+##      cpu: 4000m
+##      memory: 8Gi
+##    requests:
+##      cpu: 4000m
+##      memory: 8Gi
+
+  livenessProbe:
+    enabled: true
+    #httpGet:
+    #  path: /metrics
+    #  port: 5556
+    #exec:
+    #  command:
+    #  - /bin/sh
+    #  - /var/opt/SIU/check.sh
+    tcpSocket:
+      port: 5556
+    initialDelaySeconds: 0
+    periodSeconds: 10
+    timeoutSeconds: 1
+    successThreshold: 1
+    failureThreshold: 30
+
+  readinessProbe:
+    enabled: true
+    #httpGet:
+    #  path: /metrics
+    #  port: 5556
+    #exec:
+    #  command:
+    #  - /bin/sh
+    #  - /var/opt/SIU/check.sh
+    tcpSocket:
+      port: 5556
+    initialDelaySeconds: 0
+    periodSeconds: 10
+    timeoutSeconds: 1
+    successThreshold: 1
+    failureThreshold: 30
+
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 1
+    targetCPUUtilizationPercentage: 75
+
+##  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: "20%"
+      maxUnavailable: "10%"
+    #type: Recreate

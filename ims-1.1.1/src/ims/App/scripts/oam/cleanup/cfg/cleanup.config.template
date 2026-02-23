@@ -1,0 +1,12 @@
+[GENERAL]
+LOG_LEVEL=4
+
+[DIRECTORIES]
+# Format: DirectoryPath:FilePattern:RetentionTimeInMinutes
+/var/opt/SIU/archive:.*:1440
+/var/opt/SIU/audit:.*:1440
+/var/opt/SIU/cache:.*:1440
+/var/opt/SIU/ctrl:.*\.ctrl$:FOREVER
+/var/opt/SIU/log:.*\.log$:1440
+/var/opt/SIU/output:.*:1440
+/var/opt/SIU/tmp:.*:1440

@@ -1,0 +1,41 @@
+{{- if or ( eq .Values.global.create "AllExceptPVCPV" ) ( eq .Values.global.create "All" ) }}
+
+{{- if .Values.autoscaling }}
+{{- if eq .Values.autoscaling.enabled true }}
+
+{{$replicas:= include "container.replicas" . }}
+{{- if ne $replicas "0" }}
+
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: "{{ .Release.Name }}-{{ .Values.container.serverName | camelcase | lower }}"
+  labels:
+    app: "{{ .Release.Name | lower }}-{{ .Values.container.serverName | lower }}"
+    release: {{ .Release.Name }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version}}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+{{- if .Values.autoscaling.maxReplicas }}
+  maxReplicas: {{ .Values.autoscaling.maxReplicas }}
+{{- end }}
+{{- if .Values.autoscaling.minReplicas }}
+  minReplicas: {{ .Values.autoscaling.minReplicas }}
+{{- end }}
+  scaleTargetRef:
+    apiVersion: extensions/v1beta1
+    kind: Deployment
+    name: "{{ .Release.Name }}-{{ .Values.container.serverName | camelcase | lower }}"
+{{- if .Values.autoscaling.targetCPUUtilizationPercentage }}
+  targetCPUUtilizationPercentage: {{ .Values.autoscaling.targetCPUUtilizationPercentage }}
+{{- else }}
+  targetCPUUtilizationPercentage: 80
+{{- end }}
+
+{{- end }}
+
+{{- end }}
+{{- end }}
+
+{{- end }}

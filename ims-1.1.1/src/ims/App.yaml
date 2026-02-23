@@ -1,0 +1,69 @@
+application:
+  name: App
+  description: HCLTech eIUM microService
+  vendor: HCLTech
+  version: 10.17
+
+  licenseFile: $ENV{CONF_MOUNT_DIR}/license/license.config
+
+  processes:
+    - name: R7
+      type: collector
+      processName: $ENV{CONTAINER_NAME}
+      configBundle: ims/processes/k8s/R7
+      configEnv: App/env/R7.env
+      configEnvMerge: false
+      processCreationMode: local
+      startup: $ENV{R7_STARTUP:-true}
+      logLevel: $ENV{LOG_LEVEL:-4}
+      exportMetrics: enabled=$ENV{METRICS_ENABLED:-true};port=$ENV{METRICS_PORT:-5556};path=/metrics;prefix=$ENV{METRICS_PREFIX:-IMSR7_K_}
+      jvmArgs: App/properties/R7.jvm
+      targetType: app
+      registry: $ENV{REGISTRY}
+
+    - name: R10
+      type: collector
+      processName: $ENV{CONTAINER_NAME}
+      configBundle: ims/processes/k8s/R10
+      configEnv: App/env/R10.env
+      configEnvMerge: false
+      processCreationMode: local
+      startup: $ENV{R10_STARTUP:-true}
+      logLevel: $ENV{LOG_LEVEL:-4}
+      exportMetrics: enabled=$ENV{METRICS_ENABLED:-true};port=$ENV{METRICS_PORT:-5556};path=/metrics;prefix=$ENV{METRICS_PREFIX:-IMSR10_K_}
+      jvmArgs: App/properties/R10.jvm
+      targetType: app
+      registry: $ENV{REGISTRY}
+
+  collectinfo:
+    xmlFile: App/collectinfo/eium_sf_app.xml
+    propsFile: App/collectinfo/eium_sf_app.properties
+    iniFile: App/collectinfo/eium_sf_app_install.ini
+
+  repository:
+    validate: false
+    repositoryContents:
+    -
+      file: App/repository/datamodel
+      repositoryPath: /
+    -
+      file: App/repository/configs
+      repositoryPath: /
+    -
+      file: App/repository/deployment
+      repositoryPath: /
+
+  container:
+    lifeCycle:
+      onEnter:
+        -
+          exec:
+            targetType: app
+            command:
+              - /var/opt/bits/App/scripts/runtime/init.sh
+      preDeployment:
+        -
+          exec:
+            targetType: app
+            command:
+              - mkdir -p /tmp /var/opt/SIU/ctrl
