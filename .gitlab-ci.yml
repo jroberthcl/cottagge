@@ -1,0 +1,278 @@
+include:
+  - https://nexus.pic.services.prod/repository/DIB-Raw/gitlab-modules/latest/package/docker_build.gitlab-ci.yml
+  - https://nexus.pic.services.prod/repository/DIB-Raw/gitlab-modules/latest/deploy/helm_stretch.gitlab-ci.yml
+
+.function: &common_functions |
+  function execCommon() {
+    echo "[INFO] BEGIN execCommon()"
+
+    install_dependencies
+    ensure_namespace
+    normalize_environment_url
+    create_registry_secret
+    create_application_secret
+
+    source env/variables.conf
+    setCiApplicationTag ${RELEASE_VERSION}
+
+    IMAGE=$(echo ${HELM_RELEASE_NAME} | tr '[A-Z]' '[a-z]');
+
+    HELM_ARGS=""
+    HELM_ARGS=$HELM_ARGS" --set global.envLabel=${ENV_LABEL}"
+    HELM_ARGS=$HELM_ARGS" --set global.istio=${IUM_ENABLE_ISTIO}";
+    HELM_ARGS=$HELM_ARGS" --set global.imagePullSecrets[0].name=registry-"$(project_path)
+    HELM_ARGS=$HELM_ARGS" --set global.images.repository[0][1]=${CI_REGISTRY}/${CI_REGISTRY_PROJECT}"
+    HELM_ARGS=$HELM_ARGS" --set global.images.repository[0][2]=${IMAGE}"
+    HELM_ARGS=$HELM_ARGS" --set global.images.repository[0][3]=${CI_APPLICATION_TAG}"
+    HELM_ARGS=$HELM_ARGS" --set global.images.repository[0][4]=${IMAGE_PULL_POLICY}"
+    HELM_ARGS=$HELM_ARGS" --set global.images.repository[1][1]=${CI_REGISTRY}/${CI_REGISTRY_PROJECT}"
+    HELM_ARGS=$HELM_ARGS" --set global.images.repository[1][2]=${IMAGE}"
+    HELM_ARGS=$HELM_ARGS" --set global.images.repository[1][3]=${CI_APPLICATION_TAG}"
+    HELM_ARGS=$HELM_ARGS" --set global.images.repository[1][4]=${IMAGE_PULL_POLICY}"
+    HELM_ARGS=$HELM_ARGS" --set global.kafkaGroupIdInterpod=${KAFKA_GROUPID_INTERPOD}"
+    HELM_ARGS=$HELM_ARGS" --set global.kafkaGroupIdR10=${KAFKA_GROUPID_R10}"
+    HELM_ARGS=$HELM_ARGS" --set global.kafkaGroupIdR7=${KAFKA_GROUPID_R7}"
+    HELM_ARGS=$HELM_ARGS" --set global.kafkaTopicInterPod=${KAFKA_TOPIC_INTERPOD}"
+    HELM_ARGS=$HELM_ARGS" --set global.kafkaTopicR10=${KAFKA_TOPIC_R10}"
+    HELM_ARGS=$HELM_ARGS" --set global.kafkaTopicR7=${KAFKA_TOPIC_R7}"
+    HELM_ARGS=$HELM_ARGS" --set global.s3DirInterPod=${S3_DIR_INTERPOD}"
+    HELM_ARGS=$HELM_ARGS" --set global.s3DirR10=${S3_DIR_R10}"
+    HELM_ARGS=$HELM_ARGS" --set global.s3DirR7=${S3_DIR_R7}"
+    HELM_ARGS=$HELM_ARGS" --set global.secretname="$(deploy_name)"-secret"
+    HELM_ARGS=$HELM_ARGS" --set-file global.licenseFile=../../src/license/license.config"
+    export HELM_ARGS
+
+    [ -d K8S/ims/pvcs ] && kubectl create -n $KUBE_NAMESPACE -f K8S/ims/pvcs || echo 0;
+
+    cd K8S/ims;
+
+    sed -i "s/<APP_VERSION>/${RELEASE_VERSION}/g" Chart.yaml;
+    sed -i "s/<VERSION>/${RELEASE_VERSION}/g" Chart.yaml;
+    sed -i "s/<REPLICAS_R7>/${REPLICAS_R7}/g" values.yaml;
+    sed -i "s/<REPLICAS_R10>/${REPLICAS_R10}/g" values.yaml;
+
+    helm upgrade --install -n ${KUBE_NAMESPACE} ${HELM_RELEASE_NAME} . -f values.yaml ${HELM_ARGS};
+
+    cd -
+
+    echo "[INFO] END execCommon()"
+  }
+
+  function setCiApplicationTag() {
+    local releaseVersion=$1
+
+    echo "[INFO] Setting CI_APPLICATION_TAG for release version: $releaseVersion"
+
+    if [ -z $CI_COMMIT_BRANCH ] && [ ! -z $CI_COMMIT_TAG ]; then
+      if [ "$CI_COMMIT_TAG" != "$releaseVersion" ]; then
+        echo "[ERROR] Deploying on Production environment, but CI_COMMIT_TAG ($CI_COMMIT_TAG) is different from CI_APPLICATION_TAG ($CI_APPLICATION_TAG). Exiting."
+        exit 1
+      fi
+      CI_APPLICATION_TAG=${releaseVersion}
+      echo "[INFO] Deploying on production environment with tag $CI_COMMIT_TAG"
+    else
+      if [ ! -z $CI_COMMIT_BRANCH ]; then
+        CI_APPLICATION_TAG=${releaseVersion}-${CI_COMMIT_BRANCH}
+        echo "[INFO] Deploying from branch $CI_COMMIT_BRANCH with tag ${CI_APPLICATION_TAG}"
+      else
+        CI_APPLICATION_TAG=${releaseVersion}-${CI_COMMIT_SHORT_SHA}
+        echo "[WARNING] CI_COMMIT_BRANCH is not set. Deploying with tag ${CI_APPLICATION_TAG}"
+      fi
+    fi
+
+    echo "[INFO] END setCiApplicationTag(): CI_APPLICATION_TAG is set to ${CI_APPLICATION_TAG}"
+  }
+
+  function substituteEnvVars() {
+    echo "[INFO] BEGIN substituteEnvVars()"
+    local inputFilePath=$1
+    local outputFilePath=$2
+
+    if [ ! -f $inputFilePath ]; then
+      echo "[ERROR] Input file $inputFilePath does not exist. Working directory is $(pwd). Exiting."
+      exit 1
+    else
+      echo "[DEBUG] Input file $inputFilePath found. Working directory is $(pwd)."
+    fi
+
+    while IFS= read -r line; do
+        eval "echo \"$line\""
+    done < $inputFilePath > $outputFilePath
+
+    echo "[INFO] END substituteEnvVars()"
+  }
+
+  function valentineExecutorCustomized() {
+    local dockerfilePath=$1
+
+    echo "[INFO] BEGIN valentineExecutorCustomized()"
+
+    if [ -z "${CI_DESTINATION}" ]; then
+      echo "[ERROR] CI_DESTINATION is not set. Exiting."
+      exit 1
+    fi
+
+    if [ -z "${CI_PROJECT_FULL_PATH}" ]; then
+      echo "[ERROR] CI_PROJECT_FULL_PATH is not set. Exiting."
+      exit 1
+    fi
+
+    if [ -z "${CI_REGISTRY}" ] || [ -z "${CI_REGISTRY_USER}" ] || [ -z "${CI_REGISTRY_PASSWORD}" ]; then
+      echo "[ERROR] One of the CI_REGISTRY variables is not set. Exiting."
+      exit 1
+    fi
+
+    wget -O SFRRoot.crt -Y off https://nexus.pic.services.prod/repository/DIB-Raw/valentine/certificates/SFRRoot.crt
+    cat SFRRoot.crt >> /kaniko/ssl/certs/ca-certificates.crt
+
+    # Creation array
+    AUTH="\"$CI_REGISTRY\":{\"username\":\"${CI_REGISTRY_USER}\", \"password\":\"${CI_REGISTRY_PASSWORD}\"}"
+
+    for i in $(seq 1 5); do
+      r="CI_EXTERNAL_REGISTRY_${i}"
+      u="CI_EXTERNAL_REGISTRY_USER_${i}"
+      p="CI_EXTERNAL_REGISTRY_PASSWORD_${i}"
+
+      echo "[DEBUG] Processing external registry $i: r=$r, u=$u, p=$p"
+
+      registry=$(eval echo "\$${r}")
+      user=$(eval echo "\$${u}")
+      password=$(eval echo "\$${p}")
+
+      if [ "${registry}" == "" ]; then
+        break
+      else
+        echo "la var ${r} est déclarée. On continue."
+        if [[ "${user}" == ""  || "${password}" == ""  ]]; then
+          echo "Le user ${u} ou son password n'est pas setté. On en prend pas en compte ${r}"
+          break
+        else
+          AUTH="$AUTH, \"${registry}\":{\"username\":\"${user}\", \"password\":\"${password}\"}"
+        fi
+      fi
+    done
+
+    KANIKOCFG="{\"auths\":{$AUTH}"
+
+    if [ -n "$HTTP_PROXY" ]; then
+      KANIKOCFG="${KANIKOCFG}, \"proxies\": { \"default\": { \"httpProxy\": \"${HTTP_PROXY}\", \"httpsProxy\": \"${HTTPS_PROXY}\", \"noProxy\": \"${NO_PROXY}\"}}"
+    fi
+
+    KANIKOCFG="${KANIKOCFG} }"
+    echo "${KANIKOCFG}" > /kaniko/.docker/config.json
+
+    KANIKOPROXYBUILDARGS="--build-arg http_proxy=${HTTP_PROXY} --build-arg https_proxy=${HTTPS_PROXY}  --build-arg no_proxy=${NO_PROXY}"
+
+    echo "CI_DESTINATION=${CI_DESTINATION}" >> autodevops.env
+
+    /kaniko/executor ${KANIKOPROXYBUILDARGS} ${USERKANIKOARGS} --cache=true --skip-push-permission-check --dockerfile ${dockerfilePath} --destination "${CI_DESTINATION}" --context ${CI_CONTEXT}
+
+    echo "[INFO] END valentineExecutorCustomized()"
+  }
+
+variables:
+  BUSYBOX_TAG: "1.28"
+  CI_APPLICATION_TAG: ""
+  CI_REGISTRY_PROJECT: "collecte-voix-fixe"
+  HELM_RELEASE_NAME: "ims"
+  IMAGE_PULL_POLICY: "Always"
+  IUM_IMAGE_NAME: "eium-standalone-sf-alma"
+  IUM_IMAGE_TAG: "10.17.4-RC2_Custom"
+  IUM_PROJECT: "collecte-voix-fixe"
+  PROCESS_NAMES: "R7 R10"
+  RELEASE_VERSION: "1.1.1"
+  STORAGECLASS: "rook-ceph-block-topology-ec"
+
+build_project:
+  stage: build
+  image: maven:3.9.6-eclipse-temurin-17
+  cache:
+    key: mavenrepo
+    paths:
+      - m2repo
+  artifacts:
+    paths:
+      - target/*
+    expire_in: 1 day
+  tags:
+    - appli01-pp
+  script:
+    - *common_functions
+    - echo "[INFO] BEGIN build_project"
+    - source env/variables.conf
+    - setCiApplicationTag ${RELEASE_VERSION}
+    - echo "[INFO] END build_project"
+
+package:
+  artifacts:
+    paths:
+      - tmp/
+    expire_in: 1 minute
+
+  extends: .package_docker
+  script:
+    - *common_functions
+    - echo "[INFO] BEGIN package"
+    - source env/variables.conf
+    - setCiApplicationTag ${RELEASE_VERSION}
+    - CI_ARTIFACT_NAME=${HELM_RELEASE_NAME}
+    - CI_CONTEXT=${CI_PROJECT_DIR}
+    - CI_PROJECT_FULL_PATH=$(project_full_path)
+    - echo "[DEBUG] CI_PROJECT_FULL_PATH=${CI_PROJECT_FULL_PATH}"
+    - CI_DESTINATION=${CI_REGISTRY}/${CI_REGISTRY_PROJECT}/${CI_ARTIFACT_NAME}:${CI_APPLICATION_TAG}
+    - mkdir tmp
+    - substituteEnvVars K8S/ims/Dockerfile tmp/Dockerfile
+    - valentineExecutorCustomized tmp/Dockerfile
+    - echo "[INFO] END package"
+  stage: package
+
+review:
+  script:
+    - *common_functions
+    - echo "[INFO] BEGIN review"
+    - execCommon
+    - echo "[INFO] END review"
+  stage: review
+  variables:
+    VAR: "help"
+
+integ-stretch:
+  extends: .auto-deploy-integ-job
+  script:
+    - *common_functions
+    - echo "[INFO] BEGIN integ-stretch"
+    - execCommon
+    - echo "[INFO] END integ-stretch"
+  variables:
+    VAR: "help"
+
+staging-stretch:
+  extends: .auto-deploy-staging-job
+  script:
+    - *common_functions
+    - echo "[INFO] BEGIN integ-stretch"
+    - echo "[INFO] Nothing to do"
+    - echo "[INFO] END integ-stretch"
+  variables:
+    VAR: "help"
+
+production-stretch:
+  extends: .auto-deploy-production-job
+  script:
+    - *common_functions
+    - echo "[INFO] BEGIN production-stretch"
+    - execCommon
+    - echo "[INFO] END production-stretch"
+  variables:
+    VAR: "help"
+
+stages:
+  - build
+  - test
+  - codequality
+  - package
+  - review
+  - integ
+  - staging
+  - production
+  - cleanup
