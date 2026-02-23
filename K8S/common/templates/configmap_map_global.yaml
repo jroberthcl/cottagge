@@ -1,0 +1,53 @@
+{{- if or ( eq .Values.global.create "AllExceptPVCPV" ) ( eq .Values.global.create "All" ) }}
+
+{{- if .Values.container }}
+{{- if .Values.container.serverName }}
+
+{{$replicas:= include "container.replicas" . }}
+{{- if ne $replicas "0" }}
+
+{{- if .Values.global }}
+  {{- if .Values.global.configMap }}
+
+    {{- if .Values.global.configMap.enabled }}
+    {{- if eq .Values.global.configMap.enabled true }}
+      {{- $servername:= .Values.container.serverName | camelcase | lower }}
+      {{- $releasename:= .Release.Name }}
+      {{- $releaseservice:= .Release.Service }}
+      {{- $chartname:= .Chart.Name }}
+      {{- $chartversion:= .Chart.Version }}
+      {{- $files:= .Files }}
+      {{- range .Values.global.configMap.mounts }}
+        {{- $root:= . }}
+        {{- $numb:=( index $root 0 ) }}
+        {{- $name:=( index $root 1 ) }}
+        {{- $ldir:=( index $root 2 ) }}
+        {{- $cdir:=( index $root 3 ) }}
+        {{- $file:=( index $root 4 ) }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ $releasename }}-{{ $servername }}-map-g{{ $numb }}-cm"
+  labels:
+    chart: "{{ $chartname }}-{{ $chartversion }}"
+    release: "{{ $releasename }}"
+    heritage: "{{ $releaseservice }}"
+binaryData:
+  {{ $file }}: |-
+    {{ $files.Get $ldir | b64enc }}
+
+      {{- end }}
+    {{- end }}
+    {{- end }}
+
+  {{- end }}
+{{- end }}
+
+
+{{- end }}
+
+{{- end }}
+{{- end }}
+
+{{- end }}

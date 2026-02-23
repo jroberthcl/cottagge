@@ -1,0 +1,2413 @@
+<transformations xmlns="http://www.hp.com/usage/datastruct/transform"
+    targetNamespace="http://www.hp.com/usage/datastruct/transform/XFD_IMSR10_to_SNME_IMSR10">
+
+    <import prefix="t" ns="http://www.hp.com/usage/datastruct/transform" />
+    <import prefix="tnme" ns="http://www.hp.com/usage/datastruct/transform/nme" />
+
+    <import prefix="xfd" ns="http://www.hp.com/usage/datastruct/xfd/IMSR10" />
+    <import prefix="snme" ns="http://www.hp.com/usage/nme/nmeschema/IMSR10" />
+    <import prefix="nme" ns="http://www.hp.com/usage/nme/nmeschema" />
+
+    <transformer id="XFD_File_to_SNME_File" from="xfd:File" to="snme:File">
+        <transform input="header" output="header">
+            <use-transformer from="xfd:FileHeader" to="snme:FileHeader" class="XFD_FileHeader_to_SNME_FileHeader" />
+        </transform>
+        <transform input="records" output="records">
+            <transformer from="xfd:Record[]" to="snme:Record[]">
+                <array>
+                    <use-transformer from="xfd:Record" to="snme:Record" class="XFD_Record_to_SNME_Record" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_FileHeader_to_SNME_FileHeader" from="xfd:FileHeader" to="snme:FileHeader">
+        <transform input="fileLength" output="fileLength">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="headerLength" output="headerLength">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_Record_to_SNME_Record" from="xfd:Record" to="snme:Record">
+        <transform input="header" output="header">
+            <use-transformer from="xfd:RecordHeader" to="snme:RecordHeader" class="XFD_RecordHeader_to_SNME_RecordHeader" />
+        </transform>
+        <transform input="iMSRecord" output="iMSRecord">
+            <use-transformer from="xfd:IMSRecord" to="snme:IMSRecord" class="XFD_IMSRecord_to_SNME_IMSRecord" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_RecordHeader_to_SNME_RecordHeader" from="xfd:RecordHeader" to="snme:RecordHeader">
+        <transform input="recordLength" output="recordLength">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="releaseIdentifier" output="releaseIdentifier">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="versionIdentifier" output="versionIdentifier">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="dataRecordFormat" output="dataRecordFormat">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="TSNumber" output="TSNumber">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="releaseIdentifierExtension" output="releaseIdentifierExtension">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_IPTextRepresentedAddress_to_SNME_IPTextRepresentedAddress" from="xfd:IPTextRepresentedAddress" to="snme:IPTextRepresentedAddress">
+        <transform input="iPTextV4Address" output="iPTextV4Address">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="iPTextV6Address" output="iPTextV6Address">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_AccessNetworkChargingPhysicalAccessID_to_SNME_AccessNetworkChargingPhysicalAccessID" from="xfd:AccessNetworkChargingPhysicalAccessID" to="snme:AccessNetworkChargingPhysicalAccessID">
+        <transform input="accessNetworkChargingPhysicalAccessIDValue" output="accessNetworkChargingPhysicalAccessIDValue">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="accessNetworkChargingPhysicalAccessIDRealm" output="accessNetworkChargingPhysicalAccessIDRealm">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_InvolvedParty_to_SNME_InvolvedParty" from="xfd:InvolvedParty" to="snme:InvolvedParty">
+        <transform input="sIP_URI" output="sIP_URI">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="tEL_URI" output="tEL_URI">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_ServedPartyIPAddress_to_SNME_ServedPartyIPAddress" from="xfd:ServedPartyIPAddress" to="snme:ServedPartyIPAddress">
+        <transform input="iPBinaryAddress_iPBinV4Address" output="iPBinaryAddress_iPBinV4Address">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="iPBinaryAddress_iPBinV6Address" output="iPBinaryAddress_iPBinV6Address">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="iPTextRepresentedAddress_iPTextV4Address" output="iPTextRepresentedAddress_iPTextV4Address">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="iPTextRepresentedAddress_iPTextV6Address" output="iPTextRepresentedAddress_iPTextV6Address">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_QoS_Information_to_SNME_QoS_Information" from="xfd:QoS_Information" to="snme:QoS_Information">
+        <transform input="qoS_Class_Identifier" output="qoS_Class_Identifier">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="max_Requested_Bandwidth_UL" output="max_Requested_Bandwidth_UL">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="max_Requested_Bandwidth_DL" output="max_Requested_Bandwidth_DL">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="guaranteed_Bitrate_UL" output="guaranteed_Bitrate_UL">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="guaranteed_Bitrate_DL" output="guaranteed_Bitrate_DL">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="bearer_Identifier" output="bearer_Identifier">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="allocation_Retention_Priority" output="allocation_Retention_Priority">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_S_CSCF_Information_to_SNME_S_CSCF_Information" from="xfd:S_CSCF_Information" to="snme:S_CSCF_Information">
+        <transform input="mandatoryCapabilities" output="mandatoryCapabilities">
+            <use-transformer from="xfd:S_CSCF_Information_generatedType_0" to="snme:S_CSCF_Information_generatedType_0" class="XFD_S_CSCF_Information_generatedType_0_to_SNME_S_CSCF_Information_generatedType_0" />
+        </transform>
+        <transform input="optionalCapabilities" output="optionalCapabilities">
+            <use-transformer from="xfd:S_CSCF_Information_generatedType_1" to="snme:S_CSCF_Information_generatedType_1" class="XFD_S_CSCF_Information_generatedType_1_to_SNME_S_CSCF_Information_generatedType_1" />
+        </transform>
+        <transform input="serverName" output="serverName">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_S_CSCF_Information_generatedType_1_to_SNME_S_CSCF_Information_generatedType_1" from="xfd:S_CSCF_Information_generatedType_1" to="snme:S_CSCF_Information_generatedType_1">
+        <transform input="S_CSCF_Information_generatedType_1" output="S_CSCF_Information_generatedType_1">
+            <use-transformer from="string[]" to="nme:string-array" class="tnme:StringArrayToStringArrayWrapper" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_S_CSCF_Information_generatedType_0_to_SNME_S_CSCF_Information_generatedType_0" from="xfd:S_CSCF_Information_generatedType_0" to="snme:S_CSCF_Information_generatedType_0">
+        <transform input="S_CSCF_Information_generatedType_0" output="S_CSCF_Information_generatedType_0">
+            <use-transformer from="string[]" to="nme:string-array" class="tnme:StringArrayToStringArrayWrapper" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_ICSCFRecord_to_SNME_ICSCFRecord" from="xfd:ICSCFRecord" to="snme:ICSCFRecord">
+        <transform input="recordType" output="recordType">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="retransmission" output="retransmission">
+            <use-transformer from="int" to="int" class="t:IntToIntCopy" />
+        </transform>
+        <transform input="sIP_Method" output="sIP_Method">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="role_of_Node" output="role_of_Node">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="nodeAddress" output="nodeAddress">
+            <use-transformer from="xfd:NodeAddress" to="snme:NodeAddress" class="XFD_NodeAddress_to_SNME_NodeAddress" />
+        </transform>
+        <transform input="session_Id" output="session_Id">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="list_Of_Calling_Party_Address" output="list_Of_Calling_Party_Address">
+            <use-transformer from="xfd:ListOfInvolvedParties" to="snme:ListOfInvolvedParties" class="XFD_ListOfInvolvedParties_to_SNME_ListOfInvolvedParties" />
+        </transform>
+        <transform input="called_Party_Address" output="called_Party_Address">
+            <use-transformer from="xfd:InvolvedParty" to="snme:InvolvedParty" class="XFD_InvolvedParty_to_SNME_InvolvedParty" />
+        </transform>
+        <transform input="serviceRequestTimeStamp" output="serviceRequestTimeStamp">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="interOperatorIdentifiers" output="interOperatorIdentifiers">
+            <use-transformer from="xfd:InterOperatorIdentifiers" to="snme:InterOperatorIdentifiers" class="XFD_InterOperatorIdentifiers_to_SNME_InterOperatorIdentifiers" />
+        </transform>
+        <transform input="localRecordSequenceNumber" output="localRecordSequenceNumber">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="causeForRecordClosing" output="causeForRecordClosing">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="incomplete_CDR_Indication" output="incomplete_CDR_Indication">
+            <use-transformer from="xfd:Incomplete_CDR_Indication" to="snme:Incomplete_CDR_Indication" class="XFD_Incomplete_CDR_Indication_to_SNME_Incomplete_CDR_Indication" />
+        </transform>
+        <transform input="iMS_Charging_Identifier" output="iMS_Charging_Identifier">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="serviceReasonReturnCode" output="serviceReasonReturnCode">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="recordExtensions" output="recordExtensions">
+            <use-transformer from="xfd:ManagementExtensions" to="snme:ManagementExtensions" class="XFD_ManagementExtensions_to_SNME_ManagementExtensions" />
+        </transform>
+        <transform input="expiresInformation" output="expiresInformation">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="list_Of_Associated_URI" output="list_Of_Associated_URI">
+            <use-transformer from="xfd:ListOfInvolvedParties" to="snme:ListOfInvolvedParties" class="XFD_ListOfInvolvedParties_to_SNME_ListOfInvolvedParties" />
+        </transform>
+        <transform input="event" output="event">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="accessNetworkInformation" output="accessNetworkInformation">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="serviceContextID" output="serviceContextID">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="numberPortabilityRouting" output="numberPortabilityRouting">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="carrierSelectRouting" output="carrierSelectRouting">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="sessionPriority" output="sessionPriority">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="serviceRequestTimeStampFraction" output="serviceRequestTimeStampFraction">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="userLocationInformation" output="userLocationInformation">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="mSTimeZone" output="mSTimeZone">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="listOfReasonHeader" output="listOfReasonHeader">
+            <use-transformer from="xfd:ListOfReasonHeader" to="snme:ListOfReasonHeader" class="XFD_ListOfReasonHeader_to_SNME_ListOfReasonHeader" />
+        </transform>
+        <transform input="s_CSCF_Information" output="s_CSCF_Information">
+            <use-transformer from="xfd:S_CSCF_Information" to="snme:S_CSCF_Information" class="XFD_S_CSCF_Information_to_SNME_S_CSCF_Information" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_TariffInformation_to_SNME_TariffInformation" from="xfd:TariffInformation" to="snme:TariffInformation">
+        <transform input="currencyCode" output="currencyCode">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="scaleFactor" output="scaleFactor">
+            <use-transformer from="double" to="double" class="t:DoubleToDoubleCopy" />
+        </transform>
+        <transform input="rateElements" output="rateElements">
+            <use-transformer from="xfd:TariffInformation_generatedType_2" to="snme:TariffInformation_generatedType_2" class="XFD_TariffInformation_generatedType_2_to_SNME_TariffInformation_generatedType_2" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_TariffInformation_generatedType_2_to_SNME_TariffInformation_generatedType_2" from="xfd:TariffInformation_generatedType_2" to="snme:TariffInformation_generatedType_2">
+        <transform input="TariffInformation_generatedType_2" output="TariffInformation_generatedType_2">
+            <transformer from="xfd:RateElement[]" to="snme:RateElement[]">
+                <array>
+                    <use-transformer from="xfd:RateElement" to="snme:RateElement" class="XFD_RateElement_to_SNME_RateElement" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_ServiceSpecificInfo_to_SNME_ServiceSpecificInfo" from="xfd:ServiceSpecificInfo" to="snme:ServiceSpecificInfo">
+        <transform input="serviceSpecificData" output="serviceSpecificData">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="serviceSpecificType" output="serviceSpecificType">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_InterOperatorIdentifierlist_to_SNME_InterOperatorIdentifierlist" from="xfd:InterOperatorIdentifierlist" to="snme:InterOperatorIdentifierlist">
+        <transform input="InterOperatorIdentifierlist" output="InterOperatorIdentifierlist">
+            <transformer from="xfd:InterOperatorIdentifiers[]" to="snme:InterOperatorIdentifiers[]">
+                <array>
+                    <use-transformer from="xfd:InterOperatorIdentifiers" to="snme:InterOperatorIdentifiers" class="XFD_InterOperatorIdentifiers_to_SNME_InterOperatorIdentifiers" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_MGCFInfo_to_SNME_MGCFInfo" from="xfd:MGCFInfo" to="snme:MGCFInfo">
+        <transform input="aCMTimestamp" output="aCMTimestamp">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="callReleaseDirection" output="callReleaseDirection">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="numberOfFaxPages" output="numberOfFaxPages">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="qoSData" output="qoSData">
+            <use-transformer from="xfd:QoSData" to="snme:QoSData" class="XFD_QoSData_to_SNME_QoSData" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_PsExtension_to_SNME_PsExtension" from="xfd:PsExtension" to="snme:PsExtension">
+        <transform input="callAnswerStatus" output="callAnswerStatus">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="qoS_Information" output="qoS_Information">
+            <use-transformer from="xfd:QoS_Information" to="snme:QoS_Information" class="XFD_QoS_Information_to_SNME_QoS_Information" />
+        </transform>
+        <transform input="userEquipmentInfo" output="userEquipmentInfo">
+            <use-transformer from="xfd:UserEquipmentInfo" to="snme:UserEquipmentInfo" class="XFD_UserEquipmentInfo_to_SNME_UserEquipmentInfo" />
+        </transform>
+        <transform input="threeGPP2_BSID" output="threeGPP2_BSID">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="servedPartyIPAddress" output="servedPartyIPAddress">
+            <use-transformer from="xfd:IPAddressCustom" to="snme:IPAddressCustom" class="XFD_IPAddressCustom_to_SNME_IPAddressCustom" />
+        </transform>
+        <transform input="userLocationInformation" output="userLocationInformation">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="mSTimeZone" output="mSTimeZone">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="charging_group_ID" output="charging_group_ID">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_PCSCFRecord_to_SNME_PCSCFRecord" from="xfd:PCSCFRecord" to="snme:PCSCFRecord">
+        <transform input="recordType" output="recordType">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="retransmission" output="retransmission">
+            <use-transformer from="int" to="int" class="t:IntToIntCopy" />
+        </transform>
+        <transform input="sIP_Method" output="sIP_Method">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="role_of_Node" output="role_of_Node">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="nodeAddress" output="nodeAddress">
+            <use-transformer from="xfd:NodeAddress" to="snme:NodeAddress" class="XFD_NodeAddress_to_SNME_NodeAddress" />
+        </transform>
+        <transform input="session_Id" output="session_Id">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="list_Of_Calling_Party_Address" output="list_Of_Calling_Party_Address">
+            <use-transformer from="xfd:ListOfInvolvedParties" to="snme:ListOfInvolvedParties" class="XFD_ListOfInvolvedParties_to_SNME_ListOfInvolvedParties" />
+        </transform>
+        <transform input="called_Party_Address" output="called_Party_Address">
+            <use-transformer from="xfd:InvolvedParty" to="snme:InvolvedParty" class="XFD_InvolvedParty_to_SNME_InvolvedParty" />
+        </transform>
+        <transform input="serviceRequestTimeStamp" output="serviceRequestTimeStamp">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="serviceDeliveryStartTimeStamp" output="serviceDeliveryStartTimeStamp">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="serviceDeliveryEndTimeStamp" output="serviceDeliveryEndTimeStamp">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="recordOpeningTime" output="recordOpeningTime">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="recordClosureTime" output="recordClosureTime">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="interOperatorIdentifiers" output="interOperatorIdentifiers">
+            <use-transformer from="xfd:InterOperatorIdentifiers" to="snme:InterOperatorIdentifiers" class="XFD_InterOperatorIdentifiers_to_SNME_InterOperatorIdentifiers" />
+        </transform>
+        <transform input="localRecordSequenceNumber" output="localRecordSequenceNumber">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="recordSequenceNumber" output="recordSequenceNumber">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="causeForRecordClosing" output="causeForRecordClosing">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="incomplete_CDR_Indication" output="incomplete_CDR_Indication">
+            <use-transformer from="xfd:Incomplete_CDR_Indication" to="snme:Incomplete_CDR_Indication" class="XFD_Incomplete_CDR_Indication_to_SNME_Incomplete_CDR_Indication" />
+        </transform>
+        <transform input="iMS_Charging_Identifier" output="iMS_Charging_Identifier">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="list_Of_SDP_Media_Components" output="list_Of_SDP_Media_Components">
+            <use-transformer from="xfd:PCSCFRecord_generatedType_3" to="snme:PCSCFRecord_generatedType_3" class="XFD_PCSCFRecord_generatedType_3_to_SNME_PCSCFRecord_generatedType_3" />
+        </transform>
+        <transform input="gGSNaddress" output="gGSNaddress">
+            <use-transformer from="xfd:NodeAddress" to="snme:NodeAddress" class="XFD_NodeAddress_to_SNME_NodeAddress" />
+        </transform>
+        <transform input="serviceReasonReturnCode" output="serviceReasonReturnCode">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="list_Of_Message_Bodies" output="list_Of_Message_Bodies">
+            <use-transformer from="xfd:PCSCFRecord_generatedType_4" to="snme:PCSCFRecord_generatedType_4" class="XFD_PCSCFRecord_generatedType_4_to_SNME_PCSCFRecord_generatedType_4" />
+        </transform>
+        <transform input="recordExtensions" output="recordExtensions">
+            <use-transformer from="xfd:ManagementExtensions" to="snme:ManagementExtensions" class="XFD_ManagementExtensions_to_SNME_ManagementExtensions" />
+        </transform>
+        <transform input="expiresInformation" output="expiresInformation">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="list_Of_Associated_URI" output="list_Of_Associated_URI">
+            <use-transformer from="xfd:ListOfInvolvedParties" to="snme:ListOfInvolvedParties" class="XFD_ListOfInvolvedParties_to_SNME_ListOfInvolvedParties" />
+        </transform>
+        <transform input="event" output="event">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="accessNetworkInformation" output="accessNetworkInformation">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="serviceContextID" output="serviceContextID">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="list_of_subscription_ID" output="list_of_subscription_ID">
+            <use-transformer from="xfd:PCSCFRecord_generatedType_5" to="snme:PCSCFRecord_generatedType_5" class="XFD_PCSCFRecord_generatedType_5_to_SNME_PCSCFRecord_generatedType_5" />
+        </transform>
+        <transform input="list_Of_Early_SDP_Media_Components" output="list_Of_Early_SDP_Media_Components">
+            <use-transformer from="xfd:PCSCFRecord_generatedType_6" to="snme:PCSCFRecord_generatedType_6" class="XFD_PCSCFRecord_generatedType_6_to_SNME_PCSCFRecord_generatedType_6" />
+        </transform>
+        <transform input="iMSCommunicationServiceIdentifier" output="iMSCommunicationServiceIdentifier">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="sessionPriority" output="sessionPriority">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="serviceRequestTimeStampFraction" output="serviceRequestTimeStampFraction">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="serviceDeliveryStartTimeStampFraction" output="serviceDeliveryStartTimeStampFraction">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="serviceDeliveryEndTimeStampFraction" output="serviceDeliveryEndTimeStampFraction">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="list_of_Requested_Party_Address" output="list_of_Requested_Party_Address">
+            <use-transformer from="xfd:ListOfInvolvedParties" to="snme:ListOfInvolvedParties" class="XFD_ListOfInvolvedParties_to_SNME_ListOfInvolvedParties" />
+        </transform>
+        <transform input="list_Of_Called_Asserted_Identity" output="list_Of_Called_Asserted_Identity">
+            <use-transformer from="xfd:ListOfInvolvedParties" to="snme:ListOfInvolvedParties" class="XFD_ListOfInvolvedParties_to_SNME_ListOfInvolvedParties" />
+        </transform>
+        <transform input="userLocationInformation" output="userLocationInformation">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="mSTimeZone" output="mSTimeZone">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="servedPartyIPAddress" output="servedPartyIPAddress">
+            <use-transformer from="xfd:IPAddressCustom" to="snme:IPAddressCustom" class="XFD_IPAddressCustom_to_SNME_IPAddressCustom" />
+        </transform>
+        <transform input="iMSVisitedNetworkIdentifier" output="iMSVisitedNetworkIdentifier">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="listOfReasonHeader" output="listOfReasonHeader">
+            <use-transformer from="xfd:ListOfReasonHeader" to="snme:ListOfReasonHeader" class="XFD_ListOfReasonHeader_to_SNME_ListOfReasonHeader" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_PCSCFRecord_generatedType_3_to_SNME_PCSCFRecord_generatedType_3" from="xfd:PCSCFRecord_generatedType_3" to="snme:PCSCFRecord_generatedType_3">
+        <transform input="PCSCFRecord_generatedType_3" output="PCSCFRecord_generatedType_3">
+            <transformer from="xfd:Media_Components_List[]" to="snme:Media_Components_List[]">
+                <array>
+                    <use-transformer from="xfd:Media_Components_List" to="snme:Media_Components_List" class="XFD_Media_Components_List_to_SNME_Media_Components_List" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_PCSCFRecord_generatedType_4_to_SNME_PCSCFRecord_generatedType_4" from="xfd:PCSCFRecord_generatedType_4" to="snme:PCSCFRecord_generatedType_4">
+        <transform input="PCSCFRecord_generatedType_4" output="PCSCFRecord_generatedType_4">
+            <transformer from="xfd:MessageBody[]" to="snme:MessageBody[]">
+                <array>
+                    <use-transformer from="xfd:MessageBody" to="snme:MessageBody" class="XFD_MessageBody_to_SNME_MessageBody" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_PCSCFRecord_generatedType_5_to_SNME_PCSCFRecord_generatedType_5" from="xfd:PCSCFRecord_generatedType_5" to="snme:PCSCFRecord_generatedType_5">
+        <transform input="PCSCFRecord_generatedType_5" output="PCSCFRecord_generatedType_5">
+            <transformer from="xfd:SubscriptionID[]" to="snme:SubscriptionID[]">
+                <array>
+                    <use-transformer from="xfd:SubscriptionID" to="snme:SubscriptionID" class="XFD_SubscriptionID_to_SNME_SubscriptionID" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_PCSCFRecord_generatedType_6_to_SNME_PCSCFRecord_generatedType_6" from="xfd:PCSCFRecord_generatedType_6" to="snme:PCSCFRecord_generatedType_6">
+        <transform input="PCSCFRecord_generatedType_6" output="PCSCFRecord_generatedType_6">
+            <transformer from="xfd:Early_Media_Components_List[]" to="snme:Early_Media_Components_List[]">
+                <array>
+                    <use-transformer from="xfd:Early_Media_Components_List" to="snme:Early_Media_Components_List" class="XFD_Early_Media_Components_List_to_SNME_Early_Media_Components_List" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_Virtual_Group_Call_Control_to_SNME_Virtual_Group_Call_Control" from="xfd:Virtual_Group_Call_Control" to="snme:Virtual_Group_Call_Control">
+        <transform input="virtual_Group_ID" output="virtual_Group_ID">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="reason" output="reason">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_ListOfInvolvedParties_to_SNME_ListOfInvolvedParties" from="xfd:ListOfInvolvedParties" to="snme:ListOfInvolvedParties">
+        <transform input="ListOfInvolvedParties" output="ListOfInvolvedParties">
+            <transformer from="xfd:InvolvedParty[]" to="snme:InvolvedParty[]">
+                <array>
+                    <use-transformer from="xfd:InvolvedParty" to="snme:InvolvedParty" class="XFD_InvolvedParty_to_SNME_InvolvedParty" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_TrunkGroupID_to_SNME_TrunkGroupID" from="xfd:TrunkGroupID" to="snme:TrunkGroupID">
+        <transform input="incoming" output="incoming">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="outgoing" output="outgoing">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_ManagementExtensions_to_SNME_ManagementExtensions" from="xfd:ManagementExtensions" to="snme:ManagementExtensions">
+        <transform input="ManagementExtensions" output="ManagementExtensions">
+            <transformer from="xfd:ManagementExtension[]" to="snme:ManagementExtension[]">
+                <array>
+                    <use-transformer from="xfd:ManagementExtension" to="snme:ManagementExtension" class="XFD_ManagementExtension_to_SNME_ManagementExtension" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_TransmissionMedium_to_SNME_TransmissionMedium" from="xfd:TransmissionMedium" to="snme:TransmissionMedium">
+        <transform input="tMR" output="tMR">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="tMU" output="tMU">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_ApplicationServersInformation_to_SNME_ApplicationServersInformation" from="xfd:ApplicationServersInformation" to="snme:ApplicationServersInformation">
+        <transform input="applicationServersInvolved" output="applicationServersInvolved">
+            <use-transformer from="xfd:NodeAddress" to="snme:NodeAddress" class="XFD_NodeAddress_to_SNME_NodeAddress" />
+        </transform>
+        <transform input="applicationProvidedCalledParties" output="applicationProvidedCalledParties">
+            <use-transformer from="xfd:ApplicationServersInformation_generatedType_7" to="snme:ApplicationServersInformation_generatedType_7" class="XFD_ApplicationServersInformation_generatedType_7_to_SNME_ApplicationServersInformation_generatedType_7" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_ApplicationServersInformation_generatedType_7_to_SNME_ApplicationServersInformation_generatedType_7" from="xfd:ApplicationServersInformation_generatedType_7" to="snme:ApplicationServersInformation_generatedType_7">
+        <transform input="ApplicationServersInformation_generatedType_7" output="ApplicationServersInformation_generatedType_7">
+            <transformer from="xfd:InvolvedParty[]" to="snme:InvolvedParty[]">
+                <array>
+                    <use-transformer from="xfd:InvolvedParty" to="snme:InvolvedParty" class="XFD_InvolvedParty_to_SNME_InvolvedParty" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_ASRecord_to_SNME_ASRecord" from="xfd:ASRecord" to="snme:ASRecord">
+        <transform input="recordType" output="recordType">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="retransmission" output="retransmission">
+            <use-transformer from="int" to="int" class="t:IntToIntCopy" />
+        </transform>
+        <transform input="sIP_Method" output="sIP_Method">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="role_of_Node" output="role_of_Node">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="nodeAddress" output="nodeAddress">
+            <use-transformer from="xfd:NodeAddress" to="snme:NodeAddress" class="XFD_NodeAddress_to_SNME_NodeAddress" />
+        </transform>
+        <transform input="session_Id" output="session_Id">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="list_Of_Calling_Party_Address" output="list_Of_Calling_Party_Address">
+            <use-transformer from="xfd:ListOfInvolvedParties" to="snme:ListOfInvolvedParties" class="XFD_ListOfInvolvedParties_to_SNME_ListOfInvolvedParties" />
+        </transform>
+        <transform input="called_Party_Address" output="called_Party_Address">
+            <use-transformer from="xfd:InvolvedParty" to="snme:InvolvedParty" class="XFD_InvolvedParty_to_SNME_InvolvedParty" />
+        </transform>
+        <transform input="privateUserID" output="privateUserID">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="serviceRequestTimeStamp" output="serviceRequestTimeStamp">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="serviceDeliveryStartTimeStamp" output="serviceDeliveryStartTimeStamp">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="serviceDeliveryEndTimeStamp" output="serviceDeliveryEndTimeStamp">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="recordOpeningTime" output="recordOpeningTime">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="recordClosureTime" output="recordClosureTime">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="interOperatorIdentifiers" output="interOperatorIdentifiers">
+            <use-transformer from="xfd:InterOperatorIdentifiers" to="snme:InterOperatorIdentifiers" class="XFD_InterOperatorIdentifiers_to_SNME_InterOperatorIdentifiers" />
+        </transform>
+        <transform input="localRecordSequenceNumber" output="localRecordSequenceNumber">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="recordSequenceNumber" output="recordSequenceNumber">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="causeForRecordClosing" output="causeForRecordClosing">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="incomplete_CDR_Indication" output="incomplete_CDR_Indication">
+            <use-transformer from="xfd:Incomplete_CDR_Indication" to="snme:Incomplete_CDR_Indication" class="XFD_Incomplete_CDR_Indication_to_SNME_Incomplete_CDR_Indication" />
+        </transform>
+        <transform input="iMS_Charging_Identifier" output="iMS_Charging_Identifier">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="list_Of_SDP_Media_Components" output="list_Of_SDP_Media_Components">
+            <use-transformer from="xfd:ASRecord_generatedType_8" to="snme:ASRecord_generatedType_8" class="XFD_ASRecord_generatedType_8_to_SNME_ASRecord_generatedType_8" />
+        </transform>
+        <transform input="gGSNaddress" output="gGSNaddress">
+            <use-transformer from="xfd:NodeAddress" to="snme:NodeAddress" class="XFD_NodeAddress_to_SNME_NodeAddress" />
+        </transform>
+        <transform input="serviceReasonReturnCode" output="serviceReasonReturnCode">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="list_Of_Message_Bodies" output="list_Of_Message_Bodies">
+            <use-transformer from="xfd:ASRecord_generatedType_9" to="snme:ASRecord_generatedType_9" class="XFD_ASRecord_generatedType_9_to_SNME_ASRecord_generatedType_9" />
+        </transform>
+        <transform input="recordExtensions" output="recordExtensions">
+            <use-transformer from="xfd:ManagementExtensions" to="snme:ManagementExtensions" class="XFD_ManagementExtensions_to_SNME_ManagementExtensions" />
+        </transform>
+        <transform input="expiresInformation" output="expiresInformation">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="event" output="event">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="accessNetworkInformation" output="accessNetworkInformation">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="serviceContextID" output="serviceContextID">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="list_of_subscription_ID" output="list_of_subscription_ID">
+            <use-transformer from="xfd:ASRecord_generatedType_10" to="snme:ASRecord_generatedType_10" class="XFD_ASRecord_generatedType_10_to_SNME_ASRecord_generatedType_10" />
+        </transform>
+        <transform input="list_Of_Early_SDP_Media_Components" output="list_Of_Early_SDP_Media_Components">
+            <use-transformer from="xfd:ASRecord_generatedType_11" to="snme:ASRecord_generatedType_11" class="XFD_ASRecord_generatedType_11_to_SNME_ASRecord_generatedType_11" />
+        </transform>
+        <transform input="iMSCommunicationServiceIdentifier" output="iMSCommunicationServiceIdentifier">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="numberPortabilityRouting" output="numberPortabilityRouting">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="carrierSelectRouting" output="carrierSelectRouting">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="sessionPriority" output="sessionPriority">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="serviceRequestTimeStampFraction" output="serviceRequestTimeStampFraction">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="serviceDeliveryStartTimeStampFraction" output="serviceDeliveryStartTimeStampFraction">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="serviceDeliveryEndTimeStampFraction" output="serviceDeliveryEndTimeStampFraction">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="list_of_Requested_Party_Address" output="list_of_Requested_Party_Address">
+            <use-transformer from="xfd:ListOfInvolvedParties" to="snme:ListOfInvolvedParties" class="XFD_ListOfInvolvedParties_to_SNME_ListOfInvolvedParties" />
+        </transform>
+        <transform input="online_charging_flag" output="online_charging_flag">
+            <use-transformer from="int" to="int" class="t:IntToIntCopy" />
+        </transform>
+        <transform input="realTimeTariffInformation" output="realTimeTariffInformation">
+            <use-transformer from="xfd:ASRecord_generatedType_12" to="snme:ASRecord_generatedType_12" class="XFD_ASRecord_generatedType_12_to_SNME_ASRecord_generatedType_12" />
+        </transform>
+        <transform input="userLocationInformation" output="userLocationInformation">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="mSTimeZone" output="mSTimeZone">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="iMSVisitedNetworkIdentifier" output="iMSVisitedNetworkIdentifier">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="listOfReasonHeader" output="listOfReasonHeader">
+            <use-transformer from="xfd:ListOfReasonHeader" to="snme:ListOfReasonHeader" class="XFD_ListOfReasonHeader_to_SNME_ListOfReasonHeader" />
+        </transform>
+        <transform input="serviceSpecificInfo" output="serviceSpecificInfo">
+            <use-transformer from="xfd:ASRecord_generatedType_13" to="snme:ASRecord_generatedType_13" class="XFD_ASRecord_generatedType_13_to_SNME_ASRecord_generatedType_13" />
+        </transform>
+        <transform input="requested_Party_Address" output="requested_Party_Address">
+            <use-transformer from="xfd:InvolvedParty" to="snme:InvolvedParty" class="XFD_InvolvedParty_to_SNME_InvolvedParty" />
+        </transform>
+        <transform input="list_Of_Called_Asserted_Identity" output="list_Of_Called_Asserted_Identity">
+            <use-transformer from="xfd:ListOfInvolvedParties" to="snme:ListOfInvolvedParties" class="XFD_ListOfInvolvedParties_to_SNME_ListOfInvolvedParties" />
+        </transform>
+        <transform input="alternateChargedPartyAddress" output="alternateChargedPartyAddress">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="outgoingSessionId" output="outgoingSessionId">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="initialIMS_Charging_Identifier" output="initialIMS_Charging_Identifier">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="tADS_Identifier" output="tADS_Identifier">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_ASRecord_generatedType_10_to_SNME_ASRecord_generatedType_10" from="xfd:ASRecord_generatedType_10" to="snme:ASRecord_generatedType_10">
+        <transform input="ASRecord_generatedType_10" output="ASRecord_generatedType_10">
+            <transformer from="xfd:SubscriptionID[]" to="snme:SubscriptionID[]">
+                <array>
+                    <use-transformer from="xfd:SubscriptionID" to="snme:SubscriptionID" class="XFD_SubscriptionID_to_SNME_SubscriptionID" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_ASRecord_generatedType_9_to_SNME_ASRecord_generatedType_9" from="xfd:ASRecord_generatedType_9" to="snme:ASRecord_generatedType_9">
+        <transform input="ASRecord_generatedType_9" output="ASRecord_generatedType_9">
+            <transformer from="xfd:MessageBody[]" to="snme:MessageBody[]">
+                <array>
+                    <use-transformer from="xfd:MessageBody" to="snme:MessageBody" class="XFD_MessageBody_to_SNME_MessageBody" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_ASRecord_generatedType_12_to_SNME_ASRecord_generatedType_12" from="xfd:ASRecord_generatedType_12" to="snme:ASRecord_generatedType_12">
+        <transform input="ASRecord_generatedType_12" output="ASRecord_generatedType_12">
+            <transformer from="xfd:RealTimeTariffInformation[]" to="snme:RealTimeTariffInformation[]">
+                <array>
+                    <use-transformer from="xfd:RealTimeTariffInformation" to="snme:RealTimeTariffInformation" class="XFD_RealTimeTariffInformation_to_SNME_RealTimeTariffInformation" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_ASRecord_generatedType_8_to_SNME_ASRecord_generatedType_8" from="xfd:ASRecord_generatedType_8" to="snme:ASRecord_generatedType_8">
+        <transform input="ASRecord_generatedType_8" output="ASRecord_generatedType_8">
+            <transformer from="xfd:Media_Components_List[]" to="snme:Media_Components_List[]">
+                <array>
+                    <use-transformer from="xfd:Media_Components_List" to="snme:Media_Components_List" class="XFD_Media_Components_List_to_SNME_Media_Components_List" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_ASRecord_generatedType_11_to_SNME_ASRecord_generatedType_11" from="xfd:ASRecord_generatedType_11" to="snme:ASRecord_generatedType_11">
+        <transform input="ASRecord_generatedType_11" output="ASRecord_generatedType_11">
+            <transformer from="xfd:Early_Media_Components_List[]" to="snme:Early_Media_Components_List[]">
+                <array>
+                    <use-transformer from="xfd:Early_Media_Components_List" to="snme:Early_Media_Components_List" class="XFD_Early_Media_Components_List_to_SNME_Early_Media_Components_List" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_ASRecord_generatedType_13_to_SNME_ASRecord_generatedType_13" from="xfd:ASRecord_generatedType_13" to="snme:ASRecord_generatedType_13">
+        <transform input="ASRecord_generatedType_13" output="ASRecord_generatedType_13">
+            <transformer from="xfd:ServiceSpecificInfo[]" to="snme:ServiceSpecificInfo[]">
+                <array>
+                    <use-transformer from="xfd:ServiceSpecificInfo" to="snme:ServiceSpecificInfo" class="XFD_ServiceSpecificInfo_to_SNME_ServiceSpecificInfo" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_Event_Type_to_SNME_Event_Type" from="xfd:Event_Type" to="snme:Event_Type">
+        <transform input="event" output="event">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="expiresInformation" output="expiresInformation">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="sIP_Method" output="sIP_Method">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_Cost_Information_to_SNME_Cost_Information" from="xfd:Cost_Information" to="snme:Cost_Information">
+        <transform input="unit_Value" output="unit_Value">
+            <use-transformer from="xfd:Unit_Value" to="snme:Unit_Value" class="XFD_Unit_Value_to_SNME_Unit_Value" />
+        </transform>
+        <transform input="currency_Code" output="currency_Code">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="cost_Unit" output="cost_Unit">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_SDP_Media_Description_to_SNME_SDP_Media_Description" from="xfd:SDP_Media_Description" to="snme:SDP_Media_Description">
+        <transform input="SDP_Media_Description" output="SDP_Media_Description">
+            <use-transformer from="string[]" to="nme:string-array" class="tnme:StringArrayToStringArrayWrapper" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_IMSRecord_to_SNME_IMSRecord" from="xfd:IMSRecord" to="snme:IMSRecord">
+        <transform input="sCSCFRecord" output="sCSCFRecord">
+            <use-transformer from="xfd:SCSCFRecord" to="snme:SCSCFRecord" class="XFD_SCSCFRecord_to_SNME_SCSCFRecord" />
+        </transform>
+        <transform input="pCSCFRecord" output="pCSCFRecord">
+            <use-transformer from="xfd:PCSCFRecord" to="snme:PCSCFRecord" class="XFD_PCSCFRecord_to_SNME_PCSCFRecord" />
+        </transform>
+        <transform input="iCSCFRecord" output="iCSCFRecord">
+            <use-transformer from="xfd:ICSCFRecord" to="snme:ICSCFRecord" class="XFD_ICSCFRecord_to_SNME_ICSCFRecord" />
+        </transform>
+        <transform input="mRFCRecord" output="mRFCRecord">
+            <use-transformer from="xfd:MRFCRecord" to="snme:MRFCRecord" class="XFD_MRFCRecord_to_SNME_MRFCRecord" />
+        </transform>
+        <transform input="mGCFRecord" output="mGCFRecord">
+            <use-transformer from="xfd:MGCFRecord" to="snme:MGCFRecord" class="XFD_MGCFRecord_to_SNME_MGCFRecord" />
+        </transform>
+        <transform input="bGCFRecord" output="bGCFRecord">
+            <use-transformer from="xfd:BGCFRecord" to="snme:BGCFRecord" class="XFD_BGCFRecord_to_SNME_BGCFRecord" />
+        </transform>
+        <transform input="aSRecord" output="aSRecord">
+            <use-transformer from="xfd:ASRecord" to="snme:ASRecord" class="XFD_ASRecord_to_SNME_ASRecord" />
+        </transform>
+        <transform input="eCSCFRecord" output="eCSCFRecord">
+            <use-transformer from="xfd:ECSCFRecord" to="snme:ECSCFRecord" class="XFD_ECSCFRecord_to_SNME_ECSCFRecord" />
+        </transform>
+        <transform input="iBCFRecord" output="iBCFRecord">
+            <use-transformer from="xfd:IBCFRecord" to="snme:IBCFRecord" class="XFD_IBCFRecord_to_SNME_IBCFRecord" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_SubscriptionID_to_SNME_SubscriptionID" from="xfd:SubscriptionID" to="snme:SubscriptionID">
+        <transform input="subscriptionIDType" output="subscriptionIDType">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="subscriptionIDData" output="subscriptionIDData">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_IPAddressCustom_to_SNME_IPAddressCustom" from="xfd:IPAddressCustom" to="snme:IPAddressCustom">
+        <transform input="iPBinaryAddress_iPBinV4Address" output="iPBinaryAddress_iPBinV4Address">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="iPBinaryAddress_iPBinV6Address" output="iPBinaryAddress_iPBinV6Address">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="iPTextRepresentedAddress_iPTextV4Address" output="iPTextRepresentedAddress_iPTextV4Address">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="iPTextRepresentedAddress_iPTextV6Address" output="iPTextRepresentedAddress_iPTextV6Address">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_MessageBody_to_SNME_MessageBody" from="xfd:MessageBody" to="snme:MessageBody">
+        <transform input="content_Type" output="content_Type">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="content_Disposition" output="content_Disposition">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="content_Length" output="content_Length">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="originator" output="originator">
+            <use-transformer from="xfd:InvolvedParty" to="snme:InvolvedParty" class="XFD_InvolvedParty_to_SNME_InvolvedParty" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_IBCFRecord_to_SNME_IBCFRecord" from="xfd:IBCFRecord" to="snme:IBCFRecord">
+        <transform input="recordType" output="recordType">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="retransmission" output="retransmission">
+            <use-transformer from="int" to="int" class="t:IntToIntCopy" />
+        </transform>
+        <transform input="sIP_Method" output="sIP_Method">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="role_of_Node" output="role_of_Node">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="nodeAddress" output="nodeAddress">
+            <use-transformer from="xfd:NodeAddress" to="snme:NodeAddress" class="XFD_NodeAddress_to_SNME_NodeAddress" />
+        </transform>
+        <transform input="session_Id" output="session_Id">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="list_Of_Calling_Party_Address" output="list_Of_Calling_Party_Address">
+            <use-transformer from="xfd:ListOfInvolvedParties" to="snme:ListOfInvolvedParties" class="XFD_ListOfInvolvedParties_to_SNME_ListOfInvolvedParties" />
+        </transform>
+        <transform input="called_Party_Address" output="called_Party_Address">
+            <use-transformer from="xfd:InvolvedParty" to="snme:InvolvedParty" class="XFD_InvolvedParty_to_SNME_InvolvedParty" />
+        </transform>
+        <transform input="serviceRequestTimeStamp" output="serviceRequestTimeStamp">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="serviceDeliveryStartTimeStamp" output="serviceDeliveryStartTimeStamp">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="serviceDeliveryEndTimeStamp" output="serviceDeliveryEndTimeStamp">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="recordOpeningTime" output="recordOpeningTime">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="recordClosureTime" output="recordClosureTime">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="interOperatorIdentifiers" output="interOperatorIdentifiers">
+            <use-transformer from="xfd:InterOperatorIdentifiers" to="snme:InterOperatorIdentifiers" class="XFD_InterOperatorIdentifiers_to_SNME_InterOperatorIdentifiers" />
+        </transform>
+        <transform input="localRecordSequenceNumber" output="localRecordSequenceNumber">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="recordSequenceNumber" output="recordSequenceNumber">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="causeForRecordClosing" output="causeForRecordClosing">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="incomplete_CDR_Indication" output="incomplete_CDR_Indication">
+            <use-transformer from="xfd:Incomplete_CDR_Indication" to="snme:Incomplete_CDR_Indication" class="XFD_Incomplete_CDR_Indication_to_SNME_Incomplete_CDR_Indication" />
+        </transform>
+        <transform input="iMS_Charging_Identifier" output="iMS_Charging_Identifier">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="list_Of_SDP_Media_Components" output="list_Of_SDP_Media_Components">
+            <use-transformer from="xfd:IBCFRecord_generatedType_14" to="snme:IBCFRecord_generatedType_14" class="XFD_IBCFRecord_generatedType_14_to_SNME_IBCFRecord_generatedType_14" />
+        </transform>
+        <transform input="gGSNaddress" output="gGSNaddress">
+            <use-transformer from="xfd:NodeAddress" to="snme:NodeAddress" class="XFD_NodeAddress_to_SNME_NodeAddress" />
+        </transform>
+        <transform input="serviceReasonReturnCode" output="serviceReasonReturnCode">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="list_Of_Message_Bodies" output="list_Of_Message_Bodies">
+            <use-transformer from="xfd:IBCFRecord_generatedType_15" to="snme:IBCFRecord_generatedType_15" class="XFD_IBCFRecord_generatedType_15_to_SNME_IBCFRecord_generatedType_15" />
+        </transform>
+        <transform input="recordExtensions" output="recordExtensions">
+            <use-transformer from="xfd:ManagementExtensions" to="snme:ManagementExtensions" class="XFD_ManagementExtensions_to_SNME_ManagementExtensions" />
+        </transform>
+        <transform input="expiresInformation" output="expiresInformation">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="event" output="event">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="accessNetworkInformation" output="accessNetworkInformation">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="serviceContextID" output="serviceContextID">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="list_of_subscription_ID" output="list_of_subscription_ID">
+            <use-transformer from="xfd:IBCFRecord_generatedType_16" to="snme:IBCFRecord_generatedType_16" class="XFD_IBCFRecord_generatedType_16_to_SNME_IBCFRecord_generatedType_16" />
+        </transform>
+        <transform input="list_Of_Early_SDP_Media_Components" output="list_Of_Early_SDP_Media_Components">
+            <use-transformer from="xfd:IBCFRecord_generatedType_17" to="snme:IBCFRecord_generatedType_17" class="XFD_IBCFRecord_generatedType_17_to_SNME_IBCFRecord_generatedType_17" />
+        </transform>
+        <transform input="iMSCommunicationServiceIdentifier" output="iMSCommunicationServiceIdentifier">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="sessionPriority" output="sessionPriority">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="serviceRequestTimeStampFraction" output="serviceRequestTimeStampFraction">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="serviceDeliveryStartTimeStampFraction" output="serviceDeliveryStartTimeStampFraction">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="serviceDeliveryEndTimeStampFraction" output="serviceDeliveryEndTimeStampFraction">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="list_of_Requested_Party_Address" output="list_of_Requested_Party_Address">
+            <use-transformer from="xfd:ListOfInvolvedParties" to="snme:ListOfInvolvedParties" class="XFD_ListOfInvolvedParties_to_SNME_ListOfInvolvedParties" />
+        </transform>
+        <transform input="list_Of_Called_Asserted_Identity" output="list_Of_Called_Asserted_Identity">
+            <use-transformer from="xfd:ListOfInvolvedParties" to="snme:ListOfInvolvedParties" class="XFD_ListOfInvolvedParties_to_SNME_ListOfInvolvedParties" />
+        </transform>
+        <transform input="realTimeTariffInformation" output="realTimeTariffInformation">
+            <use-transformer from="xfd:IBCFRecord_generatedType_18" to="snme:IBCFRecord_generatedType_18" class="XFD_IBCFRecord_generatedType_18_to_SNME_IBCFRecord_generatedType_18" />
+        </transform>
+        <transform input="userLocationInformation" output="userLocationInformation">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="mSTimeZone" output="mSTimeZone">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="listOfReasonHeader" output="listOfReasonHeader">
+            <use-transformer from="xfd:ListOfReasonHeader" to="snme:ListOfReasonHeader" class="XFD_ListOfReasonHeader_to_SNME_ListOfReasonHeader" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_IBCFRecord_generatedType_14_to_SNME_IBCFRecord_generatedType_14" from="xfd:IBCFRecord_generatedType_14" to="snme:IBCFRecord_generatedType_14">
+        <transform input="IBCFRecord_generatedType_14" output="IBCFRecord_generatedType_14">
+            <transformer from="xfd:Media_Components_List[]" to="snme:Media_Components_List[]">
+                <array>
+                    <use-transformer from="xfd:Media_Components_List" to="snme:Media_Components_List" class="XFD_Media_Components_List_to_SNME_Media_Components_List" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_IBCFRecord_generatedType_18_to_SNME_IBCFRecord_generatedType_18" from="xfd:IBCFRecord_generatedType_18" to="snme:IBCFRecord_generatedType_18">
+        <transform input="IBCFRecord_generatedType_18" output="IBCFRecord_generatedType_18">
+            <transformer from="xfd:RealTimeTariffInformation[]" to="snme:RealTimeTariffInformation[]">
+                <array>
+                    <use-transformer from="xfd:RealTimeTariffInformation" to="snme:RealTimeTariffInformation" class="XFD_RealTimeTariffInformation_to_SNME_RealTimeTariffInformation" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_IBCFRecord_generatedType_17_to_SNME_IBCFRecord_generatedType_17" from="xfd:IBCFRecord_generatedType_17" to="snme:IBCFRecord_generatedType_17">
+        <transform input="IBCFRecord_generatedType_17" output="IBCFRecord_generatedType_17">
+            <transformer from="xfd:Early_Media_Components_List[]" to="snme:Early_Media_Components_List[]">
+                <array>
+                    <use-transformer from="xfd:Early_Media_Components_List" to="snme:Early_Media_Components_List" class="XFD_Early_Media_Components_List_to_SNME_Early_Media_Components_List" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_IBCFRecord_generatedType_16_to_SNME_IBCFRecord_generatedType_16" from="xfd:IBCFRecord_generatedType_16" to="snme:IBCFRecord_generatedType_16">
+        <transform input="IBCFRecord_generatedType_16" output="IBCFRecord_generatedType_16">
+            <transformer from="xfd:SubscriptionID[]" to="snme:SubscriptionID[]">
+                <array>
+                    <use-transformer from="xfd:SubscriptionID" to="snme:SubscriptionID" class="XFD_SubscriptionID_to_SNME_SubscriptionID" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_IBCFRecord_generatedType_15_to_SNME_IBCFRecord_generatedType_15" from="xfd:IBCFRecord_generatedType_15" to="snme:IBCFRecord_generatedType_15">
+        <transform input="IBCFRecord_generatedType_15" output="IBCFRecord_generatedType_15">
+            <transformer from="xfd:MessageBody[]" to="snme:MessageBody[]">
+                <array>
+                    <use-transformer from="xfd:MessageBody" to="snme:MessageBody" class="XFD_MessageBody_to_SNME_MessageBody" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_SCSCFRecord_to_SNME_SCSCFRecord" from="xfd:SCSCFRecord" to="snme:SCSCFRecord">
+        <transform input="recordType" output="recordType">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="retransmission" output="retransmission">
+            <use-transformer from="int" to="int" class="t:IntToIntCopy" />
+        </transform>
+        <transform input="sIP_Method" output="sIP_Method">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="role_of_Node" output="role_of_Node">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="nodeAddress" output="nodeAddress">
+            <use-transformer from="xfd:NodeAddress" to="snme:NodeAddress" class="XFD_NodeAddress_to_SNME_NodeAddress" />
+        </transform>
+        <transform input="session_Id" output="session_Id">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="list_Of_Calling_Party_Address" output="list_Of_Calling_Party_Address">
+            <use-transformer from="xfd:ListOfInvolvedParties" to="snme:ListOfInvolvedParties" class="XFD_ListOfInvolvedParties_to_SNME_ListOfInvolvedParties" />
+        </transform>
+        <transform input="called_Party_Address" output="called_Party_Address">
+            <use-transformer from="xfd:InvolvedParty" to="snme:InvolvedParty" class="XFD_InvolvedParty_to_SNME_InvolvedParty" />
+        </transform>
+        <transform input="privateUserID" output="privateUserID">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="serviceRequestTimeStamp" output="serviceRequestTimeStamp">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="serviceDeliveryStartTimeStamp" output="serviceDeliveryStartTimeStamp">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="serviceDeliveryEndTimeStamp" output="serviceDeliveryEndTimeStamp">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="recordOpeningTime" output="recordOpeningTime">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="recordClosureTime" output="recordClosureTime">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="interOperatorIdentifiers" output="interOperatorIdentifiers">
+            <use-transformer from="xfd:InterOperatorIdentifierlist" to="snme:InterOperatorIdentifierlist" class="XFD_InterOperatorIdentifierlist_to_SNME_InterOperatorIdentifierlist" />
+        </transform>
+        <transform input="localRecordSequenceNumber" output="localRecordSequenceNumber">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="recordSequenceNumber" output="recordSequenceNumber">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="causeForRecordClosing" output="causeForRecordClosing">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="incomplete_CDR_Indication" output="incomplete_CDR_Indication">
+            <use-transformer from="xfd:Incomplete_CDR_Indication" to="snme:Incomplete_CDR_Indication" class="XFD_Incomplete_CDR_Indication_to_SNME_Incomplete_CDR_Indication" />
+        </transform>
+        <transform input="iMS_Charging_Identifier" output="iMS_Charging_Identifier">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="list_Of_SDP_Media_Components" output="list_Of_SDP_Media_Components">
+            <use-transformer from="xfd:SCSCFRecord_generatedType_19" to="snme:SCSCFRecord_generatedType_19" class="XFD_SCSCFRecord_generatedType_19_to_SNME_SCSCFRecord_generatedType_19" />
+        </transform>
+        <transform input="gGSNaddress" output="gGSNaddress">
+            <use-transformer from="xfd:NodeAddress" to="snme:NodeAddress" class="XFD_NodeAddress_to_SNME_NodeAddress" />
+        </transform>
+        <transform input="serviceReasonReturnCode" output="serviceReasonReturnCode">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="list_Of_Message_Bodies" output="list_Of_Message_Bodies">
+            <use-transformer from="xfd:SCSCFRecord_generatedType_20" to="snme:SCSCFRecord_generatedType_20" class="XFD_SCSCFRecord_generatedType_20_to_SNME_SCSCFRecord_generatedType_20" />
+        </transform>
+        <transform input="recordExtensions" output="recordExtensions">
+            <use-transformer from="xfd:ManagementExtensions" to="snme:ManagementExtensions" class="XFD_ManagementExtensions_to_SNME_ManagementExtensions" />
+        </transform>
+        <transform input="expiresInformation" output="expiresInformation">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="list_Of_Associated_URI" output="list_Of_Associated_URI">
+            <use-transformer from="xfd:ListOfInvolvedParties" to="snme:ListOfInvolvedParties" class="XFD_ListOfInvolvedParties_to_SNME_ListOfInvolvedParties" />
+        </transform>
+        <transform input="event" output="event">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="accessNetworkInformation" output="accessNetworkInformation">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="serviceContextID" output="serviceContextID">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="list_of_subscription_ID" output="list_of_subscription_ID">
+            <use-transformer from="xfd:SCSCFRecord_generatedType_21" to="snme:SCSCFRecord_generatedType_21" class="XFD_SCSCFRecord_generatedType_21_to_SNME_SCSCFRecord_generatedType_21" />
+        </transform>
+        <transform input="list_Of_Early_SDP_Media_Components" output="list_Of_Early_SDP_Media_Components">
+            <use-transformer from="xfd:SCSCFRecord_generatedType_22" to="snme:SCSCFRecord_generatedType_22" class="XFD_SCSCFRecord_generatedType_22_to_SNME_SCSCFRecord_generatedType_22" />
+        </transform>
+        <transform input="iMSCommunicationServiceIdentifier" output="iMSCommunicationServiceIdentifier">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="numberPortabilityRouting" output="numberPortabilityRouting">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="carrierSelectRouting" output="carrierSelectRouting">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="sessionPriority" output="sessionPriority">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="serviceRequestTimeStampFraction" output="serviceRequestTimeStampFraction">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="serviceDeliveryStartTimeStampFraction" output="serviceDeliveryStartTimeStampFraction">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="serviceDeliveryEndTimeStampFraction" output="serviceDeliveryEndTimeStampFraction">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="applicationServersInformation" output="applicationServersInformation">
+            <use-transformer from="xfd:SCSCFRecord_generatedType_23" to="snme:SCSCFRecord_generatedType_23" class="XFD_SCSCFRecord_generatedType_23_to_SNME_SCSCFRecord_generatedType_23" />
+        </transform>
+        <transform input="requested_Party_Address" output="requested_Party_Address">
+            <use-transformer from="xfd:InvolvedParty" to="snme:InvolvedParty" class="XFD_InvolvedParty_to_SNME_InvolvedParty" />
+        </transform>
+        <transform input="list_Of_Called_Asserted_Identity" output="list_Of_Called_Asserted_Identity">
+            <use-transformer from="xfd:ListOfInvolvedParties" to="snme:ListOfInvolvedParties" class="XFD_ListOfInvolvedParties_to_SNME_ListOfInvolvedParties" />
+        </transform>
+        <transform input="online_charging_flag" output="online_charging_flag">
+            <use-transformer from="int" to="int" class="t:IntToIntCopy" />
+        </transform>
+        <transform input="realTimeTariffInformation" output="realTimeTariffInformation">
+            <use-transformer from="xfd:SCSCFRecord_generatedType_24" to="snme:SCSCFRecord_generatedType_24" class="XFD_SCSCFRecord_generatedType_24_to_SNME_SCSCFRecord_generatedType_24" />
+        </transform>
+        <transform input="userLocationInformation" output="userLocationInformation">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="mSTimeZone" output="mSTimeZone">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="iMSVisitedNetworkIdentifier" output="iMSVisitedNetworkIdentifier">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="listOfReasonHeader" output="listOfReasonHeader">
+            <use-transformer from="xfd:ListOfReasonHeader" to="snme:ListOfReasonHeader" class="XFD_ListOfReasonHeader_to_SNME_ListOfReasonHeader" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_SCSCFRecord_generatedType_24_to_SNME_SCSCFRecord_generatedType_24" from="xfd:SCSCFRecord_generatedType_24" to="snme:SCSCFRecord_generatedType_24">
+        <transform input="SCSCFRecord_generatedType_24" output="SCSCFRecord_generatedType_24">
+            <transformer from="xfd:RealTimeTariffInformation[]" to="snme:RealTimeTariffInformation[]">
+                <array>
+                    <use-transformer from="xfd:RealTimeTariffInformation" to="snme:RealTimeTariffInformation" class="XFD_RealTimeTariffInformation_to_SNME_RealTimeTariffInformation" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_SCSCFRecord_generatedType_19_to_SNME_SCSCFRecord_generatedType_19" from="xfd:SCSCFRecord_generatedType_19" to="snme:SCSCFRecord_generatedType_19">
+        <transform input="SCSCFRecord_generatedType_19" output="SCSCFRecord_generatedType_19">
+            <transformer from="xfd:Media_Components_List[]" to="snme:Media_Components_List[]">
+                <array>
+                    <use-transformer from="xfd:Media_Components_List" to="snme:Media_Components_List" class="XFD_Media_Components_List_to_SNME_Media_Components_List" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_SCSCFRecord_generatedType_20_to_SNME_SCSCFRecord_generatedType_20" from="xfd:SCSCFRecord_generatedType_20" to="snme:SCSCFRecord_generatedType_20">
+        <transform input="SCSCFRecord_generatedType_20" output="SCSCFRecord_generatedType_20">
+            <transformer from="xfd:MessageBody[]" to="snme:MessageBody[]">
+                <array>
+                    <use-transformer from="xfd:MessageBody" to="snme:MessageBody" class="XFD_MessageBody_to_SNME_MessageBody" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_SCSCFRecord_generatedType_21_to_SNME_SCSCFRecord_generatedType_21" from="xfd:SCSCFRecord_generatedType_21" to="snme:SCSCFRecord_generatedType_21">
+        <transform input="SCSCFRecord_generatedType_21" output="SCSCFRecord_generatedType_21">
+            <transformer from="xfd:SubscriptionID[]" to="snme:SubscriptionID[]">
+                <array>
+                    <use-transformer from="xfd:SubscriptionID" to="snme:SubscriptionID" class="XFD_SubscriptionID_to_SNME_SubscriptionID" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_SCSCFRecord_generatedType_22_to_SNME_SCSCFRecord_generatedType_22" from="xfd:SCSCFRecord_generatedType_22" to="snme:SCSCFRecord_generatedType_22">
+        <transform input="SCSCFRecord_generatedType_22" output="SCSCFRecord_generatedType_22">
+            <transformer from="xfd:Early_Media_Components_List[]" to="snme:Early_Media_Components_List[]">
+                <array>
+                    <use-transformer from="xfd:Early_Media_Components_List" to="snme:Early_Media_Components_List" class="XFD_Early_Media_Components_List_to_SNME_Early_Media_Components_List" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_SCSCFRecord_generatedType_23_to_SNME_SCSCFRecord_generatedType_23" from="xfd:SCSCFRecord_generatedType_23" to="snme:SCSCFRecord_generatedType_23">
+        <transform input="SCSCFRecord_generatedType_23" output="SCSCFRecord_generatedType_23">
+            <transformer from="xfd:ApplicationServersInformation[]" to="snme:ApplicationServersInformation[]">
+                <array>
+                    <use-transformer from="xfd:ApplicationServersInformation" to="snme:ApplicationServersInformation" class="XFD_ApplicationServersInformation_to_SNME_ApplicationServersInformation" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_MGCFRecord_to_SNME_MGCFRecord" from="xfd:MGCFRecord" to="snme:MGCFRecord">
+        <transform input="recordType" output="recordType">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="retransmission" output="retransmission">
+            <use-transformer from="int" to="int" class="t:IntToIntCopy" />
+        </transform>
+        <transform input="sIP_Method" output="sIP_Method">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="role_of_Node" output="role_of_Node">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="nodeAddress" output="nodeAddress">
+            <use-transformer from="xfd:NodeAddress" to="snme:NodeAddress" class="XFD_NodeAddress_to_SNME_NodeAddress" />
+        </transform>
+        <transform input="session_Id" output="session_Id">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="list_Of_Calling_Party_Address" output="list_Of_Calling_Party_Address">
+            <use-transformer from="xfd:ListOfInvolvedParties" to="snme:ListOfInvolvedParties" class="XFD_ListOfInvolvedParties_to_SNME_ListOfInvolvedParties" />
+        </transform>
+        <transform input="called_Party_Address" output="called_Party_Address">
+            <use-transformer from="xfd:InvolvedParty" to="snme:InvolvedParty" class="XFD_InvolvedParty_to_SNME_InvolvedParty" />
+        </transform>
+        <transform input="serviceRequestTimeStamp" output="serviceRequestTimeStamp">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="serviceDeliveryStartTimeStamp" output="serviceDeliveryStartTimeStamp">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="serviceDeliveryEndTimeStamp" output="serviceDeliveryEndTimeStamp">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="recordOpeningTime" output="recordOpeningTime">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="recordClosureTime" output="recordClosureTime">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="interOperatorIdentifiers" output="interOperatorIdentifiers">
+            <use-transformer from="xfd:InterOperatorIdentifiers" to="snme:InterOperatorIdentifiers" class="XFD_InterOperatorIdentifiers_to_SNME_InterOperatorIdentifiers" />
+        </transform>
+        <transform input="localRecordSequenceNumber" output="localRecordSequenceNumber">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="recordSequenceNumber" output="recordSequenceNumber">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="causeForRecordClosing" output="causeForRecordClosing">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="incomplete_CDR_Indication" output="incomplete_CDR_Indication">
+            <use-transformer from="xfd:Incomplete_CDR_Indication" to="snme:Incomplete_CDR_Indication" class="XFD_Incomplete_CDR_Indication_to_SNME_Incomplete_CDR_Indication" />
+        </transform>
+        <transform input="iMS_Charging_Identifier" output="iMS_Charging_Identifier">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="list_Of_SDP_Media_Components" output="list_Of_SDP_Media_Components">
+            <use-transformer from="xfd:MGCFRecord_generatedType_25" to="snme:MGCFRecord_generatedType_25" class="XFD_MGCFRecord_generatedType_25_to_SNME_MGCFRecord_generatedType_25" />
+        </transform>
+        <transform input="serviceReasonReturnCode" output="serviceReasonReturnCode">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="recordExtensions" output="recordExtensions">
+            <use-transformer from="xfd:ManagementExtensions" to="snme:ManagementExtensions" class="XFD_ManagementExtensions_to_SNME_ManagementExtensions" />
+        </transform>
+        <transform input="expiresInformation" output="expiresInformation">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="event" output="event">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="accessNetworkInformation" output="accessNetworkInformation">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="serviceContextID" output="serviceContextID">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="list_Of_Early_SDP_Media_Components" output="list_Of_Early_SDP_Media_Components">
+            <use-transformer from="xfd:MGCFRecord_generatedType_26" to="snme:MGCFRecord_generatedType_26" class="XFD_MGCFRecord_generatedType_26_to_SNME_MGCFRecord_generatedType_26" />
+        </transform>
+        <transform input="numberPortabilityRouting" output="numberPortabilityRouting">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="carrierSelectRouting" output="carrierSelectRouting">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="sessionPriority" output="sessionPriority">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="serviceRequestTimeStampFraction" output="serviceRequestTimeStampFraction">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="serviceDeliveryStartTimeStampFraction" output="serviceDeliveryStartTimeStampFraction">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="serviceDeliveryEndTimeStampFraction" output="serviceDeliveryEndTimeStampFraction">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="realTimeTariffInformation" output="realTimeTariffInformation">
+            <use-transformer from="xfd:MGCFRecord_generatedType_27" to="snme:MGCFRecord_generatedType_27" class="XFD_MGCFRecord_generatedType_27_to_SNME_MGCFRecord_generatedType_27" />
+        </transform>
+        <transform input="listOfReasonHeader" output="listOfReasonHeader">
+            <use-transformer from="xfd:ListOfReasonHeader" to="snme:ListOfReasonHeader" class="XFD_ListOfReasonHeader_to_SNME_ListOfReasonHeader" />
+        </transform>
+        <transform input="trunkGroupID" output="trunkGroupID">
+            <use-transformer from="xfd:TrunkGroupID" to="snme:TrunkGroupID" class="XFD_TrunkGroupID_to_SNME_TrunkGroupID" />
+        </transform>
+        <transform input="bearerService" output="bearerService">
+            <use-transformer from="xfd:TransmissionMedium" to="snme:TransmissionMedium" class="XFD_TransmissionMedium_to_SNME_TransmissionMedium" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_MGCFRecord_generatedType_27_to_SNME_MGCFRecord_generatedType_27" from="xfd:MGCFRecord_generatedType_27" to="snme:MGCFRecord_generatedType_27">
+        <transform input="MGCFRecord_generatedType_27" output="MGCFRecord_generatedType_27">
+            <transformer from="xfd:RealTimeTariffInformation[]" to="snme:RealTimeTariffInformation[]">
+                <array>
+                    <use-transformer from="xfd:RealTimeTariffInformation" to="snme:RealTimeTariffInformation" class="XFD_RealTimeTariffInformation_to_SNME_RealTimeTariffInformation" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_MGCFRecord_generatedType_26_to_SNME_MGCFRecord_generatedType_26" from="xfd:MGCFRecord_generatedType_26" to="snme:MGCFRecord_generatedType_26">
+        <transform input="MGCFRecord_generatedType_26" output="MGCFRecord_generatedType_26">
+            <transformer from="xfd:Early_Media_Components_List[]" to="snme:Early_Media_Components_List[]">
+                <array>
+                    <use-transformer from="xfd:Early_Media_Components_List" to="snme:Early_Media_Components_List" class="XFD_Early_Media_Components_List_to_SNME_Early_Media_Components_List" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_MGCFRecord_generatedType_25_to_SNME_MGCFRecord_generatedType_25" from="xfd:MGCFRecord_generatedType_25" to="snme:MGCFRecord_generatedType_25">
+        <transform input="MGCFRecord_generatedType_25" output="MGCFRecord_generatedType_25">
+            <transformer from="xfd:Media_Components_List[]" to="snme:Media_Components_List[]">
+                <array>
+                    <use-transformer from="xfd:Media_Components_List" to="snme:Media_Components_List" class="XFD_Media_Components_List_to_SNME_Media_Components_List" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_MRFCRecord_to_SNME_MRFCRecord" from="xfd:MRFCRecord" to="snme:MRFCRecord">
+        <transform input="recordType" output="recordType">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="retransmission" output="retransmission">
+            <use-transformer from="int" to="int" class="t:IntToIntCopy" />
+        </transform>
+        <transform input="sIP_Method" output="sIP_Method">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="nodeAddress" output="nodeAddress">
+            <use-transformer from="xfd:NodeAddress" to="snme:NodeAddress" class="XFD_NodeAddress_to_SNME_NodeAddress" />
+        </transform>
+        <transform input="session_Id" output="session_Id">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="list_Of_Calling_Party_Address" output="list_Of_Calling_Party_Address">
+            <use-transformer from="xfd:ListOfInvolvedParties" to="snme:ListOfInvolvedParties" class="XFD_ListOfInvolvedParties_to_SNME_ListOfInvolvedParties" />
+        </transform>
+        <transform input="called_Party_Address" output="called_Party_Address">
+            <use-transformer from="xfd:InvolvedParty" to="snme:InvolvedParty" class="XFD_InvolvedParty_to_SNME_InvolvedParty" />
+        </transform>
+        <transform input="serviceRequestTimeStamp" output="serviceRequestTimeStamp">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="serviceDeliveryStartTimeStamp" output="serviceDeliveryStartTimeStamp">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="serviceDeliveryEndTimeStamp" output="serviceDeliveryEndTimeStamp">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="recordOpeningTime" output="recordOpeningTime">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="recordClosureTime" output="recordClosureTime">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="interOperatorIdentifiers" output="interOperatorIdentifiers">
+            <use-transformer from="xfd:InterOperatorIdentifiers" to="snme:InterOperatorIdentifiers" class="XFD_InterOperatorIdentifiers_to_SNME_InterOperatorIdentifiers" />
+        </transform>
+        <transform input="localRecordSequenceNumber" output="localRecordSequenceNumber">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="recordSequenceNumber" output="recordSequenceNumber">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="causeForRecordClosing" output="causeForRecordClosing">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="incomplete_CDR_Indication" output="incomplete_CDR_Indication">
+            <use-transformer from="xfd:Incomplete_CDR_Indication" to="snme:Incomplete_CDR_Indication" class="XFD_Incomplete_CDR_Indication_to_SNME_Incomplete_CDR_Indication" />
+        </transform>
+        <transform input="iMS_Charging_Identifier" output="iMS_Charging_Identifier">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="list_Of_SDP_Media_Components" output="list_Of_SDP_Media_Components">
+            <use-transformer from="xfd:MRFCRecord_generatedType_28" to="snme:MRFCRecord_generatedType_28" class="XFD_MRFCRecord_generatedType_28_to_SNME_MRFCRecord_generatedType_28" />
+        </transform>
+        <transform input="gGSNaddress" output="gGSNaddress">
+            <use-transformer from="xfd:NodeAddress" to="snme:NodeAddress" class="XFD_NodeAddress_to_SNME_NodeAddress" />
+        </transform>
+        <transform input="serviceReasonReturnCode" output="serviceReasonReturnCode">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="recordExtensions" output="recordExtensions">
+            <use-transformer from="xfd:ManagementExtensions" to="snme:ManagementExtensions" class="XFD_ManagementExtensions_to_SNME_ManagementExtensions" />
+        </transform>
+        <transform input="expiresInformation" output="expiresInformation">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="event" output="event">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="accessNetworkInformation" output="accessNetworkInformation">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="serviceContextID" output="serviceContextID">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="list_of_subscription_ID" output="list_of_subscription_ID">
+            <use-transformer from="xfd:MRFCRecord_generatedType_29" to="snme:MRFCRecord_generatedType_29" class="XFD_MRFCRecord_generatedType_29_to_SNME_MRFCRecord_generatedType_29" />
+        </transform>
+        <transform input="list_Of_Early_SDP_Media_Components" output="list_Of_Early_SDP_Media_Components">
+            <use-transformer from="xfd:MRFCRecord_generatedType_30" to="snme:MRFCRecord_generatedType_30" class="XFD_MRFCRecord_generatedType_30_to_SNME_MRFCRecord_generatedType_30" />
+        </transform>
+        <transform input="sessionPriority" output="sessionPriority">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="serviceRequestTimeStampFraction" output="serviceRequestTimeStampFraction">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="serviceDeliveryStartTimeStampFraction" output="serviceDeliveryStartTimeStampFraction">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="serviceDeliveryEndTimeStampFraction" output="serviceDeliveryEndTimeStampFraction">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="applicationServersInformation" output="applicationServersInformation">
+            <use-transformer from="xfd:MRFCRecord_generatedType_31" to="snme:MRFCRecord_generatedType_31" class="XFD_MRFCRecord_generatedType_31_to_SNME_MRFCRecord_generatedType_31" />
+        </transform>
+        <transform input="online_charging_flag" output="online_charging_flag">
+            <use-transformer from="int" to="int" class="t:IntToIntCopy" />
+        </transform>
+        <transform input="userLocationInformation" output="userLocationInformation">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="mSTimeZone" output="mSTimeZone">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="listOfReasonHeader" output="listOfReasonHeader">
+            <use-transformer from="xfd:ListOfReasonHeader" to="snme:ListOfReasonHeader" class="XFD_ListOfReasonHeader_to_SNME_ListOfReasonHeader" />
+        </transform>
+        <transform input="service_Id" output="service_Id">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="requested_Party_Address" output="requested_Party_Address">
+            <use-transformer from="xfd:InvolvedParty" to="snme:InvolvedParty" class="XFD_InvolvedParty_to_SNME_InvolvedParty" />
+        </transform>
+        <transform input="list_Of_Called_Asserted_Identity" output="list_Of_Called_Asserted_Identity">
+            <use-transformer from="xfd:ListOfInvolvedParties" to="snme:ListOfInvolvedParties" class="XFD_ListOfInvolvedParties_to_SNME_ListOfInvolvedParties" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_MRFCRecord_generatedType_28_to_SNME_MRFCRecord_generatedType_28" from="xfd:MRFCRecord_generatedType_28" to="snme:MRFCRecord_generatedType_28">
+        <transform input="MRFCRecord_generatedType_28" output="MRFCRecord_generatedType_28">
+            <transformer from="xfd:Media_Components_List[]" to="snme:Media_Components_List[]">
+                <array>
+                    <use-transformer from="xfd:Media_Components_List" to="snme:Media_Components_List" class="XFD_Media_Components_List_to_SNME_Media_Components_List" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_MRFCRecord_generatedType_31_to_SNME_MRFCRecord_generatedType_31" from="xfd:MRFCRecord_generatedType_31" to="snme:MRFCRecord_generatedType_31">
+        <transform input="MRFCRecord_generatedType_31" output="MRFCRecord_generatedType_31">
+            <transformer from="xfd:ApplicationServersInformation[]" to="snme:ApplicationServersInformation[]">
+                <array>
+                    <use-transformer from="xfd:ApplicationServersInformation" to="snme:ApplicationServersInformation" class="XFD_ApplicationServersInformation_to_SNME_ApplicationServersInformation" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_MRFCRecord_generatedType_29_to_SNME_MRFCRecord_generatedType_29" from="xfd:MRFCRecord_generatedType_29" to="snme:MRFCRecord_generatedType_29">
+        <transform input="MRFCRecord_generatedType_29" output="MRFCRecord_generatedType_29">
+            <transformer from="xfd:SubscriptionID[]" to="snme:SubscriptionID[]">
+                <array>
+                    <use-transformer from="xfd:SubscriptionID" to="snme:SubscriptionID" class="XFD_SubscriptionID_to_SNME_SubscriptionID" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_MRFCRecord_generatedType_30_to_SNME_MRFCRecord_generatedType_30" from="xfd:MRFCRecord_generatedType_30" to="snme:MRFCRecord_generatedType_30">
+        <transform input="MRFCRecord_generatedType_30" output="MRFCRecord_generatedType_30">
+            <transformer from="xfd:Early_Media_Components_List[]" to="snme:Early_Media_Components_List[]">
+                <array>
+                    <use-transformer from="xfd:Early_Media_Components_List" to="snme:Early_Media_Components_List" class="XFD_Early_Media_Components_List_to_SNME_Early_Media_Components_List" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_ECSCFRecord_to_SNME_ECSCFRecord" from="xfd:ECSCFRecord" to="snme:ECSCFRecord">
+        <transform input="recordType" output="recordType">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="retransmission" output="retransmission">
+            <use-transformer from="int" to="int" class="t:IntToIntCopy" />
+        </transform>
+        <transform input="sIP_Method" output="sIP_Method">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="role_of_Node" output="role_of_Node">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="nodeAddress" output="nodeAddress">
+            <use-transformer from="xfd:NodeAddress" to="snme:NodeAddress" class="XFD_NodeAddress_to_SNME_NodeAddress" />
+        </transform>
+        <transform input="session_Id" output="session_Id">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="list_Of_Calling_Party_Address" output="list_Of_Calling_Party_Address">
+            <use-transformer from="xfd:ListOfInvolvedParties" to="snme:ListOfInvolvedParties" class="XFD_ListOfInvolvedParties_to_SNME_ListOfInvolvedParties" />
+        </transform>
+        <transform input="called_Party_Address" output="called_Party_Address">
+            <use-transformer from="xfd:InvolvedParty" to="snme:InvolvedParty" class="XFD_InvolvedParty_to_SNME_InvolvedParty" />
+        </transform>
+        <transform input="privateUserID" output="privateUserID">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="serviceRequestTimeStamp" output="serviceRequestTimeStamp">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="serviceDeliveryStartTimeStamp" output="serviceDeliveryStartTimeStamp">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="serviceDeliveryEndTimeStamp" output="serviceDeliveryEndTimeStamp">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="recordOpeningTime" output="recordOpeningTime">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="recordClosureTime" output="recordClosureTime">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="interOperatorIdentifiers" output="interOperatorIdentifiers">
+            <use-transformer from="xfd:InterOperatorIdentifierlist" to="snme:InterOperatorIdentifierlist" class="XFD_InterOperatorIdentifierlist_to_SNME_InterOperatorIdentifierlist" />
+        </transform>
+        <transform input="localRecordSequenceNumber" output="localRecordSequenceNumber">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="recordSequenceNumber" output="recordSequenceNumber">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="causeForRecordClosing" output="causeForRecordClosing">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="incomplete_CDR_Indication" output="incomplete_CDR_Indication">
+            <use-transformer from="xfd:Incomplete_CDR_Indication" to="snme:Incomplete_CDR_Indication" class="XFD_Incomplete_CDR_Indication_to_SNME_Incomplete_CDR_Indication" />
+        </transform>
+        <transform input="iMS_Charging_Identifier" output="iMS_Charging_Identifier">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="list_Of_SDP_Media_Components" output="list_Of_SDP_Media_Components">
+            <use-transformer from="xfd:ECSCFRecord_generatedType_32" to="snme:ECSCFRecord_generatedType_32" class="XFD_ECSCFRecord_generatedType_32_to_SNME_ECSCFRecord_generatedType_32" />
+        </transform>
+        <transform input="gGSNaddress" output="gGSNaddress">
+            <use-transformer from="xfd:NodeAddress" to="snme:NodeAddress" class="XFD_NodeAddress_to_SNME_NodeAddress" />
+        </transform>
+        <transform input="serviceReasonReturnCode" output="serviceReasonReturnCode">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="list_Of_Message_Bodies" output="list_Of_Message_Bodies">
+            <use-transformer from="xfd:ECSCFRecord_generatedType_33" to="snme:ECSCFRecord_generatedType_33" class="XFD_ECSCFRecord_generatedType_33_to_SNME_ECSCFRecord_generatedType_33" />
+        </transform>
+        <transform input="recordExtensions" output="recordExtensions">
+            <use-transformer from="xfd:ManagementExtensions" to="snme:ManagementExtensions" class="XFD_ManagementExtensions_to_SNME_ManagementExtensions" />
+        </transform>
+        <transform input="expiresInformation" output="expiresInformation">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="list_Of_Associated_URI" output="list_Of_Associated_URI">
+            <use-transformer from="xfd:ListOfInvolvedParties" to="snme:ListOfInvolvedParties" class="XFD_ListOfInvolvedParties_to_SNME_ListOfInvolvedParties" />
+        </transform>
+        <transform input="event" output="event">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="accessNetworkInformation" output="accessNetworkInformation">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="serviceContextID" output="serviceContextID">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="list_of_subscription_ID" output="list_of_subscription_ID">
+            <use-transformer from="xfd:ECSCFRecord_generatedType_34" to="snme:ECSCFRecord_generatedType_34" class="XFD_ECSCFRecord_generatedType_34_to_SNME_ECSCFRecord_generatedType_34" />
+        </transform>
+        <transform input="list_Of_Early_SDP_Media_Components" output="list_Of_Early_SDP_Media_Components">
+            <use-transformer from="xfd:ECSCFRecord_generatedType_35" to="snme:ECSCFRecord_generatedType_35" class="XFD_ECSCFRecord_generatedType_35_to_SNME_ECSCFRecord_generatedType_35" />
+        </transform>
+        <transform input="iMSCommunicationServiceIdentifier" output="iMSCommunicationServiceIdentifier">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="numberPortabilityRouting" output="numberPortabilityRouting">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="carrierSelectRouting" output="carrierSelectRouting">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="sessionPriority" output="sessionPriority">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="serviceRequestTimeStampFraction" output="serviceRequestTimeStampFraction">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="serviceDeliveryStartTimeStampFraction" output="serviceDeliveryStartTimeStampFraction">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="serviceDeliveryEndTimeStampFraction" output="serviceDeliveryEndTimeStampFraction">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="applicationServersInformation" output="applicationServersInformation">
+            <use-transformer from="xfd:ECSCFRecord_generatedType_36" to="snme:ECSCFRecord_generatedType_36" class="XFD_ECSCFRecord_generatedType_36_to_SNME_ECSCFRecord_generatedType_36" />
+        </transform>
+        <transform input="requested_Party_Address" output="requested_Party_Address">
+            <use-transformer from="xfd:InvolvedParty" to="snme:InvolvedParty" class="XFD_InvolvedParty_to_SNME_InvolvedParty" />
+        </transform>
+        <transform input="list_Of_Called_Asserted_Identity" output="list_Of_Called_Asserted_Identity">
+            <use-transformer from="xfd:ListOfInvolvedParties" to="snme:ListOfInvolvedParties" class="XFD_ListOfInvolvedParties_to_SNME_ListOfInvolvedParties" />
+        </transform>
+        <transform input="userLocationInformation" output="userLocationInformation">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="mSTimeZone" output="mSTimeZone">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="listOfReasonHeader" output="listOfReasonHeader">
+            <use-transformer from="xfd:ListOfReasonHeader" to="snme:ListOfReasonHeader" class="XFD_ListOfReasonHeader_to_SNME_ListOfReasonHeader" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_ECSCFRecord_generatedType_32_to_SNME_ECSCFRecord_generatedType_32" from="xfd:ECSCFRecord_generatedType_32" to="snme:ECSCFRecord_generatedType_32">
+        <transform input="ECSCFRecord_generatedType_32" output="ECSCFRecord_generatedType_32">
+            <transformer from="xfd:Media_Components_List[]" to="snme:Media_Components_List[]">
+                <array>
+                    <use-transformer from="xfd:Media_Components_List" to="snme:Media_Components_List" class="XFD_Media_Components_List_to_SNME_Media_Components_List" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_ECSCFRecord_generatedType_35_to_SNME_ECSCFRecord_generatedType_35" from="xfd:ECSCFRecord_generatedType_35" to="snme:ECSCFRecord_generatedType_35">
+        <transform input="ECSCFRecord_generatedType_35" output="ECSCFRecord_generatedType_35">
+            <transformer from="xfd:Early_Media_Components_List[]" to="snme:Early_Media_Components_List[]">
+                <array>
+                    <use-transformer from="xfd:Early_Media_Components_List" to="snme:Early_Media_Components_List" class="XFD_Early_Media_Components_List_to_SNME_Early_Media_Components_List" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_ECSCFRecord_generatedType_36_to_SNME_ECSCFRecord_generatedType_36" from="xfd:ECSCFRecord_generatedType_36" to="snme:ECSCFRecord_generatedType_36">
+        <transform input="ECSCFRecord_generatedType_36" output="ECSCFRecord_generatedType_36">
+            <transformer from="xfd:ApplicationServersInformation[]" to="snme:ApplicationServersInformation[]">
+                <array>
+                    <use-transformer from="xfd:ApplicationServersInformation" to="snme:ApplicationServersInformation" class="XFD_ApplicationServersInformation_to_SNME_ApplicationServersInformation" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_ECSCFRecord_generatedType_33_to_SNME_ECSCFRecord_generatedType_33" from="xfd:ECSCFRecord_generatedType_33" to="snme:ECSCFRecord_generatedType_33">
+        <transform input="ECSCFRecord_generatedType_33" output="ECSCFRecord_generatedType_33">
+            <transformer from="xfd:MessageBody[]" to="snme:MessageBody[]">
+                <array>
+                    <use-transformer from="xfd:MessageBody" to="snme:MessageBody" class="XFD_MessageBody_to_SNME_MessageBody" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_ECSCFRecord_generatedType_34_to_SNME_ECSCFRecord_generatedType_34" from="xfd:ECSCFRecord_generatedType_34" to="snme:ECSCFRecord_generatedType_34">
+        <transform input="ECSCFRecord_generatedType_34" output="ECSCFRecord_generatedType_34">
+            <transformer from="xfd:SubscriptionID[]" to="snme:SubscriptionID[]">
+                <array>
+                    <use-transformer from="xfd:SubscriptionID" to="snme:SubscriptionID" class="XFD_SubscriptionID_to_SNME_SubscriptionID" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_IPBinaryAddress_to_SNME_IPBinaryAddress" from="xfd:IPBinaryAddress" to="snme:IPBinaryAddress">
+        <transform input="iPBinV4Address" output="iPBinV4Address">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="iPBinV6Address" output="iPBinV6Address">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_NodeAddress_to_SNME_NodeAddress" from="xfd:NodeAddress" to="snme:NodeAddress">
+        <transform input="iPAddress" output="iPAddress">
+            <use-transformer from="xfd:IPAddressCustom" to="snme:IPAddressCustom" class="XFD_IPAddressCustom_to_SNME_IPAddressCustom" />
+        </transform>
+        <transform input="domainName" output="domainName">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_RealTimeTariffInformation_to_SNME_RealTimeTariffInformation" from="xfd:RealTimeTariffInformation" to="snme:RealTimeTariffInformation">
+        <transform input="tariffInformation" output="tariffInformation">
+            <use-transformer from="xfd:TariffInformation" to="snme:TariffInformation" class="XFD_TariffInformation_to_SNME_TariffInformation" />
+        </transform>
+        <transform input="tariffXml" output="tariffXml">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_AIN_Info_to_SNME_AIN_Info" from="xfd:AIN_Info" to="snme:AIN_Info">
+        <transform input="aMAslpID" output="aMAslpID">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_BGCFRecord_to_SNME_BGCFRecord" from="xfd:BGCFRecord" to="snme:BGCFRecord">
+        <transform input="recordType" output="recordType">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="retransmission" output="retransmission">
+            <use-transformer from="int" to="int" class="t:IntToIntCopy" />
+        </transform>
+        <transform input="sIP_Method" output="sIP_Method">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="role_of_Node" output="role_of_Node">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="nodeAddress" output="nodeAddress">
+            <use-transformer from="xfd:NodeAddress" to="snme:NodeAddress" class="XFD_NodeAddress_to_SNME_NodeAddress" />
+        </transform>
+        <transform input="session_Id" output="session_Id">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="list_Of_Calling_Party_Address" output="list_Of_Calling_Party_Address">
+            <use-transformer from="xfd:ListOfInvolvedParties" to="snme:ListOfInvolvedParties" class="XFD_ListOfInvolvedParties_to_SNME_ListOfInvolvedParties" />
+        </transform>
+        <transform input="called_Party_Address" output="called_Party_Address">
+            <use-transformer from="xfd:InvolvedParty" to="snme:InvolvedParty" class="XFD_InvolvedParty_to_SNME_InvolvedParty" />
+        </transform>
+        <transform input="serviceRequestTimeStamp" output="serviceRequestTimeStamp">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="serviceDeliveryStartTimeStamp" output="serviceDeliveryStartTimeStamp">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="serviceDeliveryEndTimeStamp" output="serviceDeliveryEndTimeStamp">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="recordOpeningTime" output="recordOpeningTime">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="recordClosureTime" output="recordClosureTime">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="interOperatorIdentifiers" output="interOperatorIdentifiers">
+            <use-transformer from="xfd:InterOperatorIdentifiers" to="snme:InterOperatorIdentifiers" class="XFD_InterOperatorIdentifiers_to_SNME_InterOperatorIdentifiers" />
+        </transform>
+        <transform input="localRecordSequenceNumber" output="localRecordSequenceNumber">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="recordSequenceNumber" output="recordSequenceNumber">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="causeForRecordClosing" output="causeForRecordClosing">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="incomplete_CDR_Indication" output="incomplete_CDR_Indication">
+            <use-transformer from="xfd:Incomplete_CDR_Indication" to="snme:Incomplete_CDR_Indication" class="XFD_Incomplete_CDR_Indication_to_SNME_Incomplete_CDR_Indication" />
+        </transform>
+        <transform input="iMS_Charging_Identifier" output="iMS_Charging_Identifier">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="list_Of_SDP_Media_Components" output="list_Of_SDP_Media_Components">
+            <use-transformer from="xfd:BGCFRecord_generatedType_37" to="snme:BGCFRecord_generatedType_37" class="XFD_BGCFRecord_generatedType_37_to_SNME_BGCFRecord_generatedType_37" />
+        </transform>
+        <transform input="serviceReasonReturnCode" output="serviceReasonReturnCode">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="recordExtensions" output="recordExtensions">
+            <use-transformer from="xfd:ManagementExtensions" to="snme:ManagementExtensions" class="XFD_ManagementExtensions_to_SNME_ManagementExtensions" />
+        </transform>
+        <transform input="expiresInformation" output="expiresInformation">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="event" output="event">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="accessNetworkInformation" output="accessNetworkInformation">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="serviceContextID" output="serviceContextID">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="list_Of_Early_SDP_Media_Components" output="list_Of_Early_SDP_Media_Components">
+            <use-transformer from="xfd:BGCFRecord_generatedType_38" to="snme:BGCFRecord_generatedType_38" class="XFD_BGCFRecord_generatedType_38_to_SNME_BGCFRecord_generatedType_38" />
+        </transform>
+        <transform input="numberPortabilityRouting" output="numberPortabilityRouting">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="carrierSelectRouting" output="carrierSelectRouting">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="sessionPriority" output="sessionPriority">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="serviceRequestTimeStampFraction" output="serviceRequestTimeStampFraction">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="serviceDeliveryStartTimeStampFraction" output="serviceDeliveryStartTimeStampFraction">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="serviceDeliveryEndTimeStampFraction" output="serviceDeliveryEndTimeStampFraction">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="listOfReasonHeader" output="listOfReasonHeader">
+            <use-transformer from="xfd:ListOfReasonHeader" to="snme:ListOfReasonHeader" class="XFD_ListOfReasonHeader_to_SNME_ListOfReasonHeader" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_BGCFRecord_generatedType_37_to_SNME_BGCFRecord_generatedType_37" from="xfd:BGCFRecord_generatedType_37" to="snme:BGCFRecord_generatedType_37">
+        <transform input="BGCFRecord_generatedType_37" output="BGCFRecord_generatedType_37">
+            <transformer from="xfd:Media_Components_List[]" to="snme:Media_Components_List[]">
+                <array>
+                    <use-transformer from="xfd:Media_Components_List" to="snme:Media_Components_List" class="XFD_Media_Components_List_to_SNME_Media_Components_List" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_BGCFRecord_generatedType_38_to_SNME_BGCFRecord_generatedType_38" from="xfd:BGCFRecord_generatedType_38" to="snme:BGCFRecord_generatedType_38">
+        <transform input="BGCFRecord_generatedType_38" output="BGCFRecord_generatedType_38">
+            <transformer from="xfd:Early_Media_Components_List[]" to="snme:Early_Media_Components_List[]">
+                <array>
+                    <use-transformer from="xfd:Early_Media_Components_List" to="snme:Early_Media_Components_List" class="XFD_Early_Media_Components_List_to_SNME_Early_Media_Components_List" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_Mobile_ID_to_SNME_Mobile_ID" from="xfd:Mobile_ID" to="snme:Mobile_ID">
+        <transform input="calling_imsi" output="calling_imsi">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="calling_min" output="calling_min">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="called_imsi" output="called_imsi">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="called_min" output="called_min">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_SupplServiceInfo_to_SNME_SupplServiceInfo" from="xfd:SupplServiceInfo" to="snme:SupplServiceInfo">
+        <transform input="sS_Service_Type" output="sS_Service_Type">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="sS_Service_Mode" output="sS_Service_Mode">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="sS_Service_Action" output="sS_Service_Action">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="service_ID" output="service_ID">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="associated_Number" output="associated_Number">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="sS_Start_Date_and_Time" output="sS_Start_Date_and_Time">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="sS_End_Date_and_Time" output="sS_End_Date_and_Time">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="sS_Name_Space" output="sS_Name_Space">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="sS_Precedence_Level" output="sS_Precedence_Level">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="sS_Service_Category" output="sS_Service_Category">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_ALURecordExtensions_to_SNME_ALURecordExtensions" from="xfd:ALURecordExtensions" to="snme:ALURecordExtensions">
+        <transform input="supplServiceInfos" output="supplServiceInfos">
+            <use-transformer from="xfd:ALURecordExtensions_generatedType_39" to="snme:ALURecordExtensions_generatedType_39" class="XFD_ALURecordExtensions_generatedType_39_to_SNME_ALURecordExtensions_generatedType_39" />
+        </transform>
+        <transform input="call_Type" output="call_Type">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="call_Direction" output="call_Direction">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="mobile_ID" output="mobile_ID">
+            <use-transformer from="xfd:Mobile_ID" to="snme:Mobile_ID" class="XFD_Mobile_ID_to_SNME_Mobile_ID" />
+        </transform>
+        <transform input="handover_Info" output="handover_Info">
+            <use-transformer from="xfd:ALURecordExtensions_generatedType_40" to="snme:ALURecordExtensions_generatedType_40" class="XFD_ALURecordExtensions_generatedType_40_to_SNME_ALURecordExtensions_generatedType_40" />
+        </transform>
+        <transform input="roaming_Ind" output="roaming_Ind">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="third_Party_Charging_Address" output="third_Party_Charging_Address">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="ue_Local_Time_Offset" output="ue_Local_Time_Offset">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="mac_ID" output="mac_ID">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="initial_Cell_Sector_Location" output="initial_Cell_Sector_Location">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="last_Cell_Sector_Location" output="last_Cell_Sector_Location">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="rating_Result" output="rating_Result">
+            <use-transformer from="xfd:RatingResult" to="snme:RatingResult" class="XFD_RatingResult_to_SNME_RatingResult" />
+        </transform>
+        <transform input="ain_Info" output="ain_Info">
+            <use-transformer from="xfd:AIN_Info" to="snme:AIN_Info" class="XFD_AIN_Info_to_SNME_AIN_Info" />
+        </transform>
+        <transform input="accessNetworkChargingPhysicalAccessID" output="accessNetworkChargingPhysicalAccessID">
+            <use-transformer from="xfd:AccessNetworkChargingPhysicalAccessID" to="snme:AccessNetworkChargingPhysicalAccessID" class="XFD_AccessNetworkChargingPhysicalAccessID_to_SNME_AccessNetworkChargingPhysicalAccessID" />
+        </transform>
+        <transform input="mGCFInfo" output="mGCFInfo">
+            <use-transformer from="xfd:MGCFInfo" to="snme:MGCFInfo" class="XFD_MGCFInfo_to_SNME_MGCFInfo" />
+        </transform>
+        <transform input="callingPartyCategory" output="callingPartyCategory">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="advice_of_Charge" output="advice_of_Charge">
+            <use-transformer from="xfd:Advice_of_Charge" to="snme:Advice_of_Charge" class="XFD_Advice_of_Charge_to_SNME_Advice_of_Charge" />
+        </transform>
+        <transform input="qoS_Statistic" output="qoS_Statistic">
+            <use-transformer from="xfd:QoS_Statistic" to="snme:QoS_Statistic" class="XFD_QoS_Statistic_to_SNME_QoS_Statistic" />
+        </transform>
+        <transform input="calling_Party_Number_Wholesale_ID" output="calling_Party_Number_Wholesale_ID">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="called_Party_Number_Wholesale_ID" output="called_Party_Number_Wholesale_ID">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="virtual_Group_Call_Control" output="virtual_Group_Call_Control">
+            <use-transformer from="xfd:Virtual_Group_Call_Control" to="snme:Virtual_Group_Call_Control" class="XFD_Virtual_Group_Call_Control_to_SNME_Virtual_Group_Call_Control" />
+        </transform>
+        <transform input="endReason" output="endReason">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="emergency_Service_Routing_Number" output="emergency_Service_Routing_Number">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="aLU_Service_Parameter_Info" output="aLU_Service_Parameter_Info">
+            <use-transformer from="xfd:ALURecordExtensions_generatedType_41" to="snme:ALURecordExtensions_generatedType_41" class="XFD_ALURecordExtensions_generatedType_41_to_SNME_ALURecordExtensions_generatedType_41" />
+        </transform>
+        <transform input="sIPRingingTimestamp" output="sIPRingingTimestamp">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="sIPRingingTimestampFraction" output="sIPRingingTimestampFraction">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="psExtension" output="psExtension">
+            <use-transformer from="xfd:PsExtension" to="snme:PsExtension" class="XFD_PsExtension_to_SNME_PsExtension" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_ALURecordExtensions_generatedType_39_to_SNME_ALURecordExtensions_generatedType_39" from="xfd:ALURecordExtensions_generatedType_39" to="snme:ALURecordExtensions_generatedType_39">
+        <transform input="ALURecordExtensions_generatedType_39" output="ALURecordExtensions_generatedType_39">
+            <transformer from="xfd:SupplServiceInfo[]" to="snme:SupplServiceInfo[]">
+                <array>
+                    <use-transformer from="xfd:SupplServiceInfo" to="snme:SupplServiceInfo" class="XFD_SupplServiceInfo_to_SNME_SupplServiceInfo" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_ALURecordExtensions_generatedType_41_to_SNME_ALURecordExtensions_generatedType_41" from="xfd:ALURecordExtensions_generatedType_41" to="snme:ALURecordExtensions_generatedType_41">
+        <transform input="ALURecordExtensions_generatedType_41" output="ALURecordExtensions_generatedType_41">
+            <transformer from="xfd:ALU_Service_Parameter_Info[]" to="snme:ALU_Service_Parameter_Info[]">
+                <array>
+                    <use-transformer from="xfd:ALU_Service_Parameter_Info" to="snme:ALU_Service_Parameter_Info" class="XFD_ALU_Service_Parameter_Info_to_SNME_ALU_Service_Parameter_Info" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_ALURecordExtensions_generatedType_40_to_SNME_ALURecordExtensions_generatedType_40" from="xfd:ALURecordExtensions_generatedType_40" to="snme:ALURecordExtensions_generatedType_40">
+        <transform input="ALURecordExtensions_generatedType_40" output="ALURecordExtensions_generatedType_40">
+            <transformer from="xfd:Handover_Info[]" to="snme:Handover_Info[]">
+                <array>
+                    <use-transformer from="xfd:Handover_Info" to="snme:Handover_Info" class="XFD_Handover_Info_to_SNME_Handover_Info" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_Early_Media_Components_List_to_SNME_Early_Media_Components_List" from="xfd:Early_Media_Components_List" to="snme:Early_Media_Components_List">
+        <transform input="sDP_Offer_Timestamp" output="sDP_Offer_Timestamp">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="sDP_Answer_Timestamp" output="sDP_Answer_Timestamp">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="sDP_Media_Components" output="sDP_Media_Components">
+            <use-transformer from="xfd:Early_Media_Components_List_generatedType_42" to="snme:Early_Media_Components_List_generatedType_42" class="XFD_Early_Media_Components_List_generatedType_42_to_SNME_Early_Media_Components_List_generatedType_42" />
+        </transform>
+        <transform input="mediaInitiatorFlag" output="mediaInitiatorFlag">
+            <use-transformer from="int" to="int" class="t:IntToIntCopy" />
+        </transform>
+        <transform input="sDP_Session_Description" output="sDP_Session_Description">
+            <use-transformer from="xfd:Early_Media_Components_List_generatedType_43" to="snme:Early_Media_Components_List_generatedType_43" class="XFD_Early_Media_Components_List_generatedType_43_to_SNME_Early_Media_Components_List_generatedType_43" />
+        </transform>
+        <transform input="sDP_Type" output="sDP_Type">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_Early_Media_Components_List_generatedType_43_to_SNME_Early_Media_Components_List_generatedType_43" from="xfd:Early_Media_Components_List_generatedType_43" to="snme:Early_Media_Components_List_generatedType_43">
+        <transform input="Early_Media_Components_List_generatedType_43" output="Early_Media_Components_List_generatedType_43">
+            <use-transformer from="string[]" to="nme:string-array" class="tnme:StringArrayToStringArrayWrapper" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_Early_Media_Components_List_generatedType_42_to_SNME_Early_Media_Components_List_generatedType_42" from="xfd:Early_Media_Components_List_generatedType_42" to="snme:Early_Media_Components_List_generatedType_42">
+        <transform input="Early_Media_Components_List_generatedType_42" output="Early_Media_Components_List_generatedType_42">
+            <transformer from="xfd:SDP_Media_Component[]" to="snme:SDP_Media_Component[]">
+                <array>
+                    <use-transformer from="xfd:SDP_Media_Component" to="snme:SDP_Media_Component" class="XFD_SDP_Media_Component_to_SNME_SDP_Media_Component" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_UserEquipmentInfo_to_SNME_UserEquipmentInfo" from="xfd:UserEquipmentInfo" to="snme:UserEquipmentInfo">
+        <transform input="userEquipmentValue" output="userEquipmentValue">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="userEquipmentType" output="userEquipmentType">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_Advice_of_Charge_to_SNME_Advice_of_Charge" from="xfd:Advice_of_Charge" to="snme:Advice_of_Charge">
+        <transform input="initial_Cost_Information" output="initial_Cost_Information">
+            <use-transformer from="xfd:Cost_Information" to="snme:Cost_Information" class="XFD_Cost_Information_to_SNME_Cost_Information" />
+        </transform>
+        <transform input="initial_Time_Length" output="initial_Time_Length">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="cost_Information" output="cost_Information">
+            <use-transformer from="xfd:Cost_Information" to="snme:Cost_Information" class="XFD_Cost_Information_to_SNME_Cost_Information" />
+        </transform>
+        <transform input="time_Length" output="time_Length">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="time_Granularity" output="time_Granularity">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="aOC_Types" output="aOC_Types">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="aOC_Result" output="aOC_Result">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_SDP_Media_Component_to_SNME_SDP_Media_Component" from="xfd:SDP_Media_Component" to="snme:SDP_Media_Component">
+        <transform input="sDP_Media_Name" output="sDP_Media_Name">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="sDP_Media_Descriptions" output="sDP_Media_Descriptions">
+            <use-transformer from="xfd:SDP_Media_Description" to="snme:SDP_Media_Description" class="XFD_SDP_Media_Description_to_SNME_SDP_Media_Description" />
+        </transform>
+        <transform input="accessCorrelationID_gPRS_Charging_Id" output="accessCorrelationID_gPRS_Charging_Id">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="accessCorrelationID_accessNetworkChargingIdentifier" output="accessCorrelationID_accessNetworkChargingIdentifier">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="authorized_QoS" output="authorized_QoS">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_ListOfReasonHeader_to_SNME_ListOfReasonHeader" from="xfd:ListOfReasonHeader" to="snme:ListOfReasonHeader">
+        <transform input="ListOfReasonHeader" output="ListOfReasonHeader">
+            <use-transformer from="string[]" to="nme:string-array" class="tnme:StringArrayToStringArrayWrapper" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_Unit_Value_to_SNME_Unit_Value" from="xfd:Unit_Value" to="snme:Unit_Value">
+        <transform input="value_Digits" output="value_Digits">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="exponent" output="exponent">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_RatingResult_to_SNME_RatingResult" from="xfd:RatingResult" to="snme:RatingResult">
+        <transform input="unit_Value" output="unit_Value">
+            <use-transformer from="xfd:UnitValue" to="snme:UnitValue" class="XFD_UnitValue_to_SNME_UnitValue" />
+        </transform>
+        <transform input="currency_Code" output="currency_Code">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="cost_Unit" output="cost_Unit">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="result_Code" output="result_Code">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="rating_Action" output="rating_Action">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_RateElement_to_SNME_RateElement" from="xfd:RateElement" to="snme:RateElement">
+        <transform input="unitType" output="unitType">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="unitValue" output="unitValue">
+            <use-transformer from="double" to="double" class="t:DoubleToDoubleCopy" />
+        </transform>
+        <transform input="unitCost" output="unitCost">
+            <use-transformer from="double" to="double" class="t:DoubleToDoubleCopy" />
+        </transform>
+        <transform input="unitQuotaThreshold" output="unitQuotaThreshold">
+            <use-transformer from="double" to="double" class="t:DoubleToDoubleCopy" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_QoS_Statistic_to_SNME_QoS_Statistic" from="xfd:QoS_Statistic" to="snme:QoS_Statistic">
+        <transform input="network_Statistic" output="network_Statistic">
+            <use-transformer from="xfd:QoS_Statistic_generatedType_44" to="snme:QoS_Statistic_generatedType_44" class="XFD_QoS_Statistic_generatedType_44_to_SNME_QoS_Statistic_generatedType_44" />
+        </transform>
+        <transform input="rTP_Statistic" output="rTP_Statistic">
+            <use-transformer from="xfd:QoS_Statistic_generatedType_45" to="snme:QoS_Statistic_generatedType_45" class="XFD_QoS_Statistic_generatedType_45_to_SNME_QoS_Statistic_generatedType_45" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_QoS_Statistic_generatedType_45_to_SNME_QoS_Statistic_generatedType_45" from="xfd:QoS_Statistic_generatedType_45" to="snme:QoS_Statistic_generatedType_45">
+        <transform input="QoS_Statistic_generatedType_45" output="QoS_Statistic_generatedType_45">
+            <use-transformer from="Blob[]" to="snme:BlobWrapper[]" class="tnme:BlobArrayToNMEBlobWrapperArray">
+                <params>
+                    <param name="NMEAttributeName" value="value" />
+                </params>
+            </use-transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_QoS_Statistic_generatedType_44_to_SNME_QoS_Statistic_generatedType_44" from="xfd:QoS_Statistic_generatedType_44" to="snme:QoS_Statistic_generatedType_44">
+        <transform input="QoS_Statistic_generatedType_44" output="QoS_Statistic_generatedType_44">
+            <use-transformer from="Blob[]" to="snme:BlobWrapper[]" class="tnme:BlobArrayToNMEBlobWrapperArray">
+                <params>
+                    <param name="NMEAttributeName" value="value" />
+                </params>
+            </use-transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_ALU_Service_Parameter_Info_to_SNME_ALU_Service_Parameter_Info" from="xfd:ALU_Service_Parameter_Info" to="snme:ALU_Service_Parameter_Info">
+        <transform input="service_Parameter_Type" output="service_Parameter_Type">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="service_Parameter_OctetString_Value" output="service_Parameter_OctetString_Value">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="service_Parameter_UTF8String_Value" output="service_Parameter_UTF8String_Value">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_AccessCorrelationID_to_SNME_AccessCorrelationID" from="xfd:AccessCorrelationID" to="snme:AccessCorrelationID">
+        <transform input="gPRS_Charging_Id" output="gPRS_Charging_Id">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="accessNetworkChargingIdentifier" output="accessNetworkChargingIdentifier">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_Incomplete_CDR_Indication_to_SNME_Incomplete_CDR_Indication" from="xfd:Incomplete_CDR_Indication" to="snme:Incomplete_CDR_Indication">
+        <transform input="aCRStartLost" output="aCRStartLost">
+            <use-transformer from="boolean" to="boolean" class="t:BooleanToBooleanCopy" />
+        </transform>
+        <transform input="aCRInterimLost" output="aCRInterimLost">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="aCRStopLost" output="aCRStopLost">
+            <use-transformer from="boolean" to="boolean" class="t:BooleanToBooleanCopy" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_InterOperatorIdentifiers_to_SNME_InterOperatorIdentifiers" from="xfd:InterOperatorIdentifiers" to="snme:InterOperatorIdentifiers">
+        <transform input="originatingIOI" output="originatingIOI">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="terminatingIOI" output="terminatingIOI">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_Handover_Info_to_SNME_Handover_Info" from="xfd:Handover_Info" to="snme:Handover_Info">
+        <transform input="handover_timestamp" output="handover_timestamp">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="handover_Ind" output="handover_Ind">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_UnitValue_to_SNME_UnitValue" from="xfd:UnitValue" to="snme:UnitValue">
+        <transform input="value_Digits" output="value_Digits">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="exponent" output="exponent">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_QoSData_to_SNME_QoSData" from="xfd:QoSData" to="snme:QoSData">
+        <transform input="packetSent" output="packetSent">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="packetReceived" output="packetReceived">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="packetLost" output="packetLost">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="bytesSent" output="bytesSent">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="bytesReceived" output="bytesReceived">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="interArrivalJitter" output="interArrivalJitter">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="iPNetworkRoundTripDelay" output="iPNetworkRoundTripDelay">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_Media_Components_List_to_SNME_Media_Components_List" from="xfd:Media_Components_List" to="snme:Media_Components_List">
+        <transform input="sIP_Request_Timestamp" output="sIP_Request_Timestamp">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="sIP_Response_Timestamp" output="sIP_Response_Timestamp">
+            <use-transformer from="Blob" to="nme:byte-array" class="tnme:BlobToByteArrayWrapper" />
+        </transform>
+        <transform input="sDP_Media_Components" output="sDP_Media_Components">
+            <use-transformer from="xfd:Media_Components_List_generatedType_46" to="snme:Media_Components_List_generatedType_46" class="XFD_Media_Components_List_generatedType_46_to_SNME_Media_Components_List_generatedType_46" />
+        </transform>
+        <transform input="mediaInitiatorFlag" output="mediaInitiatorFlag">
+            <use-transformer from="int" to="int" class="t:IntToIntCopy" />
+        </transform>
+        <transform input="sDP_Session_Description" output="sDP_Session_Description">
+            <use-transformer from="xfd:Media_Components_List_generatedType_47" to="snme:Media_Components_List_generatedType_47" class="XFD_Media_Components_List_generatedType_47_to_SNME_Media_Components_List_generatedType_47" />
+        </transform>
+        <transform input="mediaInitiatorParty" output="mediaInitiatorParty">
+            <use-transformer from="xfd:InvolvedParty" to="snme:InvolvedParty" class="XFD_InvolvedParty_to_SNME_InvolvedParty" />
+        </transform>
+        <transform input="sIP_Request_Timestamp_Fraction" output="sIP_Request_Timestamp_Fraction">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="sIP_Response_Timestamp_Fraction" output="sIP_Response_Timestamp_Fraction">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="sDP_Type" output="sDP_Type">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="localGWInsertedIndication" output="localGWInsertedIndication">
+            <use-transformer from="boolean" to="boolean" class="t:BooleanToBooleanCopy" />
+        </transform>
+        <transform input="iPRealmDefaultIndication" output="iPRealmDefaultIndication">
+            <use-transformer from="boolean" to="boolean" class="t:BooleanToBooleanCopy" />
+        </transform>
+        <transform input="transcoderInsertedIndication" output="transcoderInsertedIndication">
+            <use-transformer from="boolean" to="boolean" class="t:BooleanToBooleanCopy" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_Media_Components_List_generatedType_46_to_SNME_Media_Components_List_generatedType_46" from="xfd:Media_Components_List_generatedType_46" to="snme:Media_Components_List_generatedType_46">
+        <transform input="Media_Components_List_generatedType_46" output="Media_Components_List_generatedType_46">
+            <transformer from="xfd:SDP_Media_Component[]" to="snme:SDP_Media_Component[]">
+                <array>
+                    <use-transformer from="xfd:SDP_Media_Component" to="snme:SDP_Media_Component" class="XFD_SDP_Media_Component_to_SNME_SDP_Media_Component" />
+                </array>
+            </transformer>
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_Media_Components_List_generatedType_47_to_SNME_Media_Components_List_generatedType_47" from="xfd:Media_Components_List_generatedType_47" to="snme:Media_Components_List_generatedType_47">
+        <transform input="Media_Components_List_generatedType_47" output="Media_Components_List_generatedType_47">
+            <use-transformer from="string[]" to="nme:string-array" class="tnme:StringArrayToStringArrayWrapper" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_ManagementExtension_to_SNME_ManagementExtension" from="xfd:ManagementExtension" to="snme:ManagementExtension">
+        <transform input="identifier" output="identifier">
+            <use-transformer from="string" to="string" class="t:StringToStringCopy" />
+        </transform>
+        <transform input="significance" output="significance">
+            <use-transformer from="boolean" to="boolean" class="t:BooleanToBooleanCopy" />
+        </transform>
+        <transform input="information" output="information">
+            <use-transformer from="xfd:InformationCustom" to="snme:InformationCustom" class="XFD_InformationCustom_to_SNME_InformationCustom" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_InformationCustom_to_SNME_InformationCustom" from="xfd:InformationCustom" to="snme:InformationCustom">
+        <transform input="informationExtensions" output="informationExtensions">
+            <use-transformer from="xfd:InformationExtensions" to="snme:InformationExtensions" class="XFD_InformationExtensions_to_SNME_InformationExtensions" />
+        </transform>
+    </transformer>
+
+    <transformer id="XFD_InformationExtensions_to_SNME_InformationExtensions" from="xfd:InformationExtensions" to="snme:InformationExtensions">
+        <transform input="extensionProvider" output="extensionProvider">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="extensionVersion" output="extensionVersion">
+            <use-transformer from="long" to="long" class="t:LongToLongCopy" />
+        </transform>
+        <transform input="extensionData" output="extensionData">
+            <use-transformer from="xfd:ALURecordExtensions" to="snme:ALURecordExtensions" class="XFD_ALURecordExtensions_to_SNME_ALURecordExtensions" />
+        </transform>
+    </transformer>
+</transformations>

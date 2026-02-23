@@ -1,0 +1,45 @@
+{{- if or ( eq .Values.global.create "AllExceptPVCPV" ) ( eq .Values.global.create "All" ) }}
+
+{{- if .Values.container }}
+{{- if .Values.container.serverName }}
+
+{{$replicas:= include "container.replicas" . }}
+{{- if ne $replicas "0" }}
+
+{{- if .Values.global.services }}
+{{- if .Values.global.services.alias }}
+
+{{- $servername:= .Values.container.serverName | camelcase | lower }}
+{{- $releasename:= .Release.Name }}
+{{- $releasenamespace:= .Release.Namespace }}
+{{- $clusterdomain:= .Values.global.clusterdomain }}
+  {{- range .Values.global.services.alias }}
+  {{- $root:= . }}
+  {{- $serv:=( index $root 0 | camelcase | lower ) }}
+  {{- $alia:=( index $root 1 ) }}
+
+    {{- if eq $serv $servername }}
+---
+#Service Alias: "{{ $alia }}.{{ $releasenamespace }}.svc.{{ $clusterdomain }}" to "{{ $releasename }}-{{ $servername }}.{{ $releasenamespace }}.svc.{{ $clusterdomain }}"
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: "{{ .Release.Name | lower }}-{{ .Values.container.serverName | lower }}"
+  name: "{{ $alia }}"
+spec:
+  type: ExternalName
+  externalName: "{{ $releasename }}-{{ $servername }}.{{ $releasenamespace }}.svc.{{ $clusterdomain }}"
+
+    {{- end }}
+  {{- end }}
+
+{{- end }}
+
+{{- end }}
+{{- end }}
+
+{{- end }}
+{{- end }}
+
+{{- end }}

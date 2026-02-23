@@ -1,0 +1,4589 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<format xmlns="http://www.hp.com/usage/datastruct/xfd" targetNamespace="http://www.hp.com/usage/datastruct/xfd/IMSR7">
+    <root type="File" />
+
+    <type id="File">
+        <codec>
+            <raw/>
+        </codec>
+        <sequence partial="true" >
+            <field id="header" type="FileHeader"/>
+            <array id="records">
+                <field type="Record" />
+            </array>
+        </sequence>
+    </type>
+
+    <type id="FileHeader" EOR="false">
+        <codec>
+            <raw/>
+        </codec>
+        <sequence partial="true" >
+            <field id="fileLength" type="long" codec="UInt4"/>
+            <field id="headerLength" type="long" codec="UInt4">
+                <script language="Groovy" trigger="after">
+                    <![CDATA[
+                        byte[] buffer = new byte[bean.headerLength - 8];
+                        inputBuffer.read(buffer);
+                    ]]>
+                </script>
+            </field>
+        </sequence>
+    </type>
+
+    <type id="Record" EOR="true">
+        <codec>
+            <raw/>
+        </codec>
+        <sequence partial="true" >
+            <field id="header" type="RecordHeader"/>
+            <field id="iMSRecord" type="IMSRecord"/>
+        </sequence>
+    </type>
+
+    <type id="RecordHeader">
+        <codec>
+            <raw/>
+        </codec>
+        <sequence partial="true" >
+            <field id="recordLength" type="long" codec="UInt2"/>
+            <field id="releaseIdentifier" type="long" codec="UInt3bits"/>
+            <field id="versionIdentifier" type="long" codec="UInt5bits"/>
+            <field id="dataRecordFormat" type="long" codec="UInt3bits"/>
+            <field id="TSNumber" type="long" codec="UInt5bits"/>
+        </sequence>
+    </type>
+
+    <type id="IPTextRepresentedAddress">
+        <codec>
+            <ber/>
+        </codec>
+        <choice>
+            <field id="iPTextV4Address" type="string">
+                <codec>
+                    <ber tag="2" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="iPTextV6Address" type="string">
+                <codec>
+                    <ber tag="3" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+        </choice>
+    </type>
+    <type id="SCSCFRecord">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <field id="recordType" type="long">
+                <codec>
+                    <ber tag="0" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="retransmission" type="int">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific" valueCodec="NULL"/>
+                </codec>
+            </field>
+            <field id="sIP_Method" type="string">
+                <codec>
+                    <ber optional="true" tag="2" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="role_of_Node" type="long">
+                <codec>
+                    <ber optional="true" tag="3" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="nodeAddress" type="NodeAddress">
+                <codec>
+                    <ber optional="true" tag="4" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="session_Id" type="string">
+                <codec>
+                    <ber optional="true" tag="5" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="list_Of_Calling_Party_Address" type="ListOfInvolvedParties">
+                <codec>
+                    <ber optional="true" tag="6" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="called_Party_Address" type="InvolvedParty">
+                <codec>
+                    <ber optional="true" tag="7" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="privateUserID" type="string">
+                <codec>
+                    <ber optional="true" tag="8" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="serviceRequestTimeStamp" type="Blob">
+                <codec>
+                    <ber optional="true" tag="9" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="serviceDeliveryStartTimeStamp" type="Blob">
+                <codec>
+                    <ber optional="true" tag="10" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="serviceDeliveryEndTimeStamp" type="Blob">
+                <codec>
+                    <ber optional="true" tag="11" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="recordOpeningTime" type="Blob">
+                <codec>
+                    <ber optional="true" tag="12" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="recordClosureTime" type="Blob">
+                <codec>
+                    <ber optional="true" tag="13" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="interOperatorIdentifiers" type="InterOperatorIdentifierlist">
+                <codec>
+                    <ber optional="true" tag="14" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="localRecordSequenceNumber" type="long">
+                <codec>
+                    <ber optional="true" tag="15" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="recordSequenceNumber" type="long">
+                <codec>
+                    <ber optional="true" tag="16" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="causeForRecordClosing" type="long">
+                <codec>
+                    <ber optional="true" tag="17" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="incomplete_CDR_Indication" type="Incomplete_CDR_Indication">
+                <codec>
+                    <ber optional="true" tag="18" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="iMS_Charging_Identifier" type="Blob">
+                <codec>
+                    <ber optional="true" tag="19" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="list_Of_SDP_Media_Components" type="SCSCFRecord_generatedType_78">
+                <codec>
+                    <ber optional="true" tag="21" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="gGSNaddress" type="NodeAddress">
+                <codec>
+                    <ber optional="true" tag="22" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="serviceReasonReturnCode" type="string">
+                <codec>
+                    <ber optional="true" tag="23" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="list_Of_Message_Bodies" type="SCSCFRecord_generatedType_79">
+                <codec>
+                    <ber optional="true" tag="24" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="recordExtensions" type="ManagementExtensions">
+                <codec>
+                    <ber optional="true" tag="25" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="expiresInformation" type="long">
+                <codec>
+                    <ber optional="true" tag="26" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="list_Of_Associated_URI" type="ListOfInvolvedParties">
+                <codec>
+                    <ber optional="true" tag="27" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="event" type="string">
+                <codec>
+                    <ber optional="true" tag="28" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="list_Of_accessNetworkInformation" type="SCSCFRecord_generatedType_80">
+                <codec>
+                    <ber optional="true" tag="29" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="serviceContextID" type="string">
+                <codec>
+                    <ber optional="true" tag="30" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="list_of_subscription_ID" type="SCSCFRecord_generatedType_81">
+                <codec>
+                    <ber optional="true" tag="31" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="list_Of_Early_SDP_Media_Components" type="SCSCFRecord_generatedType_82">
+                <codec>
+                    <ber optional="true" tag="32" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="iMSCommunicationServiceIdentifier" type="Blob">
+                <codec>
+                    <ber optional="true" tag="33" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="applicationServersInformation" type="SCSCFRecord_generatedType_83">
+                <codec>
+                    <ber optional="true" tag="40" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="requested_Party_Address" type="InvolvedParty">
+                <codec>
+                    <ber optional="true" tag="41" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="list_Of_Called_Asserted_Identity" type="ListOfInvolvedParties">
+                <codec>
+                    <ber optional="true" tag="42" tagClass="context-specific"/>
+                </codec>
+            </field>
+        </set>
+    </type>
+    <type id="SCSCFRecord_generatedType_79">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="SCSCFRecord_generatedType_79">
+                <field type="MessageBody">
+                    <codec>
+                        <ber tag="16" tagClass="universal"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="SCSCFRecord_generatedType_80">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="SCSCFRecord_generatedType_80">
+                <field type="Blob">
+                    <codec>
+                        <ber tag="4" tagClass="universal" valueCodec="OctetString"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="SCSCFRecord_generatedType_81">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="SCSCFRecord_generatedType_81">
+                <field type="SubscriptionID">
+                    <codec>
+                        <ber tag="17" tagClass="universal"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="SCSCFRecord_generatedType_82">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="SCSCFRecord_generatedType_82">
+                <field type="Early_Media_Components_List">
+                    <codec>
+                        <ber tag="16" tagClass="universal"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="SCSCFRecord_generatedType_83">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="SCSCFRecord_generatedType_83">
+                <field type="ApplicationServersInformation">
+                    <codec>
+                        <ber tag="16" tagClass="universal"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="SCSCFRecord_generatedType_78">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="SCSCFRecord_generatedType_78">
+                <field type="Media_Components_List">
+                    <codec>
+                        <ber tag="16" tagClass="universal"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="AccessNetworkChargingPhysicalAccessID">
+        <codec>
+            <ber/>
+        </codec>
+        <sequence>
+            <field id="accessNetworkChargingPhysicalAccessIDValue" type="Blob">
+                <codec>
+                    <ber optional="true" tag="0" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="accessNetworkChargingPhysicalAccessIDRealm" type="Blob">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+        </sequence>
+    </type>
+    <type id="MGCFRecord">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <field id="recordType" type="long">
+                <codec>
+                    <ber tag="0" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="retransmission" type="int">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific" valueCodec="NULL"/>
+                </codec>
+            </field>
+            <field id="sIP_Method" type="string">
+                <codec>
+                    <ber optional="true" tag="2" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="role_of_Node" type="long">
+                <codec>
+                    <ber optional="true" tag="3" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="nodeAddress" type="NodeAddress">
+                <codec>
+                    <ber optional="true" tag="4" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="session_Id" type="string">
+                <codec>
+                    <ber optional="true" tag="5" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="list_Of_Calling_Party_Address" type="ListOfInvolvedParties">
+                <codec>
+                    <ber optional="true" tag="6" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="called_Party_Address" type="InvolvedParty">
+                <codec>
+                    <ber optional="true" tag="7" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="serviceRequestTimeStamp" type="Blob">
+                <codec>
+                    <ber optional="true" tag="9" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="serviceDeliveryStartTimeStamp" type="Blob">
+                <codec>
+                    <ber optional="true" tag="10" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="serviceDeliveryEndTimeStamp" type="Blob">
+                <codec>
+                    <ber optional="true" tag="11" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="recordOpeningTime" type="Blob">
+                <codec>
+                    <ber optional="true" tag="12" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="recordClosureTime" type="Blob">
+                <codec>
+                    <ber optional="true" tag="13" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="interOperatorIdentifiers" type="InterOperatorIdentifierlist">
+                <codec>
+                    <ber optional="true" tag="14" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="localRecordSequenceNumber" type="long">
+                <codec>
+                    <ber optional="true" tag="15" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="recordSequenceNumber" type="long">
+                <codec>
+                    <ber optional="true" tag="16" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="causeForRecordClosing" type="long">
+                <codec>
+                    <ber optional="true" tag="17" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="incomplete_CDR_Indication" type="Incomplete_CDR_Indication">
+                <codec>
+                    <ber optional="true" tag="18" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="iMS_Charging_Identifier" type="Blob">
+                <codec>
+                    <ber optional="true" tag="19" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="list_Of_SDP_Media_Components" type="MGCFRecord_generatedType_84">
+                <codec>
+                    <ber optional="true" tag="21" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="serviceReasonReturnCode" type="string">
+                <codec>
+                    <ber optional="true" tag="23" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="recordExtensions" type="ManagementExtensions">
+                <codec>
+                    <ber optional="true" tag="25" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="expiresInformation" type="long">
+                <codec>
+                    <ber optional="true" tag="26" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="event" type="string">
+                <codec>
+                    <ber optional="true" tag="28" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="list_Of_accessNetworkInformation" type="MGCFRecord_generatedType_85">
+                <codec>
+                    <ber optional="true" tag="29" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="serviceContextID" type="string">
+                <codec>
+                    <ber optional="true" tag="30" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="list_Of_Early_SDP_Media_Components" type="MGCFRecord_generatedType_86">
+                <codec>
+                    <ber optional="true" tag="32" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="trunkGroupID" type="TrunkGroupID">
+                <codec>
+                    <ber optional="true" tag="80" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="bearerService" type="TransmissionMedium">
+                <codec>
+                    <ber optional="true" tag="81" tagClass="context-specific"/>
+                </codec>
+            </field>
+        </set>
+    </type>
+    <type id="MGCFRecord_generatedType_86">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="MGCFRecord_generatedType_86">
+                <field type="Early_Media_Components_List">
+                    <codec>
+                        <ber tag="16" tagClass="universal"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="MGCFRecord_generatedType_85">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="MGCFRecord_generatedType_85">
+                <field type="Blob">
+                    <codec>
+                        <ber tag="4" tagClass="universal" valueCodec="OctetString"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="MGCFRecord_generatedType_84">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="MGCFRecord_generatedType_84">
+                <field type="Media_Components_List">
+                    <codec>
+                        <ber tag="16" tagClass="universal"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="MRFCRecord">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <field id="recordType" type="long">
+                <codec>
+                    <ber tag="0" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="retransmission" type="int">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific" valueCodec="NULL"/>
+                </codec>
+            </field>
+            <field id="sIP_Method" type="string">
+                <codec>
+                    <ber optional="true" tag="2" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="role_of_Node" type="long">
+                <codec>
+                    <ber optional="true" tag="3" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="nodeAddress" type="NodeAddress">
+                <codec>
+                    <ber optional="true" tag="4" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="session_Id" type="string">
+                <codec>
+                    <ber optional="true" tag="5" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="list_Of_Calling_Party_Address" type="ListOfInvolvedParties">
+                <codec>
+                    <ber optional="true" tag="6" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="called_Party_Address" type="InvolvedParty">
+                <codec>
+                    <ber optional="true" tag="7" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="serviceRequestTimeStamp" type="Blob">
+                <codec>
+                    <ber optional="true" tag="9" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="serviceDeliveryStartTimeStamp" type="Blob">
+                <codec>
+                    <ber optional="true" tag="10" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="serviceDeliveryEndTimeStamp" type="Blob">
+                <codec>
+                    <ber optional="true" tag="11" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="recordOpeningTime" type="Blob">
+                <codec>
+                    <ber optional="true" tag="12" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="recordClosureTime" type="Blob">
+                <codec>
+                    <ber optional="true" tag="13" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="interOperatorIdentifiers" type="InterOperatorIdentifierlist">
+                <codec>
+                    <ber optional="true" tag="14" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="localRecordSequenceNumber" type="long">
+                <codec>
+                    <ber optional="true" tag="15" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="recordSequenceNumber" type="long">
+                <codec>
+                    <ber optional="true" tag="16" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="causeForRecordClosing" type="long">
+                <codec>
+                    <ber optional="true" tag="17" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="incomplete_CDR_Indication" type="Incomplete_CDR_Indication">
+                <codec>
+                    <ber optional="true" tag="18" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="iMS_Charging_Identifier" type="Blob">
+                <codec>
+                    <ber optional="true" tag="19" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="list_Of_SDP_Media_Components" type="MRFCRecord_generatedType_87">
+                <codec>
+                    <ber optional="true" tag="21" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="gGSNaddress" type="NodeAddress">
+                <codec>
+                    <ber optional="true" tag="22" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="serviceReasonReturnCode" type="string">
+                <codec>
+                    <ber optional="true" tag="23" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="recordExtensions" type="ManagementExtensions">
+                <codec>
+                    <ber optional="true" tag="25" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="expiresInformation" type="long">
+                <codec>
+                    <ber optional="true" tag="26" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="event" type="string">
+                <codec>
+                    <ber optional="true" tag="28" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="list_Of_accessNetworkInformation" type="MRFCRecord_generatedType_88">
+                <codec>
+                    <ber optional="true" tag="29" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="serviceContextID" type="string">
+                <codec>
+                    <ber optional="true" tag="30" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="list_of_subscription_ID" type="MRFCRecord_generatedType_89">
+                <codec>
+                    <ber optional="true" tag="31" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="list_Of_Early_SDP_Media_Components" type="MRFCRecord_generatedType_90">
+                <codec>
+                    <ber optional="true" tag="32" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="applicationServersInformation" type="MRFCRecord_generatedType_91">
+                <codec>
+                    <ber optional="true" tag="40" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="service_Id" type="string">
+                <codec>
+                    <ber optional="true" tag="70" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="requested_Party_Address" type="InvolvedParty">
+                <codec>
+                    <ber optional="true" tag="71" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="list_Of_Called_Asserted_Identity" type="ListOfInvolvedParties">
+                <codec>
+                    <ber optional="true" tag="72" tagClass="context-specific"/>
+                </codec>
+            </field>
+        </set>
+    </type>
+    <type id="MRFCRecord_generatedType_90">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="MRFCRecord_generatedType_90">
+                <field type="Early_Media_Components_List">
+                    <codec>
+                        <ber tag="16" tagClass="universal"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="MRFCRecord_generatedType_87">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="MRFCRecord_generatedType_87">
+                <field type="Media_Components_List">
+                    <codec>
+                        <ber tag="16" tagClass="universal"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="MRFCRecord_generatedType_91">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="MRFCRecord_generatedType_91">
+                <field type="ApplicationServersInformation">
+                    <codec>
+                        <ber tag="16" tagClass="universal"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="MRFCRecord_generatedType_88">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="MRFCRecord_generatedType_88">
+                <field type="Blob">
+                    <codec>
+                        <ber tag="4" tagClass="universal" valueCodec="OctetString"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="MRFCRecord_generatedType_89">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="MRFCRecord_generatedType_89">
+                <field type="SubscriptionID">
+                    <codec>
+                        <ber tag="17" tagClass="universal"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="InvolvedParty">
+        <codec>
+            <ber/>
+        </codec>
+        <choice>
+            <field id="sIP_URI" type="string">
+                <codec>
+                    <ber tag="0" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="tEL_URI" type="string">
+                <codec>
+                    <ber tag="1" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+        </choice>
+    </type>
+    <type id="ServedPartyIPAddress">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <field id="iPBinaryAddress_iPBinV4Address" type="Blob">
+                <codec>
+                    <ber optional="true" tag="0" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="iPBinaryAddress_iPBinV6Address" type="Blob">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="iPTextRepresentedAddress_iPTextV4Address" type="string">
+                <codec>
+                    <ber optional="true" tag="2" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="iPTextRepresentedAddress_iPTextV6Address" type="string">
+                <codec>
+                    <ber optional="true" tag="3" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+        </set>
+    </type>
+    <type id="QoS_Information">
+        <codec>
+            <ber/>
+        </codec>
+        <sequence>
+            <field id="qoS_Class_Identifier" type="long">
+                <codec>
+                    <ber optional="true" tag="0" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="max_Requested_Bandwidth_UL" type="long">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="max_Requested_Bandwidth_DL" type="long">
+                <codec>
+                    <ber optional="true" tag="2" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="guaranteed_Bitrate_UL" type="long">
+                <codec>
+                    <ber optional="true" tag="3" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="guaranteed_Bitrate_DL" type="long">
+                <codec>
+                    <ber optional="true" tag="4" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="bearer_Identifier" type="long">
+                <codec>
+                    <ber optional="true" tag="5" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="allocation_Retention_Priority" type="long">
+                <codec>
+                    <ber optional="true" tag="6" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+        </sequence>
+    </type>
+    <type id="IPBinaryAddress">
+        <codec>
+            <ber/>
+        </codec>
+        <choice>
+            <field id="iPBinV4Address" type="Blob">
+                <codec>
+                    <ber tag="0" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="iPBinV6Address" type="Blob">
+                <codec>
+                    <ber tag="1" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+        </choice>
+    </type>
+    <type id="NodeAddress">
+        <codec>
+            <ber/>
+        </codec>
+        <choice>
+            <field id="iPAddress" type="IPAddressCustom">
+                <codec>
+                    <ber tag="0" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="domainName" type="string">
+                <codec>
+                    <ber tag="1" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+        </choice>
+    </type>
+    <type id="S_CSCF_Information">
+        <codec>
+            <ber/>
+        </codec>
+        <sequence>
+            <field id="mandatoryCapabilities" type="S_CSCF_Information_generatedType_92">
+                <codec>
+                    <ber optional="true" tag="0" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="optionalCapabilities" type="S_CSCF_Information_generatedType_93">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="serverName" type="string">
+                <codec>
+                    <ber optional="true" tag="2" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+        </sequence>
+    </type>
+    <type id="S_CSCF_Information_generatedType_92">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="S_CSCF_Information_generatedType_92">
+                <field type="string">
+                    <codec>
+                        <ber tag="25" tagClass="universal" valueCodec="AsciiString"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="S_CSCF_Information_generatedType_93">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="S_CSCF_Information_generatedType_93">
+                <field type="string">
+                    <codec>
+                        <ber tag="25" tagClass="universal" valueCodec="AsciiString"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="AIN_Info">
+        <codec>
+            <ber/>
+        </codec>
+        <sequence>
+            <field id="aMAslpID" type="string">
+                <codec>
+                    <ber tag="0" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+        </sequence>
+    </type>
+    <type id="ICSCFRecord">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <field id="recordType" type="long">
+                <codec>
+                    <ber tag="0" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="retransmission" type="int">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific" valueCodec="NULL"/>
+                </codec>
+            </field>
+            <field id="sIP_Method" type="string">
+                <codec>
+                    <ber optional="true" tag="2" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="role_of_Node" type="long">
+                <codec>
+                    <ber optional="true" tag="3" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="nodeAddress" type="NodeAddress">
+                <codec>
+                    <ber optional="true" tag="4" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="session_Id" type="string">
+                <codec>
+                    <ber optional="true" tag="5" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="list_Of_Calling_Party_Address" type="ListOfInvolvedParties">
+                <codec>
+                    <ber optional="true" tag="6" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="called_Party_Address" type="InvolvedParty">
+                <codec>
+                    <ber optional="true" tag="7" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="serviceRequestTimeStamp" type="Blob">
+                <codec>
+                    <ber optional="true" tag="9" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="interOperatorIdentifiers" type="InterOperatorIdentifierlist">
+                <codec>
+                    <ber optional="true" tag="14" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="localRecordSequenceNumber" type="long">
+                <codec>
+                    <ber optional="true" tag="15" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="causeForRecordClosing" type="long">
+                <codec>
+                    <ber optional="true" tag="17" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="incomplete_CDR_Indication" type="Incomplete_CDR_Indication">
+                <codec>
+                    <ber optional="true" tag="18" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="iMS_Charging_Identifier" type="Blob">
+                <codec>
+                    <ber optional="true" tag="19" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="serviceReasonReturnCode" type="string">
+                <codec>
+                    <ber optional="true" tag="23" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="recordExtensions" type="ManagementExtensions">
+                <codec>
+                    <ber optional="true" tag="25" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="expiresInformation" type="long">
+                <codec>
+                    <ber optional="true" tag="26" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="list_Of_Associated_URI" type="ListOfInvolvedParties">
+                <codec>
+                    <ber optional="true" tag="27" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="event" type="string">
+                <codec>
+                    <ber optional="true" tag="28" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="list_Of_accessNetworkInformation" type="ICSCFRecord_generatedType_94">
+                <codec>
+                    <ber optional="true" tag="29" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="serviceContextID" type="string">
+                <codec>
+                    <ber optional="true" tag="30" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="s_CSCF_Information" type="S_CSCF_Information">
+                <codec>
+                    <ber optional="true" tag="61" tagClass="context-specific"/>
+                </codec>
+            </field>
+        </set>
+    </type>
+    <type id="ICSCFRecord_generatedType_94">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="ICSCFRecord_generatedType_94">
+                <field type="Blob">
+                    <codec>
+                        <ber tag="4" tagClass="universal" valueCodec="OctetString"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="BGCFRecord">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <field id="recordType" type="long">
+                <codec>
+                    <ber tag="0" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="retransmission" type="int">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific" valueCodec="NULL"/>
+                </codec>
+            </field>
+            <field id="sIP_Method" type="string">
+                <codec>
+                    <ber optional="true" tag="2" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="role_of_Node" type="long">
+                <codec>
+                    <ber optional="true" tag="3" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="nodeAddress" type="NodeAddress">
+                <codec>
+                    <ber optional="true" tag="4" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="session_Id" type="string">
+                <codec>
+                    <ber optional="true" tag="5" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="list_Of_Calling_Party_Address" type="ListOfInvolvedParties">
+                <codec>
+                    <ber optional="true" tag="6" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="called_Party_Address" type="InvolvedParty">
+                <codec>
+                    <ber optional="true" tag="7" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="serviceRequestTimeStamp" type="Blob">
+                <codec>
+                    <ber optional="true" tag="9" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="serviceDeliveryStartTimeStamp" type="Blob">
+                <codec>
+                    <ber optional="true" tag="10" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="serviceDeliveryEndTimeStamp" type="Blob">
+                <codec>
+                    <ber optional="true" tag="11" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="recordOpeningTime" type="Blob">
+                <codec>
+                    <ber optional="true" tag="12" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="recordClosureTime" type="Blob">
+                <codec>
+                    <ber optional="true" tag="13" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="interOperatorIdentifiers" type="InterOperatorIdentifierlist">
+                <codec>
+                    <ber optional="true" tag="14" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="localRecordSequenceNumber" type="long">
+                <codec>
+                    <ber optional="true" tag="15" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="recordSequenceNumber" type="long">
+                <codec>
+                    <ber optional="true" tag="16" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="causeForRecordClosing" type="long">
+                <codec>
+                    <ber optional="true" tag="17" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="incomplete_CDR_Indication" type="Incomplete_CDR_Indication">
+                <codec>
+                    <ber optional="true" tag="18" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="iMS_Charging_Identifier" type="Blob">
+                <codec>
+                    <ber optional="true" tag="19" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="list_Of_SDP_Media_Components" type="BGCFRecord_generatedType_95">
+                <codec>
+                    <ber optional="true" tag="21" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="serviceReasonReturnCode" type="string">
+                <codec>
+                    <ber optional="true" tag="23" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="recordExtensions" type="ManagementExtensions">
+                <codec>
+                    <ber optional="true" tag="25" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="expiresInformation" type="long">
+                <codec>
+                    <ber optional="true" tag="26" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="event" type="string">
+                <codec>
+                    <ber optional="true" tag="28" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="serviceContextID" type="string">
+                <codec>
+                    <ber optional="true" tag="30" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="list_Of_Early_SDP_Media_Components" type="BGCFRecord_generatedType_96">
+                <codec>
+                    <ber optional="true" tag="32" tagClass="context-specific"/>
+                </codec>
+            </field>
+        </set>
+    </type>
+    <type id="BGCFRecord_generatedType_95">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="BGCFRecord_generatedType_95">
+                <field type="Media_Components_List">
+                    <codec>
+                        <ber tag="16" tagClass="universal"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="BGCFRecord_generatedType_96">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="BGCFRecord_generatedType_96">
+                <field type="Early_Media_Components_List">
+                    <codec>
+                        <ber tag="16" tagClass="universal"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="Mobile_ID">
+        <codec>
+            <ber/>
+        </codec>
+        <sequence>
+            <field id="calling_imsi" type="string">
+                <codec>
+                    <ber optional="true" tag="0" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="calling_min" type="string">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="called_imsi" type="string">
+                <codec>
+                    <ber optional="true" tag="2" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="called_min" type="string">
+                <codec>
+                    <ber optional="true" tag="3" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+        </sequence>
+    </type>
+    <type id="ServiceSpecificInfo">
+        <codec>
+            <ber/>
+        </codec>
+        <sequence>
+            <field id="serviceSpecificData" type="string">
+                <codec>
+                    <ber optional="true" tag="0" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="serviceSpecificType" type="long">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+        </sequence>
+    </type>
+    <type id="SupplServiceInfo">
+        <codec>
+            <ber/>
+        </codec>
+        <sequence>
+            <field id="sS_Service_Type" type="long">
+                <codec>
+                    <ber tag="0" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="sS_Service_Mode" type="long">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="sS_Service_Action" type="long">
+                <codec>
+                    <ber optional="true" tag="2" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="service_ID" type="string">
+                <codec>
+                    <ber optional="true" tag="3" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="associated_Number" type="string">
+                <codec>
+                    <ber optional="true" tag="4" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="sS_Start_Date_and_Time" type="Blob">
+                <codec>
+                    <ber optional="true" tag="5" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="sS_End_Date_and_Time" type="Blob">
+                <codec>
+                    <ber optional="true" tag="6" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="sS_Name_Space" type="string">
+                <codec>
+                    <ber optional="true" tag="7" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="sS_Precedence_Level" type="long">
+                <codec>
+                    <ber optional="true" tag="8" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="sS_Service_Category" type="long">
+                <codec>
+                    <ber optional="true" tag="9" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+        </sequence>
+    </type>
+    <type id="InterOperatorIdentifierlist">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="InterOperatorIdentifierlist">
+                <field type="InterOperatorIdentifiers">
+                    <codec>
+                        <ber tag="16" tagClass="universal"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="MGCFInfo">
+        <codec>
+            <ber/>
+        </codec>
+        <sequence>
+            <field id="aCMTimestamp" type="string">
+                <codec>
+                    <ber optional="true" tag="0" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="callReleaseDirection" type="long">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="numberOfFaxPages" type="long">
+                <codec>
+                    <ber optional="true" tag="2" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="qoSData" type="QoSData">
+                <codec>
+                    <ber optional="true" tag="3" tagClass="context-specific"/>
+                </codec>
+            </field>
+        </sequence>
+    </type>
+    <type id="RecordExtensions">
+        <codec>
+            <ber/>
+        </codec>
+        <sequence>
+            <field id="extensionProvider" type="long">
+                <codec>
+                    <ber tag="2" tagClass="universal" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="extensionVersion" type="long">
+                <codec>
+                    <ber tag="2" tagClass="universal" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="extensionData" type="ALURecordExtensions">
+                <codec>
+                    <ber tag="17" tagClass="universal"/>
+                </codec>
+            </field>
+        </sequence>
+    </type>
+    <type id="ALURecordExtensions">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <field id="list_Of_AcctInterimTriggerTimestamp" type="ALURecordExtensions_generatedType_97">
+                <codec>
+                    <ber optional="true" tag="0" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="hw_TAS" type="HW_TAS">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="bW_CAS_Specific" type="BW_CAS_Specific">
+                <codec>
+                    <ber optional="true" tag="2" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="qoS_Statistic" type="QoS_Statistic">
+                <codec>
+                    <ber optional="true" tag="3" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="aLU_SpecificExtension" type="ALU_SPECIFICEXTENSION">
+                <codec>
+                    <ber optional="true" tag="4" tagClass="context-specific"/>
+                </codec>
+            </field>
+        </set>
+    </type>
+    <type id="ALURecordExtensions_generatedType_97">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="ALURecordExtensions_generatedType_97">
+                <field type="Blob">
+                    <codec>
+                        <ber tag="4" tagClass="universal" valueCodec="OctetString"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="Early_Media_Components_List">
+        <codec>
+            <ber/>
+        </codec>
+        <sequence>
+            <field id="sDP_Offer_Timestamp" type="Blob">
+                <codec>
+                    <ber optional="true" tag="0" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="sDP_Answer_Timestamp" type="Blob">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="sDP_Media_Components" type="Early_Media_Components_List_generatedType_98">
+                <codec>
+                    <ber optional="true" tag="2" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="mediaInitiatorFlag" type="int">
+                <codec>
+                    <ber optional="true" tag="3" tagClass="context-specific" valueCodec="NULL"/>
+                </codec>
+            </field>
+            <field id="sDP_Session_Description" type="Early_Media_Components_List_generatedType_99">
+                <codec>
+                    <ber optional="true" tag="4" tagClass="context-specific"/>
+                </codec>
+            </field>
+        </sequence>
+    </type>
+    <type id="Early_Media_Components_List_generatedType_98">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="Early_Media_Components_List_generatedType_98">
+                <field type="SDP_Media_Component">
+                    <codec>
+                        <ber tag="16" tagClass="universal"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="Early_Media_Components_List_generatedType_99">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="Early_Media_Components_List_generatedType_99">
+                <field type="string">
+                    <codec>
+                        <ber tag="25" tagClass="universal" valueCodec="AsciiString"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="Advice_of_Charge">
+        <codec>
+            <ber/>
+        </codec>
+        <sequence>
+            <field id="initial_Cost_Information" type="Cost_Information">
+                <codec>
+                    <ber optional="true" tag="0" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="initial_Time_Length" type="long">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="cost_Information" type="Cost_Information">
+                <codec>
+                    <ber optional="true" tag="2" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="time_Length" type="long">
+                <codec>
+                    <ber optional="true" tag="3" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="time_Granularity" type="string">
+                <codec>
+                    <ber optional="true" tag="4" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="aOC_Types" type="string">
+                <codec>
+                    <ber optional="true" tag="5" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="aOC_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="6" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+        </sequence>
+    </type>
+    <type id="UserEquipmentInfo">
+        <codec>
+            <ber/>
+        </codec>
+        <sequence>
+            <field id="userEquipmentValue" type="Blob">
+                <codec>
+                    <ber optional="true" tag="0" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="userEquipmentType" type="long">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+        </sequence>
+    </type>
+    <type id="SDP_Media_Component">
+        <codec>
+            <ber/>
+        </codec>
+        <sequence>
+            <field id="sDP_Media_Name" type="string">
+                <codec>
+                    <ber optional="true" tag="0" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="sDP_Media_Descriptions" type="SDP_Media_Description">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="accessCorrelationID_gPRS_Charging_Id" type="long">
+                <codec>
+                    <ber optional="true" tag="2" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="accessCorrelationID_accessNetworkChargingIdentifier" type="string">
+                <codec>
+                    <ber optional="true" tag="4" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="authorized_QoS" type="string">
+                <codec>
+                    <ber optional="true" tag="3" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+        </sequence>
+    </type>
+    <type id="PsExtension">
+        <codec>
+            <ber/>
+        </codec>
+        <sequence>
+            <field id="callAnswerStatus" type="long">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="qoS_Information" type="QoS_Information">
+                <codec>
+                    <ber optional="true" tag="2" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="userEquipmentInfo" type="UserEquipmentInfo">
+                <codec>
+                    <ber optional="true" tag="3" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="threeGPP2_BSID" type="Blob">
+                <codec>
+                    <ber optional="true" tag="4" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="servedPartyIPAddress" type="IPAddressCustom">
+                <codec>
+                    <ber optional="true" tag="5" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="userLocationInformation" type="Blob">
+                <codec>
+                    <ber optional="true" tag="6" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="mSTimeZone" type="Blob">
+                <codec>
+                    <ber optional="true" tag="7" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="charging_group_ID" type="string">
+                <codec>
+                    <ber optional="true" tag="8" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+        </sequence>
+    </type>
+    <type id="PCSCFRecord">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <field id="recordType" type="long">
+                <codec>
+                    <ber tag="0" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="retransmission" type="int">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific" valueCodec="NULL"/>
+                </codec>
+            </field>
+            <field id="sIP_Method" type="string">
+                <codec>
+                    <ber optional="true" tag="2" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="role_of_Node" type="long">
+                <codec>
+                    <ber optional="true" tag="3" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="nodeAddress" type="NodeAddress">
+                <codec>
+                    <ber optional="true" tag="4" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="session_Id" type="string">
+                <codec>
+                    <ber optional="true" tag="5" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="list_Of_Calling_Party_Address" type="ListOfInvolvedParties">
+                <codec>
+                    <ber optional="true" tag="6" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="called_Party_Address" type="InvolvedParty">
+                <codec>
+                    <ber optional="true" tag="7" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="serviceRequestTimeStamp" type="Blob">
+                <codec>
+                    <ber optional="true" tag="9" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="serviceDeliveryStartTimeStamp" type="Blob">
+                <codec>
+                    <ber optional="true" tag="10" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="serviceDeliveryEndTimeStamp" type="Blob">
+                <codec>
+                    <ber optional="true" tag="11" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="recordOpeningTime" type="Blob">
+                <codec>
+                    <ber optional="true" tag="12" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="recordClosureTime" type="Blob">
+                <codec>
+                    <ber optional="true" tag="13" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="interOperatorIdentifiers" type="InterOperatorIdentifierlist">
+                <codec>
+                    <ber optional="true" tag="14" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="localRecordSequenceNumber" type="long">
+                <codec>
+                    <ber optional="true" tag="15" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="recordSequenceNumber" type="long">
+                <codec>
+                    <ber optional="true" tag="16" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="causeForRecordClosing" type="long">
+                <codec>
+                    <ber optional="true" tag="17" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="incomplete_CDR_Indication" type="Incomplete_CDR_Indication">
+                <codec>
+                    <ber optional="true" tag="18" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="iMS_Charging_Identifier" type="Blob">
+                <codec>
+                    <ber optional="true" tag="19" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="list_Of_SDP_Media_Components" type="PCSCFRecord_generatedType_100">
+                <codec>
+                    <ber optional="true" tag="21" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="gGSNaddress" type="NodeAddress">
+                <codec>
+                    <ber optional="true" tag="22" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="serviceReasonReturnCode" type="string">
+                <codec>
+                    <ber optional="true" tag="23" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="list_Of_Message_Bodies" type="PCSCFRecord_generatedType_101">
+                <codec>
+                    <ber optional="true" tag="24" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="recordExtensions" type="ManagementExtensions">
+                <codec>
+                    <ber optional="true" tag="25" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="expiresInformation" type="long">
+                <codec>
+                    <ber optional="true" tag="26" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="list_Of_Associated_URI" type="ListOfInvolvedParties">
+                <codec>
+                    <ber optional="true" tag="27" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="event" type="string">
+                <codec>
+                    <ber optional="true" tag="28" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="list_Of_accessNetworkInformation" type="PCSCFRecord_generatedType_102">
+                <codec>
+                    <ber optional="true" tag="29" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="serviceContextID" type="string">
+                <codec>
+                    <ber optional="true" tag="30" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="list_of_subscription_ID" type="PCSCFRecord_generatedType_103">
+                <codec>
+                    <ber optional="true" tag="31" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="list_Of_Early_SDP_Media_Components" type="PCSCFRecord_generatedType_104">
+                <codec>
+                    <ber optional="true" tag="32" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="servedPartyIPAddress" type="IPAddressCustom">
+                <codec>
+                    <ber optional="true" tag="50" tagClass="context-specific"/>
+                </codec>
+            </field>
+        </set>
+    </type>
+    <type id="PCSCFRecord_generatedType_102">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="PCSCFRecord_generatedType_102">
+                <field type="Blob">
+                    <codec>
+                        <ber tag="4" tagClass="universal" valueCodec="OctetString"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="PCSCFRecord_generatedType_103">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="PCSCFRecord_generatedType_103">
+                <field type="SubscriptionID">
+                    <codec>
+                        <ber tag="17" tagClass="universal"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="PCSCFRecord_generatedType_100">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="PCSCFRecord_generatedType_100">
+                <field type="Media_Components_List">
+                    <codec>
+                        <ber tag="16" tagClass="universal"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="PCSCFRecord_generatedType_101">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="PCSCFRecord_generatedType_101">
+                <field type="MessageBody">
+                    <codec>
+                        <ber tag="16" tagClass="universal"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="PCSCFRecord_generatedType_104">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="PCSCFRecord_generatedType_104">
+                <field type="Early_Media_Components_List">
+                    <codec>
+                        <ber tag="16" tagClass="universal"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="Abnormal_Finish_Info">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <field id="abnormal_Finish_Warning" type="string">
+                <codec>
+                    <ber optional="true" tag="0" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="abnormal_Finish_Reason" type="long">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+        </set>
+    </type>
+    <type id="Unit_Value">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <field id="value_Digits" type="long">
+                <codec>
+                    <ber optional="true" tag="0" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="exponent" type="long">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+        </set>
+    </type>
+    <type id="RatingResult">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <field id="unitValue" type="UnitValue">
+                <codec>
+                    <ber optional="true" tag="0" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="currencyCode" type="long">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="costUnit" type="string">
+                <codec>
+                    <ber optional="true" tag="2" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="resultCode" type="long">
+                <codec>
+                    <ber optional="true" tag="3" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="ratingAction" type="long">
+                <codec>
+                    <ber optional="true" tag="4" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+        </set>
+    </type>
+    <type id="ListOfInvolvedParties">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="ListOfInvolvedParties">
+                <field type="InvolvedParty">
+                    <codec>
+                        <ber/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="TrunkGroupID">
+        <codec>
+            <ber/>
+        </codec>
+        <choice>
+            <field id="incoming" type="string">
+                <codec>
+                    <ber tag="0" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="outgoing" type="string">
+                <codec>
+                    <ber tag="1" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+        </choice>
+    </type>
+    <type id="TransmissionMedium">
+        <codec>
+            <ber/>
+        </codec>
+        <sequence>
+            <field id="tMR" type="Blob">
+                <codec>
+                    <ber optional="true" tag="0" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="tMU" type="Blob">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+        </sequence>
+    </type>
+    <type id="ManagementExtensions">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="ManagementExtensions">
+                <field type="ManagementExtension">
+                    <codec>
+                        <ber tag="16" tagClass="universal"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="ALU_SPECIFICEXTENSION">
+        <codec>
+            <ber/>
+        </codec>
+        <sequence>
+            <field id="supplServiceInfos" type="ALU_SPECIFICEXTENSION_generatedType_105">
+                <codec>
+                    <ber optional="true" tag="0" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="call_Type" type="long">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="call_Direction" type="long">
+                <codec>
+                    <ber optional="true" tag="2" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="mobile_ID" type="Mobile_ID">
+                <codec>
+                    <ber optional="true" tag="3" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="handover_Info" type="ALU_SPECIFICEXTENSION_generatedType_106">
+                <codec>
+                    <ber optional="true" tag="4" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="roaming_Ind" type="long">
+                <codec>
+                    <ber optional="true" tag="5" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="third_Party_Charging_Address" type="string">
+                <codec>
+                    <ber optional="true" tag="6" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="ue_Local_Time_Offset" type="string">
+                <codec>
+                    <ber optional="true" tag="7" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="mac_ID" type="string">
+                <codec>
+                    <ber optional="true" tag="8" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="initial_Cell_Sector_Location" type="string">
+                <codec>
+                    <ber optional="true" tag="9" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="last_Cell_Sector_Location" type="string">
+                <codec>
+                    <ber optional="true" tag="10" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="rating_Result" type="RatingResult">
+                <codec>
+                    <ber optional="true" tag="11" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="ain_Info" type="AIN_Info">
+                <codec>
+                    <ber optional="true" tag="13" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="accessNetworkChargingPhysicalAccessID" type="AccessNetworkChargingPhysicalAccessID">
+                <codec>
+                    <ber optional="true" tag="16" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="associatedICID" type="ALU_SPECIFICEXTENSION_generatedType_107">
+                <codec>
+                    <ber optional="true" tag="17" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="mGCFInfo" type="MGCFInfo">
+                <codec>
+                    <ber optional="true" tag="18" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="list_Of_AcctInterimTriggerTimestamp" type="ALU_SPECIFICEXTENSION_generatedType_108">
+                <codec>
+                    <ber optional="true" tag="19" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="callingPartyCategory" type="string">
+                <codec>
+                    <ber optional="true" tag="23" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="advice_of_Charge" type="Advice_of_Charge">
+                <codec>
+                    <ber optional="true" tag="24" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="qoS_Statistic" type="QoS_Statistic">
+                <codec>
+                    <ber optional="true" tag="26" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="calling_Party_Number_Wholesale_ID" type="string">
+                <codec>
+                    <ber optional="true" tag="27" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="called_Party_Number_Wholesale_ID" type="string">
+                <codec>
+                    <ber optional="true" tag="28" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="endReason" type="string">
+                <codec>
+                    <ber optional="true" tag="30" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="aLU_Service_Parameter_Info" type="ALU_SPECIFICEXTENSION_generatedType_109">
+                <codec>
+                    <ber optional="true" tag="32" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="psExtension" type="PsExtension">
+                <codec>
+                    <ber optional="true" tag="101" tagClass="context-specific"/>
+                </codec>
+            </field>
+        </sequence>
+    </type>
+    <type id="ALU_SPECIFICEXTENSION_generatedType_108">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="ALU_SPECIFICEXTENSION_generatedType_108">
+                <field type="Blob">
+                    <codec>
+                        <ber tag="4" tagClass="universal" valueCodec="OctetString"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="ALU_SPECIFICEXTENSION_generatedType_109">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="ALU_SPECIFICEXTENSION_generatedType_109">
+                <field type="ALU_Service_Parameter_Info">
+                    <codec>
+                        <ber tag="16" tagClass="universal"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="ALU_SPECIFICEXTENSION_generatedType_105">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="ALU_SPECIFICEXTENSION_generatedType_105">
+                <field type="SupplServiceInfo">
+                    <codec>
+                        <ber tag="16" tagClass="universal"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="ALU_SPECIFICEXTENSION_generatedType_106">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="ALU_SPECIFICEXTENSION_generatedType_106">
+                <field type="Handover_Info">
+                    <codec>
+                        <ber tag="16" tagClass="universal"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="ALU_SPECIFICEXTENSION_generatedType_107">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="ALU_SPECIFICEXTENSION_generatedType_107">
+                <field type="Blob">
+                    <codec>
+                        <ber tag="4" tagClass="universal" valueCodec="OctetString"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="ApplicationServersInformation">
+        <codec>
+            <ber/>
+        </codec>
+        <sequence>
+            <field id="applicationServersInvolved" type="NodeAddress">
+                <codec>
+                    <ber optional="true" tag="0" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="applicationProvidedCalledParties" type="ApplicationServersInformation_generatedType_110">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific"/>
+                </codec>
+            </field>
+        </sequence>
+    </type>
+    <type id="ApplicationServersInformation_generatedType_110">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="ApplicationServersInformation_generatedType_110">
+                <field type="InvolvedParty">
+                    <codec>
+                        <ber/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="QoS_Statistic">
+        <codec>
+            <ber/>
+        </codec>
+        <sequence>
+            <field id="network_Statistic" type="QoS_Statistic_generatedType_111">
+                <codec>
+                    <ber optional="true" tag="0" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="rTP_Statistic" type="QoS_Statistic_generatedType_112">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific"/>
+                </codec>
+            </field>
+        </sequence>
+    </type>
+    <type id="QoS_Statistic_generatedType_111">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="QoS_Statistic_generatedType_111">
+                <field type="Blob">
+                    <codec>
+                        <ber tag="4" tagClass="universal" valueCodec="OctetString"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="QoS_Statistic_generatedType_112">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="QoS_Statistic_generatedType_112">
+                <field type="Blob">
+                    <codec>
+                        <ber tag="4" tagClass="universal" valueCodec="OctetString"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="ALU_Service_Parameter_Info">
+        <codec>
+            <ber/>
+        </codec>
+        <sequence>
+            <field id="service_Parameter_Type" type="long">
+                <codec>
+                    <ber optional="true" tag="0" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="service_Parameter_OctetString_Value" type="Blob">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="service_Parameter_UTF8String_Value" type="string">
+                <codec>
+                    <ber optional="true" tag="2" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+        </sequence>
+    </type>
+    <type id="AccessCorrelationID">
+        <codec>
+            <ber/>
+        </codec>
+        <choice>
+            <field id="gPRS_Charging_Id" type="long">
+                <codec>
+                    <ber tag="2" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="accessNetworkChargingIdentifier" type="string">
+                <codec>
+                    <ber tag="4" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+        </choice>
+    </type>
+    <type id="Incomplete_CDR_Indication">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <field id="aCRStartLost" type="boolean">
+                <codec>
+                    <ber tag="0" tagClass="context-specific" valueCodec="Boolean"/>
+                </codec>
+            </field>
+            <field id="aCRInterimLost" type="long">
+                <codec>
+                    <ber tag="1" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="aCRStopLost" type="boolean">
+                <codec>
+                    <ber tag="2" tagClass="context-specific" valueCodec="Boolean"/>
+                </codec>
+            </field>
+        </set>
+    </type>
+    <type id="ASRecord">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <field id="recordType" type="long">
+                <codec>
+                    <ber tag="0" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="retransmission" type="int">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific" valueCodec="NULL"/>
+                </codec>
+            </field>
+            <field id="sIP_Method" type="string">
+                <codec>
+                    <ber optional="true" tag="2" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="role_of_Node" type="long">
+                <codec>
+                    <ber optional="true" tag="3" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="nodeAddress" type="NodeAddress">
+                <codec>
+                    <ber optional="true" tag="4" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="session_Id" type="string">
+                <codec>
+                    <ber optional="true" tag="5" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="list_Of_Calling_Party_Address" type="ListOfInvolvedParties">
+                <codec>
+                    <ber optional="true" tag="6" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="called_Party_Address" type="InvolvedParty">
+                <codec>
+                    <ber optional="true" tag="7" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="serviceRequestTimeStamp" type="Blob">
+                <codec>
+                    <ber optional="true" tag="9" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="serviceDeliveryStartTimeStamp" type="Blob">
+                <codec>
+                    <ber optional="true" tag="10" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="serviceDeliveryEndTimeStamp" type="Blob">
+                <codec>
+                    <ber optional="true" tag="11" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="recordOpeningTime" type="Blob">
+                <codec>
+                    <ber optional="true" tag="12" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="recordClosureTime" type="Blob">
+                <codec>
+                    <ber optional="true" tag="13" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="interOperatorIdentifiers" type="InterOperatorIdentifierlist">
+                <codec>
+                    <ber optional="true" tag="14" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="localRecordSequenceNumber" type="long">
+                <codec>
+                    <ber optional="true" tag="15" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="recordSequenceNumber" type="long">
+                <codec>
+                    <ber optional="true" tag="16" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="causeForRecordClosing" type="long">
+                <codec>
+                    <ber optional="true" tag="17" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="incomplete_CDR_Indication" type="Incomplete_CDR_Indication">
+                <codec>
+                    <ber optional="true" tag="18" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="iMS_Charging_Identifier" type="Blob">
+                <codec>
+                    <ber optional="true" tag="19" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="list_Of_SDP_Media_Components" type="ASRecord_generatedType_113">
+                <codec>
+                    <ber optional="true" tag="21" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="gGSNaddress" type="NodeAddress">
+                <codec>
+                    <ber optional="true" tag="22" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="serviceReasonReturnCode" type="string">
+                <codec>
+                    <ber optional="true" tag="23" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="list_Of_Message_Bodies" type="ASRecord_generatedType_114">
+                <codec>
+                    <ber optional="true" tag="24" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="recordExtensions" type="ManagementExtensions">
+                <codec>
+                    <ber optional="true" tag="25" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="expiresInformation" type="long">
+                <codec>
+                    <ber optional="true" tag="26" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="event" type="string">
+                <codec>
+                    <ber optional="true" tag="28" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="list_Of_accessNetworkInformation" type="ASRecord_generatedType_115">
+                <codec>
+                    <ber optional="true" tag="29" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="serviceContextID" type="string">
+                <codec>
+                    <ber optional="true" tag="30" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="list_of_subscription_ID" type="ASRecord_generatedType_116">
+                <codec>
+                    <ber optional="true" tag="31" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="list_Of_Early_SDP_Media_Components" type="ASRecord_generatedType_117">
+                <codec>
+                    <ber optional="true" tag="32" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="iMSCommunicationServiceIdentifier" type="Blob">
+                <codec>
+                    <ber optional="true" tag="33" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="serviceSpecificInfo" type="ASRecord_generatedType_118">
+                <codec>
+                    <ber optional="true" tag="100" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="requested_Party_Address" type="InvolvedParty">
+                <codec>
+                    <ber optional="true" tag="101" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="list_Of_Called_Asserted_Identity" type="ListOfInvolvedParties">
+                <codec>
+                    <ber optional="true" tag="102" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="alternateChargedPartyAddress" type="string">
+                <codec>
+                    <ber optional="true" tag="103" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+        </set>
+    </type>
+    <type id="ASRecord_generatedType_118">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="ASRecord_generatedType_118">
+                <field type="ServiceSpecificInfo">
+                    <codec>
+                        <ber tag="16" tagClass="universal"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="ASRecord_generatedType_116">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="ASRecord_generatedType_116">
+                <field type="SubscriptionID">
+                    <codec>
+                        <ber tag="17" tagClass="universal"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="ASRecord_generatedType_117">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="ASRecord_generatedType_117">
+                <field type="Early_Media_Components_List">
+                    <codec>
+                        <ber tag="16" tagClass="universal"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="ASRecord_generatedType_114">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="ASRecord_generatedType_114">
+                <field type="MessageBody">
+                    <codec>
+                        <ber tag="16" tagClass="universal"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="ASRecord_generatedType_115">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="ASRecord_generatedType_115">
+                <field type="Blob">
+                    <codec>
+                        <ber tag="4" tagClass="universal" valueCodec="OctetString"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="ASRecord_generatedType_113">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="ASRecord_generatedType_113">
+                <field type="Media_Components_List">
+                    <codec>
+                        <ber tag="16" tagClass="universal"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="InterOperatorIdentifiers">
+        <codec>
+            <ber/>
+        </codec>
+        <sequence>
+            <field id="originatingIOI" type="string">
+                <codec>
+                    <ber optional="true" tag="0" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="terminatingIOI" type="string">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+        </sequence>
+    </type>
+    <type id="Cost_Information">
+        <codec>
+            <ber/>
+        </codec>
+        <sequence>
+            <field id="unit_Value" type="Unit_Value">
+                <codec>
+                    <ber optional="true" tag="0" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="currency_Code" type="long">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="cost_Unit" type="string">
+                <codec>
+                    <ber optional="true" tag="2" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+        </sequence>
+    </type>
+    <type id="Handover_Info">
+        <codec>
+            <ber/>
+        </codec>
+        <sequence>
+            <field id="handover_timestamp" type="Blob">
+                <codec>
+                    <ber optional="true" tag="0" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="handover_Ind" type="long">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+        </sequence>
+    </type>
+    <type id="UnitValue">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <field id="valueDigits" type="long">
+                <codec>
+                    <ber tag="0" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="exponent" type="long">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+        </set>
+    </type>
+    <type id="QoSData">
+        <codec>
+            <ber/>
+        </codec>
+        <sequence>
+            <field id="packetSent" type="long">
+                <codec>
+                    <ber optional="true" tag="0" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="packetReceived" type="long">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="packetLost" type="long">
+                <codec>
+                    <ber optional="true" tag="2" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="bytesSent" type="long">
+                <codec>
+                    <ber optional="true" tag="3" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="bytesReceived" type="long">
+                <codec>
+                    <ber optional="true" tag="4" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="interArrivalJitter" type="long">
+                <codec>
+                    <ber optional="true" tag="5" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="iPNetworkRoundTripDelay" type="long">
+                <codec>
+                    <ber optional="true" tag="6" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+        </sequence>
+    </type>
+    <type id="Media_Components_List">
+        <codec>
+            <ber/>
+        </codec>
+        <sequence>
+            <field id="sIP_Request_Timestamp" type="Blob">
+                <codec>
+                    <ber optional="true" tag="0" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="sIP_Response_Timestamp" type="Blob">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="sDP_Media_Components" type="Media_Components_List_generatedType_119">
+                <codec>
+                    <ber optional="true" tag="2" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="mediaInitiatorFlag" type="int">
+                <codec>
+                    <ber optional="true" tag="3" tagClass="context-specific" valueCodec="NULL"/>
+                </codec>
+            </field>
+            <field id="sDP_Session_Description" type="Media_Components_List_generatedType_120">
+                <codec>
+                    <ber optional="true" tag="4" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="mediaInitiatorParty" type="InvolvedParty">
+                <codec>
+                    <ber optional="true" tag="5" tagClass="context-specific"/>
+                </codec>
+            </field>
+        </sequence>
+    </type>
+    <type id="Media_Components_List_generatedType_119">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="Media_Components_List_generatedType_119">
+                <field type="SDP_Media_Component">
+                    <codec>
+                        <ber tag="16" tagClass="universal"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="Media_Components_List_generatedType_120">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="Media_Components_List_generatedType_120">
+                <field type="string">
+                    <codec>
+                        <ber tag="25" tagClass="universal" valueCodec="AsciiString"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="SDP_Media_Description">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <array id="SDP_Media_Description">
+                <field type="string">
+                    <codec>
+                        <ber tag="25" tagClass="universal" valueCodec="AsciiString"/>
+                    </codec>
+                </field>
+            </array>
+        </set>
+    </type>
+    <type id="IMSRecord">
+        <codec>
+            <ber/>
+        </codec>
+        <choice>
+            <field id="sCSCFRecord" type="SCSCFRecord">
+                <codec>
+                    <ber tag="63" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="pCSCFRecord" type="PCSCFRecord">
+                <codec>
+                    <ber tag="64" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="iCSCFRecord" type="ICSCFRecord">
+                <codec>
+                    <ber tag="65" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="mRFCRecord" type="MRFCRecord">
+                <codec>
+                    <ber tag="66" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="mGCFRecord" type="MGCFRecord">
+                <codec>
+                    <ber tag="67" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="bGCFRecord" type="BGCFRecord">
+                <codec>
+                    <ber tag="68" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="aSRecord" type="ASRecord">
+                <codec>
+                    <ber tag="69" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="sPDFRecord" type="ASRecord">
+                <codec>
+                    <ber tag="70" tagClass="context-specific"/>
+                </codec>
+            </field>
+        </choice>
+    </type>
+    <type id="ManagementExtension">
+        <codec>
+            <ber/>
+        </codec>
+        <sequence>
+            <field id="identifier" type="string">
+                <codec>
+                    <ber tag="6" tagClass="universal" valueCodec="ObjectIdentifier"/>
+                </codec>
+            </field>
+            <field id="significance" type="boolean">
+                <codec>
+                    <ber tag="1" tagClass="context-specific" valueCodec="Boolean"/>
+                </codec>
+            </field>
+            <field id="information" type="RecordExtensions">
+                <codec>
+                    <ber tag="2" tagClass="context-specific"/>
+                </codec>
+            </field>
+        </sequence>
+    </type>
+    <type id="SubscriptionID">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <field id="subscriptionIDType" type="long">
+                <codec>
+                    <ber tag="0" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="subscriptionIDData" type="string">
+                <codec>
+                    <ber tag="1" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+        </set>
+    </type>
+    <type id="HW_TAS">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <field id="access_Network_Info" type="string">
+                <codec>
+                    <ber optional="true" tag="0" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="origin_Callee_Party_Address" type="InvolvedParty">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="ring_Duration" type="long">
+                <codec>
+                    <ber optional="true" tag="2" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="service_Identifier" type="long">
+                <codec>
+                    <ber optional="true" tag="3" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="diversion_Reason" type="long">
+                <codec>
+                    <ber optional="true" tag="4" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="diversion_Count" type="long">
+                <codec>
+                    <ber optional="true" tag="5" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="related_Call_Reference" type="string">
+                <codec>
+                    <ber optional="true" tag="6" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="charge_Category" type="long">
+                <codec>
+                    <ber optional="true" tag="7" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="abnormal_Finish_Info" type="Abnormal_Finish_Info">
+                <codec>
+                    <ber optional="true" tag="8" tagClass="context-specific"/>
+                </codec>
+            </field>
+            <field id="pBX_Address" type="string">
+                <codec>
+                    <ber optional="true" tag="9" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="dialled_Party_Address" type="string">
+                <codec>
+                    <ber optional="true" tag="10" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="carrier_Identification_Code" type="string">
+                <codec>
+                    <ber optional="true" tag="11" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="sDP_Media_Identifier" type="long">
+                <codec>
+                    <ber optional="true" tag="12" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="tariff_pulses" type="long">
+                <codec>
+                    <ber optional="true" tag="13" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="first_Level_Bill_Group" type="long">
+                <codec>
+                    <ber optional="true" tag="14" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="second_Level_Bill_Group" type="long">
+                <codec>
+                    <ber optional="true" tag="15" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="subgroup_ID" type="long">
+                <codec>
+                    <ber optional="true" tag="16" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+        </set>
+    </type>
+    <type id="BW_CAS_Specific">
+        <codec>
+            <ber/>
+        </codec>
+        <set>
+            <field id="bWAS_Radius_Encoding_Version" type="string">
+                <codec>
+                    <ber optional="true" tag="0" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Record_id" type="string">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Service_provider" type="string">
+                <codec>
+                    <ber optional="true" tag="2" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Type" type="string">
+                <codec>
+                    <ber optional="true" tag="3" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_User_Number" type="string">
+                <codec>
+                    <ber optional="true" tag="4" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Group_Number" type="string">
+                <codec>
+                    <ber optional="true" tag="5" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Direction" type="string">
+                <codec>
+                    <ber optional="true" tag="6" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Calling_Number" type="string">
+                <codec>
+                    <ber optional="true" tag="7" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Calling_Presentation_Indic" type="string">
+                <codec>
+                    <ber optional="true" tag="8" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Called_Number" type="string">
+                <codec>
+                    <ber optional="true" tag="9" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Start_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="10" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_User_Timezone" type="string">
+                <codec>
+                    <ber optional="true" tag="11" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Answer_Indic" type="string">
+                <codec>
+                    <ber optional="true" tag="12" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Answer_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="13" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Release_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="14" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Termination_Cause" type="string">
+                <codec>
+                    <ber optional="true" tag="15" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Network_Type" type="string">
+                <codec>
+                    <ber optional="true" tag="16" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Carrier_Identification_Code" type="string">
+                <codec>
+                    <ber optional="true" tag="17" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Dialed_Digits" type="string">
+                <codec>
+                    <ber optional="true" tag="18" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Call_Category" type="string">
+                <codec>
+                    <ber optional="true" tag="19" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Network_Call_Type" type="string">
+                <codec>
+                    <ber optional="true" tag="20" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Network_Translated_Number" type="string">
+                <codec>
+                    <ber optional="true" tag="21" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Network_Translated_Group" type="string">
+                <codec>
+                    <ber optional="true" tag="22" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Releasing_Party" type="string">
+                <codec>
+                    <ber optional="true" tag="23" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Route" type="string">
+                <codec>
+                    <ber optional="true" tag="24" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Network_Callid" type="string">
+                <codec>
+                    <ber optional="true" tag="25" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Codec" type="string">
+                <codec>
+                    <ber optional="true" tag="26" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Access_Device_Address" type="string">
+                <codec>
+                    <ber optional="true" tag="27" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Access_Callid" type="string">
+                <codec>
+                    <ber optional="true" tag="28" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Spare_29" type="string">
+                <codec>
+                    <ber optional="true" tag="29" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Failover_Correlation_Id" type="string">
+                <codec>
+                    <ber optional="true" tag="30" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Spare_31" type="string">
+                <codec>
+                    <ber optional="true" tag="31" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Group" type="string">
+                <codec>
+                    <ber optional="true" tag="32" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Department" type="string">
+                <codec>
+                    <ber optional="true" tag="33" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Account_Code" type="string">
+                <codec>
+                    <ber optional="true" tag="34" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Authorization_Code" type="string">
+                <codec>
+                    <ber optional="true" tag="35" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Original_Called_Number" type="string">
+                <codec>
+                    <ber optional="true" tag="36" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Original_Called_Presentation_Indic" type="string">
+                <codec>
+                    <ber optional="true" tag="37" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Original_Called_Reason" type="string">
+                <codec>
+                    <ber optional="true" tag="38" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Redirecting_Number" type="string">
+                <codec>
+                    <ber optional="true" tag="39" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Redirecting_Presentation_Indic" type="string">
+                <codec>
+                    <ber optional="true" tag="40" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Redirecting_Reason" type="string">
+                <codec>
+                    <ber optional="true" tag="41" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Charge_Indic" type="string">
+                <codec>
+                    <ber optional="true" tag="42" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Type_Of_Network" type="string">
+                <codec>
+                    <ber optional="true" tag="43" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_VP_Calling_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="44" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Local_Callid" type="string">
+                <codec>
+                    <ber optional="true" tag="45" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Remote_Callid" type="string">
+                <codec>
+                    <ber optional="true" tag="46" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Calling_Party_Category" type="string">
+                <codec>
+                    <ber optional="true" tag="47" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Conference_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="48" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Conference_Callid" type="string">
+                <codec>
+                    <ber optional="true" tag="49" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Conference_To" type="string">
+                <codec>
+                    <ber optional="true" tag="50" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Conference_From" type="string">
+                <codec>
+                    <ber optional="true" tag="51" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Conference_Id" type="string">
+                <codec>
+                    <ber optional="true" tag="52" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Conference_Role" type="string">
+                <codec>
+                    <ber optional="true" tag="53" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Conference_Bridge" type="string">
+                <codec>
+                    <ber optional="true" tag="54" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Conference_Owner" type="string">
+                <codec>
+                    <ber optional="true" tag="55" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Conference_Owner_Dn" type="string">
+                <codec>
+                    <ber optional="true" tag="56" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Conference_Title" type="string">
+                <codec>
+                    <ber optional="true" tag="57" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Conference_Project_Code" type="string">
+                <codec>
+                    <ber optional="true" tag="58" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Charging_Vector_Key" type="string">
+                <codec>
+                    <ber optional="true" tag="59" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Charging_Vector_Creator" type="string">
+                <codec>
+                    <ber optional="true" tag="60" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Charging_Vector_Orig" type="string">
+                <codec>
+                    <ber optional="true" tag="61" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Charging_Vector_Term" type="string">
+                <codec>
+                    <ber optional="true" tag="62" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Acc_Per_Call_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="63" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Acc_Per_Call_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="64" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Acb_Act_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="65" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Acb_Act_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="66" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Acb_Deact_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="67" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Acb_Deact_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="68" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Call_Park_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="69" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Call_Park_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="70" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Call_Park_Retr_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="71" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Call_Park_Retr_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="72" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Call_Pickup_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="73" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Call_Pickup_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="74" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Directed_Call_Pickup_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="75" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Directed_Call_Pickup_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="76" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Dpubi_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="77" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Dpubi_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="78" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Cancel_Cwt_Per_Call_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="79" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Cancel_Cwt_Per_Call_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="80" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Cfa_Act_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="81" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Cfa_Act_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="82" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Cfa_Deact_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="83" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Cfa_Deact_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="84" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Cfb_Act_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="85" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Cfb_Act_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="86" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Cfb_Deact_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="87" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Cfb_Deact_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="88" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Cfna_Act_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="89" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Cfna_Act_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="90" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Cfna_Deact_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="91" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Cfna_Deact_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="92" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Clid_Delivery_Per_Call_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="93" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Clid_Delivery_Per_Call_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="94" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Clid_Blocking_Per_Call_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="95" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Clid_Blocking_Per_Call_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="96" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Cot_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="97" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Cot_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="98" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Direct_Vm_Xfer_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="99" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Direct_Vm_Xfer_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="100" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Dnd_Act_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="101" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Dnd_Act_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="102" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Dnd_Deact_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="103" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Dnd_Deact_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="104" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Sac_Lock_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="105" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Sac_Lock_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="106" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Sac_Unlock_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="107" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Sac_Unlock_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="108" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Flash_Call_Hold_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="109" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Flash_Call_Hold_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="110" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Last_Number_Redial_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="111" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Last_Number_Redial_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="112" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Return_Call_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="113" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Return_Call_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="114" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Sd100_Programming_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="115" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Sd100_Programming_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="116" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Sd8_Programming_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="117" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Sd8_Programming_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="118" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Clear_Mwi_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="119" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Clear_Mwi_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="120" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_UserId" type="string">
+                <codec>
+                    <ber optional="true" tag="121" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Other_Party_Name" type="byte[]">
+                <codec>
+                    <ber optional="true" tag="122" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Other_Party_Name_Pres_Indic" type="string">
+                <codec>
+                    <ber optional="true" tag="123" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Moh_Deact_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="124" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Moh_Deact_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="125" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Push_to_Talk_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="126" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Push_to_Talk_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="127" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Hoteling_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="128" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Hoteling_Group" type="string">
+                <codec>
+                    <ber optional="true" tag="129" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Hoteling_UserId" type="string">
+                <codec>
+                    <ber optional="true" tag="130" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Hoteling_User_Number" type="string">
+                <codec>
+                    <ber optional="true" tag="131" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Hoteling_Group_Number" type="string">
+                <codec>
+                    <ber optional="true" tag="132" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Diversion_Inhibitor_Invoke_time" type="string">
+                <codec>
+                    <ber optional="true" tag="133" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Diversion_Inhibitor_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="134" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Trunk_Group_Name" type="string">
+                <codec>
+                    <ber optional="true" tag="135" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Conference_Recording_Duration" type="string">
+                <codec>
+                    <ber optional="true" tag="136" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_InstantGroupCall_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="137" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_InstantGroupCall_PushToTalk" type="string">
+                <codec>
+                    <ber optional="true" tag="138" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_InstantGroupCall_Related_Callid" type="string">
+                <codec>
+                    <ber optional="true" tag="139" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_CustomRingback_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="140" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_CLID_Permitted" type="string">
+                <codec>
+                    <ber optional="true" tag="141" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_AHR_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="142" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_AHR_Action" type="string">
+                <codec>
+                    <ber optional="true" tag="143" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Access_Network_Info" type="string">
+                <codec>
+                    <ber optional="true" tag="144" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Charging_Function_Addresses" type="string">
+                <codec>
+                    <ber optional="true" tag="145" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Charge_Number" type="string">
+                <codec>
+                    <ber optional="true" tag="146" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Related_CallId" type="string">
+                <codec>
+                    <ber optional="true" tag="147" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Related_CallId_Reason" type="string">
+                <codec>
+                    <ber optional="true" tag="148" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Transfer_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="149" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Transfer_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="150" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Transfer_Related_CallId" type="string">
+                <codec>
+                    <ber optional="true" tag="151" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Transfer_Type" type="string">
+                <codec>
+                    <ber optional="true" tag="152" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Conf_Start_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="153" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Conf_Stop_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="154" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Conf_Id" type="string">
+                <codec>
+                    <ber optional="true" tag="155" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Conf_Type" type="string">
+                <codec>
+                    <ber optional="true" tag="156" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Codec_Usage" type="string">
+                <codec>
+                    <ber optional="true" tag="157" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Vmb_Act_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="158" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Vmb_Act_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="159" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Vmb_Deact_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="160" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Vmb_Deact_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="161" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Vmna_Act_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="162" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Vmna_Act_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="163" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Vmna_Deact_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="164" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Vmna_Deact_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="165" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Vma_Act_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="166" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Vma_Act_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="167" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Vma_Deact_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="168" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Vma_Deact_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="169" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_No_Answer_Set_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="170" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_No_Answer_Set_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="171" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Clid_Blocking_Act_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="172" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Clid_Blocking_Act_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="173" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Clid_Blocking_Deact_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="174" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Clid_Blocking_Deact_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="175" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Call_Waiting_Act_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="176" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Call_Waiting_Act_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="177" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Call_Waiting_Deact_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="178" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Call_Waiting_Deact_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="179" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Fax_Messaging" type="string">
+                <codec>
+                    <ber optional="true" tag="180" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_TSD_Digits" type="string">
+                <codec>
+                    <ber optional="true" tag="181" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Trunk_Group_Info" type="string">
+                <codec>
+                    <ber optional="true" tag="182" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Recall_Type" type="string">
+                <codec>
+                    <ber optional="true" tag="183" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Cfnrc_Act_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="184" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Cfnrc_Act_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="185" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Cfnrc_Deact_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="186" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Cfnrc_Deact_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="187" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Q850_Cause" type="string">
+                <codec>
+                    <ber optional="true" tag="188" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Dialed_Digits_Context" type="string">
+                <codec>
+                    <ber optional="true" tag="189" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Called_Number_Context" type="string">
+                <codec>
+                    <ber optional="true" tag="190" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Network_Translated_Number_Context" type="string">
+                <codec>
+                    <ber optional="true" tag="191" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Calling_Number_Context" type="string">
+                <codec>
+                    <ber optional="true" tag="192" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Original_Called_Number_Context" type="string">
+                <codec>
+                    <ber optional="true" tag="193" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Redirecting_Number_Context" type="string">
+                <codec>
+                    <ber optional="true" tag="194" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Location_Control_Act_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="195" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Location_Control_Deact_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="196" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Call_Retrieve_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="197" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Routing_Number" type="string">
+                <codec>
+                    <ber optional="true" tag="198" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Origination_Method" type="string">
+                <codec>
+                    <ber optional="true" tag="199" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Call_Parked_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="200" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_BA_Related_Call_Id" type="string">
+                <codec>
+                    <ber optional="true" tag="201" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Acr_Act_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="202" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Acr_Act_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="203" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Acr_Deact_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="204" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Acr_Deact_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="205" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Outside_Access_Code" type="string">
+                <codec>
+                    <ber optional="true" tag="206" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Primary_Device_Line_Port" type="string">
+                <codec>
+                    <ber optional="true" tag="207" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Called_Asserted_Identity" type="string">
+                <codec>
+                    <ber optional="true" tag="208" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Called_Asserted_Pres_Indicator" type="string">
+                <codec>
+                    <ber optional="true" tag="209" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_SDP" type="string">
+                <codec>
+                    <ber optional="true" tag="210" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Media_Initiator_Flag" type="string">
+                <codec>
+                    <ber optional="true" tag="211" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_SDP_Offer_Timestamp" type="string">
+                <codec>
+                    <ber optional="true" tag="212" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_SDP_Answer_Timestamp" type="string">
+                <codec>
+                    <ber optional="true" tag="213" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Early_Media_SDP" type="string">
+                <codec>
+                    <ber optional="true" tag="214" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Early_Media_Initiator_Flag" type="string">
+                <codec>
+                    <ber optional="true" tag="215" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Body_Content_Type" type="string">
+                <codec>
+                    <ber optional="true" tag="216" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Body_Content_Length" type="string">
+                <codec>
+                    <ber optional="true" tag="217" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Body_Content_Disposition" type="string">
+                <codec>
+                    <ber optional="true" tag="218" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Body_Originator" type="string">
+                <codec>
+                    <ber optional="true" tag="219" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_SIP_Error_Code" type="string">
+                <codec>
+                    <ber optional="true" tag="220" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_otherInfoInPCV" type="string">
+                <codec>
+                    <ber optional="true" tag="221" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Received_Calling_Number" type="string">
+                <codec>
+                    <ber optional="true" tag="222" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_CustomRingback_Media_Selection" type="string">
+                <codec>
+                    <ber optional="true" tag="223" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_AOC_Type" type="string">
+                <codec>
+                    <ber optional="true" tag="224" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_AOC_Charge" type="string">
+                <codec>
+                    <ber optional="true" tag="225" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_AOC_Currency" type="string">
+                <codec>
+                    <ber optional="true" tag="226" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_AOC_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="227" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_AOC_Sum" type="string">
+                <codec>
+                    <ber optional="true" tag="228" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_AOC_Activation_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="229" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_AOC_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="230" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_AS_Call_Type" type="string">
+                <codec>
+                    <ber optional="true" tag="231" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Scf_Act_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="232" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Scf_Act_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="233" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Scf_Deact_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="234" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Scf_Deact_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="235" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Cfa_Inter_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="236" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Cfa_Inter_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="237" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Cfna_Inter_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="238" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Cfna_Inter_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="239" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Cfb_Inter_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="240" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Cfb_Inter_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="241" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_CBF_Auth_Code" type="string">
+                <codec>
+                    <ber optional="true" tag="242" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Call_Bridge_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="243" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Return_Call_Number_Deletion_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="244" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Return_Call_Number_Deletion_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="245" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Prepaid_Status" type="string">
+                <codec>
+                    <ber optional="true" tag="246" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Configurable_CLID" type="string">
+                <codec>
+                    <ber optional="true" tag="247" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Call_Center_Night_Service_Act_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="248" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Call_Center_Night_Service_Deact_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="249" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Call_Center_Forced_Forwarding_Act_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="250" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Call_Center_Forced_Forwarding_Deact_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="251" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Call_Center_Outgoing_Call_FAC_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="252" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Call_Center_Outgoing_Personal_Call_FAC_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="253" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Call_Center_Outgoing_Phone_Number" type="string">
+                <codec>
+                    <ber optional="true" tag="254" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Intercept_User_Routing_Number" type="string">
+                <codec>
+                    <ber optional="true" tag="255" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Intercept_Group_Routing_Number" type="string">
+                <codec>
+                    <ber optional="true" tag="256" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_CB_Activation_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="257" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_CB_Activation_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="258" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_CB_Deactivation_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="259" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_CB_Deactivation_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="260" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_CB_Query_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="261" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_CB_Query_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="262" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Cfnrc_Inter_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="263" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Cfnrc_Inter_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="264" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_VMR_Dialing_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="265" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_VMR_Dialing_Fac_result" type="string">
+                <codec>
+                    <ber optional="true" tag="266" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_VP_Dialing_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="267" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_VP_Dialing_Fac_result" type="string">
+                <codec>
+                    <ber optional="true" tag="268" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Camel_Loc_Info" type="string">
+                <codec>
+                    <ber optional="true" tag="269" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Camel_Msc_Address" type="string">
+                <codec>
+                    <ber optional="true" tag="270" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Camel_CellId_Or_LAI" type="string">
+                <codec>
+                    <ber optional="true" tag="271" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_NAME_Permitted" type="string">
+                <codec>
+                    <ber optional="true" tag="272" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Call_Center_User_Id" type="string">
+                <codec>
+                    <ber optional="true" tag="273" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Call_Center_Outgoing_Group_Phone_Number" type="string">
+                <codec>
+                    <ber optional="true" tag="274" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_VON_Type" type="string">
+                <codec>
+                    <ber optional="true" tag="275" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_PreAlertingAnncmtDuration" type="string">
+                <codec>
+                    <ber optional="true" tag="276" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_CC_Disp_Code_Tagging_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="277" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_CC_Disp_Code_Tagging_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="278" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_CC_Escalated_Call_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="279" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_CC_Escalated_Call_FAC_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="280" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_CC_Monitoring_BI_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="281" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_CC_Monitoring_BI_FAC_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="282" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Mid_Call_Cot_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="283" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Office_Zone" type="string">
+                <codec>
+                    <ber optional="true" tag="284" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Primary_Zone" type="string">
+                <codec>
+                    <ber optional="true" tag="285" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Roaming_MSC_Address" type="string">
+                <codec>
+                    <ber optional="true" tag="286" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_CC_Emergency_Call_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="287" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Monitoring_Next_Call_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="288" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Monitoring_Next_Call_FAC_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="289" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Legacy_Acb_Act_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="290" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Legacy_Acb_Act_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="291" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Legacy_Acb_Deact_Invoke_Time" type="string">
+                <codec>
+                    <ber optional="true" tag="292" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Legacy_Acb_Deact_Fac_Result" type="string">
+                <codec>
+                    <ber optional="true" tag="293" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="bWAS_Custom_Schema_Version" type="string">
+                <codec>
+                    <ber optional="true" tag="294" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+        </set>
+    </type>
+    <type id="IPAddressCustom">
+        <codec>
+            <ber/>
+        </codec>
+        <choice>
+            <field id="iPBinaryAddress_iPBinV4Address" type="Blob">
+                <codec>
+                    <ber optional="true" tag="0" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="iPBinaryAddress_iPBinV6Address" type="Blob">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific" valueCodec="OctetString"/>
+                </codec>
+            </field>
+            <field id="iPTextRepresentedAddress_iPTextV4Address" type="string">
+                <codec>
+                    <ber optional="true" tag="2" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="iPTextRepresentedAddress_iPTextV6Address" type="string">
+                <codec>
+                    <ber optional="true" tag="3" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+        </choice>
+    </type>
+    <type id="MessageBody">
+        <codec>
+            <ber/>
+        </codec>
+        <sequence>
+            <field id="content_Type" type="string">
+                <codec>
+                    <ber tag="0" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="content_Disposition" type="string">
+                <codec>
+                    <ber optional="true" tag="1" tagClass="context-specific" valueCodec="AsciiString"/>
+                </codec>
+            </field>
+            <field id="content_Length" type="long">
+                <codec>
+                    <ber tag="2" tagClass="context-specific" valueCodec="Integer"/>
+                </codec>
+            </field>
+            <field id="originator" type="InvolvedParty">
+                <codec>
+                    <ber optional="true" tag="3" tagClass="context-specific"/>
+                </codec>
+            </field>
+        </sequence>
+    </type>
+    <codec id="UInt1">
+      <raw type="short" size="1" unit="Byte" order="big-endian" unsigned="true" />
+    </codec>
+    <codec id="UInt2">
+        <raw type="int" size="2" unit="Byte" order="big-endian" unsigned="true" />
+    </codec>
+    <codec id="UInt3">
+        <raw type="long" size="3" unit="Byte" order="big-endian" unsigned="true" />
+    </codec>
+    <codec id="UInt4">
+        <raw type="long" size="4" unit="Byte" order="big-endian" unsigned="true" />
+    </codec>
+    <codec id="UInt8">
+        <raw type="long" size="8" unit="Byte" order="big-endian"/>
+    </codec>
+    <codec id="UInt3bits">
+        <raw type="long" size="3" unit="Bit" order="big-endian" unsigned="true" />
+    </codec>
+    <codec id="UInt5bits">
+        <raw type="long" size="5" unit="Bit" order="big-endian" unsigned="true" />
+    </codec>
+    <codec id="Byte5">
+        <raw type="byte[]" size="5" unit="Byte" order="big-endian" unsigned="false"/>
+    </codec>
+    <codec id="Byte20">
+        <raw type="byte[]" size="20" unit="Byte" order="big-endian" unsigned="false"/>
+    </codec>
+</format>

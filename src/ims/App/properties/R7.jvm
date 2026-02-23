@@ -1,0 +1,7 @@
+JVMOPTS=%DEFAULTS%
+JVMOPTS=-Xmx$ENV{MAX_HEAP_SIZE}
+JVMOPTS=-Xms$ENV{MIN_HEAP_SIZE}
+JVMOPTS=-Duser.timezone=Europe/Paris
+CLASSPATH=%DEFAULTS%
+CLASSPATH=/var/opt/bits/App/lib/postgresql-42.7.5.jar
+

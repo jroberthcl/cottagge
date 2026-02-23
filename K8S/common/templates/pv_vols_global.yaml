@@ -1,0 +1,115 @@
+{{- if or ( eq .Values.global.create "OnlyPVCPV" ) ( eq .Values.global.create "All" ) }}
+
+{{- if .Values.global }}
+{{- if .Values.global.persistentVolume }}
+{{- if eq .Values.global.persistentVolume.createPV true }}
+{{- if eq .Values.global.persistentVolume.enabled true }}
+
+{{- if .Values.container }}
+{{- if .Values.container.serverName }}
+{{$replicas:= include "container.replicas" . }}
+{{- if ne $replicas "0" }}
+
+{{- $helmDebug := .Values.global.helmDebug }}
+{{- $servername := .Values.container.serverName | camelcase | lower }}
+{{- $releasename:= .Release.Name }}
+{{- $releasenamespace := .Release.Namespace }}
+{{- $releaseservice:= .Release.Service }}
+{{- $chartname := .Chart.Name }}
+{{- $chartversion := .Chart.Version}}
+{{- $persistentVolumeLocal := .Values.container.persistentVolume }}
+{{- $persistentVolumeGlobal := .Values.global.persistentVolume }}
+{{- range .Values.global.persistentVolume.mounts }}
+{{- $root:= . }}
+{{- $numb:=( index $root 0 ) }}
+{{- $type:=( index $root 1 ) }}
+{{- $size:=( index $root 2 ) }}
+{{- $scls:=( index $root 3 ) }}
+{{- $repo:=( index $root 4 ) }}
+{{- $ldir:=( index $root 5 ) }}
+{{- $rdir:=( index $root 6 ) }}
+{{- $bind:=( index $root 7 ) }}
+{{- $acce:=( index $root 8 ) }}
+{{- $shar:=( index $root 9 | lower ) }}
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+{{- if eq $shar "shared" }}
+{{- $servername := $shar }}
+{{- end }}
+  name: "pv-g{{ $numb }}-{{ $servername }}"
+  labels:
+    app: "{{ .Release.Name | lower }}-{{ .Values.container.serverName | lower }}"
+    app.kubernetes.io/instance: {{ $releasename }}
+    release: {{ $releasename }}
+    helm.sh/chart: {{ $chartname }}-{{ $chartversion}}
+    app.kubernetes.io/managed-by: {{ $releaseservice }}
+spec:
+  capacity:
+    storage: {{ $size }}
+  accessModes:
+  - {{ $acce }}
+
+#storageClass
+{{- $scls:=default $scls $persistentVolumeGlobal.storageClassOverride }}
+  storageClassName: {{ $scls }}
+  persistentVolumeReclaimPolicy: {{ $repo }}
+
+#storageType
+{{- $type:=default $type $persistentVolumeGlobal.storageTypeOverride }}
+
+{{- if eq $type "nfs" }}
+
+  {{- if $persistentVolumeLocal.nfs }}
+    {{- if $persistentVolumeLocal.nfs.mountOptions }}
+  mountOptions:
+    {{- toYaml $persistentVolumeLocal.nfs.mountOptions | nindent 4 }}
+    {{- end }}
+  {{- else if $persistentVolumeGlobal.nfs.mountOptions }}
+    {{- if $persistentVolumeGlobal.nfs.mountOptions }}
+  mountOptions:
+    {{- toYaml $persistentVolumeGlobal.nfs.mountOptions | nindent 4 }}
+    {{- end }}
+  {{- end }}
+
+  nfs:
+    path: "{{ $rdir }}/{{ $releasename }}/{{ $servername }}/g{{ $numb }}"
+  {{- if $persistentVolumeGlobal.nfs }}
+    {{- if $persistentVolumeGlobal.nfs.nfs }}
+    {{- toYaml $persistentVolumeGlobal.nfs.nfs | nindent 4 }}
+    {{- end }}
+  {{- else if $persistentVolumeLocal.nfs }}
+    {{- if $persistentVolumeLocal.nfs.nfs }}
+    {{- toYaml $persistentVolumeLocal.nfs.nfs | nindent 4 }}
+    {{- end }}
+  {{- end }}
+  volumeMode: Filesystem
+{{- else if eq $type "efs" }}
+  {{- if $persistentVolumeLocal.efs }}
+    {{- if $persistentVolumeLocal.efs.csi }}
+  csi:
+    driver: {{ $persistentVolumeLocal.efs.csi.driver }}
+    volumeHandle: "{{ $persistentVolumeLocal.efs.csi.volumeHandle }}:{{ $rdir }}"
+    {{- end }}
+  {{- else if $persistentVolumeGlobal.efs.csi }}
+  csi:
+    driver: {{ $persistentVolumeGlobal.efs.csi.driver }}
+    volumeHandle: "{{ $persistentVolumeGlobal.efs.csi.volumeHandle }}:{{ $rdir }}"
+  {{- end }}
+  volumeMode: Filesystem
+{{- end }}
+
+{{- end }}
+
+{{- end }}
+
+{{- end }}
+{{- end }}
+
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{- end }}

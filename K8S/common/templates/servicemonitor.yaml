@@ -1,0 +1,37 @@
+
+{{- if or ( eq .Values.global.create "AllExceptPVCPV" ) ( eq .Values.global.create "All" ) }}
+
+{{- if .Values.global.createServiceMonitorPrometheus }}
+
+{{- if not .Values.container }}
+
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: "{{ .Release.Name | lower }}-{{ .Values.container.serverName | lower }}"
+    release: "{{ .Release.Name }}"
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    heritage: "{{ .Release.Service }}"
+    app.kubernetes.io/managed-by: "{{ .Release.Service }}"
+    app.kubernetes.io/instance: "{{ .Release.Name }}"
+    app.kubernetes.io/version: "{{ .Chart.AppVersion }}"
+    app.kubernetes.io/component: "{{ .Release.Name }}-monitor"
+    app.kubernetes.io/name: "{{ .Release.Name }}"
+    release: prometheus
+  name: "{{ .Release.Name }}-service-monitor"
+  namespace: "{{ .Release.Namespace }}"
+spec:
+  endpoints:
+  - interval: 10s
+    path: /metrics
+    port: http-metrics
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: "{{ .Release.Name }}"
+
+{{- end }}
+
+{{- end }}
+{{- end }}
+

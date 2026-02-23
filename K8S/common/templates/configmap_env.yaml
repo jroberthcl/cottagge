@@ -1,0 +1,100 @@
+{{- if or ( eq .Values.global.create "AllExceptPVCPV" ) ( eq .Values.global.create "All" ) }}
+
+
+{{- if .Values.global.envConfigMap }}
+
+{{- if .Values.container }}
+{{- if .Values.container.serverName }}
+
+{{$replicas:= include "container.replicas" . }}
+{{- if ne $replicas "0" }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ .Release.Name }}-{{ .Values.container.serverName | camelcase | lower }}-cm"
+  labels:
+    app: "{{ .Release.Name | lower }}-{{ .Values.container.serverName | lower }}"
+    release: "{{ .Release.Name }}"
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    heritage: "{{ .Release.Service }}"
+data:
+  RELEASENAME:                              "{{ .Release.Name}}"
+  NAMESPACE:                                "{{ .Release.Namespace }}"
+  CHARTNAME:                                "{{ .Chart.Name}}"
+  HOSTNAME:                                 "{{ .Values.container.hostName }}"
+  SERVERNAME:                               "{{ .Values.container.serverName }}"
+
+  {{- if .Values.container.env }}
+    {{- if .Values.container.env.PKG_NAME }}
+  PKG_NAME:                                 "{{ .Values.container.env.PKG_NAME }}"
+    {{- else if .Values.global.env.PKG_NAME }}
+  PKG_NAME:                                 "{{ .Values.global.env.PKG_NAME }}"
+    {{- end}}
+  {{- end}}
+
+  {{- if .Values.container.env }}
+    {{- if .Values.container.env.CLUSTERDOMAIN }}
+  CLUSTERDOMAIN:                            "{{ .Values.container.clusterdomain }}"
+    {{- else if .Values.global.env.CLUSTERDOMAIN }}
+  CLUSTERDOMAIN:                            "{{ .Values.global.clusterdomain }}"
+    {{- else }}
+  CLUSTERDOMAIN:                            "cluster.local"
+    {{- end }}
+  {{- else }}
+    {{- if .Values.global.env.CLUSTERDOMAIN }}
+  CLUSTERDOMAIN:                            "{{ .Values.global.clusterdomain }}"
+    {{- else }}
+  CLUSTERDOMAIN:                            "cluster.local"
+    {{- end }}
+  {{- end }}
+
+  ENV_LABEL: "{{ .Values.global.envLabel }}"
+  KAFKA_GROUPID_INTERPOD: "{{ .Values.global.kafkaGroupIdInterpod }}"
+  KAFKA_GROUPID_R10: "{{ .Values.global.kafkaGroupIdR10 }}"
+  KAFKA_GROUPID_R7: "{{ .Values.global.kafkaGroupIdR7 }}"
+  KAFKA_TOPIC_INTERPOD: "{{ .Values.global.kafkaTopicInterPod }}"
+  KAFKA_TOPIC_R10: "{{ .Values.global.kafkaTopicR10 }}"
+  KAFKA_TOPIC_R7: "{{ .Values.global.kafkaTopicR7 }}"
+  S3_DIR_INTERPOD: "{{ .Values.global.s3DirInterPod }}"
+  S3_DIR_R10: "{{ .Values.global.s3DirR10 }}"
+  S3_DIR_R7: "{{ .Values.global.s3DirR7 }}"
+
+
+# Global level
+###############################################
+{{- if .Values.global }}
+  {{- if .Values.global.env }}
+  {{- range $key, $value := .Values.global.env }}
+    {{- if contains "{{" $value }}
+  {{ $key }}: "{{ tpl $value $ }}"
+    {{- else }}
+  {{ $key }}: "{{ $value }}"
+    {{- end }}
+  {{- end }}
+  {{- end }}
+{{- end }}
+
+# Container level
+###############################################
+{{- if .Values.container }}
+  {{- if .Values.container.env }}
+  {{- range $key, $value := .Values.container.env }}
+    {{- if contains "{{" $value }}
+  {{ $key }}: "{{ tpl $value $ }}"
+    {{- else }}
+  {{ $key }}: "{{ $value }}"
+    {{- end }}
+  {{- end }}
+  {{- end }}
+{{- end }}
+
+
+{{- end }}
+
+{{- end }}
+{{- end }}
+
+{{- end }}
+
+{{- end }}

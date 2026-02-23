@@ -1,0 +1,71 @@
+{{- if or ( eq .Values.global.create "AllExceptPVCPV" ) ( eq .Values.global.create "All" ) }}
+
+{{- if .Values.container }}
+{{- if .Values.container.serverName}}
+
+{{$replicas:= include "container.replicas" . }}
+{{- if ne $replicas "0" }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ .Release.Name }}-{{ .Values.container.serverName | camelcase | lower }}"
+  #name: "prometheus-eium-svc-{{ .Values.container.serverName | camelcase | lower }}"
+  labels:
+    app: "{{ .Release.Name | lower }}-{{ .Values.container.serverName | lower }}"
+    release: "{{ .Release.Name }}"
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    heritage: "{{ .Release.Service }}"
+    app.kubernetes.io/managed-by: "{{ .Release.Service }}"
+    app.kubernetes.io/instance: "{{ .Release.Name }}"
+    app.kubernetes.io/version: "{{ .Chart.AppVersion }}"
+    app.kubernetes.io/component: "{{ .Values.container.serverName | camelcase | lower }}"
+    app.kubernetes.io/name: "{{ .Release.Name }}"
+    monitoring: enabled
+    exporter: generique
+spec:
+  type: {{ .Values.container.service.type }}
+
+  {{- if eq .Values.container.rc "statefulset" }}
+  #clusterIP: None
+  {{ else }}
+    {{- if .Values.container.service.clusterIP }}
+      {{- if eq .Values.container.service.clusterIP "LicenseServer" }}
+         {{- if .Values.global.env.LicenseServerClusterIP }}
+  clusterIP: {{ .Values.global.env.LicenseServerClusterIP }}
+         {{- end }}
+      {{- else }}
+  clusterIP: {{ .Values.container.service.clusterIP }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+
+  {{- if .Values.container.service.externalTrafficPolicy }}
+    {{- if eq .Values.container.service.externalTrafficPolicy "LicenseServer" }}
+      {{- if .Values.global.env.LicenseServerExternalTrafficPolicy }}
+  externalTrafficPolicy: {{ .Values.global.env.LicenseServerExternalTrafficPolicy }}
+      {{- end }}
+    {{- else }}
+  externalTrafficPolicy: {{ .Values.container.service.externalTrafficPolicy }}
+    {{- end }}
+  {{- end }}
+
+  ports:
+   {{- $mytype := .Values.container.service.type }}
+   {{- range .Values.container.service.ports }}
+    - name: {{ .name }}
+      port: {{ .port }}
+{{- if ne $mytype "ClusterIP" }}
+      targetPort: {{ .targetPort }}
+{{- end }}
+      protocol: {{ .protocol }}
+   {{- end }}
+
+  selector:
+    app: "{{ .Release.Name | lower }}-{{ .Values.container.serverName | lower }}"
+
+{{- end }}
+
+{{- end }}
+{{- end }}
+
+{{- end }}

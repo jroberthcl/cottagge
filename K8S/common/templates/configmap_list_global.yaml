@@ -1,0 +1,33 @@
+{{- if or ( eq .Values.global.create "AllExceptPVCPV" ) ( eq .Values.global.create "All" ) }}
+
+{{- if .Values.global.listConfigMap }}
+{{- if eq .Values.global.listConfigMap true }}
+
+{{- if not .Values.container }}
+
+      {{- $releasename:= .Release.Name }}
+      {{- $releaseservice:= .Release.Service }}
+      {{- $chartname:= .Chart.Name }}
+      {{- $chartversion:= .Chart.Version }}
+      {{- $files:= .Files }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ $releasename }}-map-list-shared-cm"
+  labels:
+    chart: "{{ $chartname }}-{{ $chartversion }}"
+    release: "{{ $releasename }}"
+    heritage: "{{ $releaseservice }}"
+data:
+      {{ range $path, $_ :=  $files.Glob  "**.*" }}
+  {{ base $path }}: |-
+    {{ $files.Get $path | b64enc }}
+  path_{{ base $path }}: {{ $path }}
+      {{- end }}
+
+{{- end }}
+
+{{- end }} 
+{{- end }} 
+
+{{- end }} 

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="collectinfo-sf-app" default="collectinfo">
+    <dirname property="collectinfo-sf-app.basedir" file="${ant.file.collectinfo-sf-app}"/>
+
+    <target name="-is.applicable">
+        <!-- If the module is not applicable, make sure the following property will be written
+             to output properties (uncomment the lines.
+        -->
+        <!--
+        <property name="mymodule.applicability.error" value="Sample module not applicable"/>
+        <write-output-properties><propertyset><propertyref name="mymodule.applicability.error"/></propertyset></write-output-properties>
+        -->
+    </target>
+
+    <target name="-APP-VERSION">
+	<property name="app-install.ini.file" location="${SIUHOME}/lib/patches/eium_sf_slrm_install.ini"/>
+	<property file="${app-install.ini.file}" prefix="eium-sf-app-install.ini."/>
+	<if>
+		<isset property="eium-sf-app-install.ini.Version"/>
+		<then>
+		<write-message-to-human-report>Example Application Solution Version:${eium-sf-app-install.ini.Version}</write-message-to-human-report>
+		</then>
+	</if>
+    </target>
+
+    <target name="-APP-VERSION-INSTALL-INI">
+	<property name="app-install.ini.file" location="${SIUHOME}/lib/patches/eium_sf_slrm_install.ini"/>
+	<collect-file-lines file-name="${app-install.ini.file}" num-lines="-1"/>
+    </target>
+</project>
+

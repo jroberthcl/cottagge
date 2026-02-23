@@ -1,0 +1,63 @@
+Thank you for installing {{ .Chart.Name }}.
+
+Your release is named {{ .Release.Name }}.
+
+To learn more about the release, try:
+
+  $ helm status {{ .Release.Name }}
+  $ helm get {{ .Release.Name }}
+
+{{- if .Values.container }}
+{{- if .Values.container.service }}
+{{- if .Values.container.service.type }}
+
+1. Get the application URL by running these commands:
+{{- if contains "NodePort" .Values.container.service.type }}
+  export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "container.fullname" . }})
+  export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
+  echo http://$NODE_IP:$NODE_PORT
+{{- else if contains "LoadBalancer" .Values.container.service.type }}
+     NOTE: It may take a few minutes for the LoadBalancer IP to be available.
+           You can watch the status of by running 'kubectl get --namespace {{ .Release.Namespace }} svc -w {{ include "container.fullname" . }}'
+  export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ include "container.fullname" . }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+
+{{- if .Values.container.service.port }}
+  echo http://$SERVICE_IP:{{ .Values.container.service.port }}
+{{- end }}
+
+{{- else if contains "ClusterIP" .Values.container.service.type }}
+  export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "container.name" . }},app.kubernetes.io/instance={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
+  echo "Visit http://127.0.0.1:8080 to use your application"
+  kubectl port-forward $POD_NAME 8080:80
+{{- end }}
+
+{{- end }}
+{{- end }}
+{{- end }}
+
+
+
+{{- if .Values.container }}
+{{- if .Values.container.serverName }}
+
+{{- if .Values.container.service }}
+{{- if .Values.container.service.interfaces }}
+{{- if .Values.container.service.interfaces.metrics }}
+{{- if .Values.container.service.interfaces.metrics.port }}
+
+{{- if .Values.global }}
+{{- if .Values.global.clusterdomain }}
+
+2. To access application service metrics from inside kubernetes use following URL::
+   http://{{ .Release.Name }}-{{ .Values.container.serverName | camelcase | lower }}.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterdomain }}:{{ .Values.container.service.interfaces.metrics.port }}/metrics
+
+{{- end }}
+{{- end }}
+
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{- end }}
+{{- end }}

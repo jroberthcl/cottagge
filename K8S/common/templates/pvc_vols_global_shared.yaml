@@ -1,0 +1,64 @@
+{{- if or ( eq .Values.global.create "OnlyPVCPV" ) ( eq .Values.global.create "All" ) }}
+
+{{- if not .Values.container }}
+{{- if .Values.global }}
+{{- if .Values.global.persistentVolume }}
+{{- if .Values.global.persistentVolume.enabled }}
+    {{- $helmDebug := .Values.global.helmDebug }}
+    {{- $releasename:= .Release.Name }}
+    {{- $releasenamespace := .Release.Namespace }}
+    {{- $releaseservice:= .Release.Service }}
+    {{- $chartname := .Chart.Name }}
+    {{- $chartversion := .Chart.Version }}
+    {{- $persistentVolumeGlobal := .Values.global.persistentVolume }}
+    {{- range .Values.global.persistentVolume.mounts }}
+      {{- $root:= . }}
+     {{- $numb:=( index $root 0 ) }}
+      {{- $size:=( index $root 2 ) }}
+      {{- $scls:=( index $root 3 ) }}
+      {{- $ldir:=( index $root 5 ) }}
+      {{- $bind:=( index $root 7 ) }}
+      {{- $acce:=( index $root 8 ) }}
+      {{- $shar:=( index $root 9 | lower ) }}
+      {{- if eq $shar "shared" }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: "pvc-g{{ $numb }}-{{ $releasename }}-shared"
+  labels:
+    app.kubernetes.io/instance: {{ $releasename }} 
+    release: {{ $releasename }} 
+    helm.sh/chart: {{ $chartname }}-{{ $chartversion }}
+    app.kubernetes.io/managed-by: {{ $releaseservice }}
+spec:
+  {{- if $helmDebug }}
+    {{- if eq $helmDebug true }}
+    #DEBUG: $persistentVolumeClaim(pvc-g{{ $numb}}-{{ $releasename }}-shared) {{ $root }},{{ $numb }},{{ $size }},{{ $scls }},{{ $ldir }},{{ $bind }},{{ $acce }},{{ $shar }}
+    {{- end }}
+  {{- end }}
+
+  accessModes:
+    - {{ $acce }}
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: {{ $size | trim }}
+
+#Override
+{{- $scls:=default $scls $persistentVolumeGlobal.storageClassOverride }}
+  storageClassName: {{ $scls }}
+
+       {{- if $bind }}
+  volumeName: "pv-g{{ $numb }}-{{ $releasename }}-shared"
+       {{- end }}
+
+      {{- end }}
+    {{- end }}
+
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{- end }}

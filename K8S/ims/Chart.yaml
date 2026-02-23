@@ -1,0 +1,7 @@
+apiVersion: v1
+appVersion: <APP_VERSION>
+description: Helm chart for Kubernetes deployment of SFR eIUM
+name: ims-chart
+version: <VERSION>
+home: https://www.hcltech.com/communication-technology-group-ctg
+

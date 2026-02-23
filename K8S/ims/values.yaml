@@ -1,0 +1,276 @@
+#-------------------------------------------------------------------------------
+# eIUM container templates
+# release: v1.0
+#
+# Project: SFR eIUM, 2024-2025
+# Components: collectors IMS R7 and R10
+#
+#-------------------------------------------------------------------------------
+
+global:
+  helmDebug: false
+  clusterdomain: "cluster.local"
+  downwardAPI: true
+  envConfigMap: true
+  listConfigMap: false
+  licenseConfigMap: true
+  licenseConfigMapShared: true
+  licenseFile: "./license/license.config"
+  podManagementPolicy: "Parallel"
+  createPVCCollector: true
+  createPVCCDR: true
+  #createServiceMonitorPrometheus: true
+  istio: false
+  secretname: "<TO_REPLACE>"
+
+  #Select what will be created, possible values: "OnlyPVCPV", "AllExceptPVCPV", "All"
+  create: "All"
+
+  replicas:
+    R7: <REPLICAS_R7>
+    R10: <REPLICAS_R10>
+
+  initContainers:
+    enabled: false
+    initialDelay: 0
+    delay: 0
+    dependServices:
+    #  - [ "EIUM_COLLECTOR", "EIUM_MYSQL", "3306", ""]
+    actions:
+    #  - [ 1, "EIUM_MYSQL", "chmod 777 -R /var/lib/mysql" ]
+
+  persistentVolume:
+    createPV: false
+    enabled: true
+    storageClassOverride: rook-ceph-block-topology-ec
+    mounts:
+      #  - [ 1, ebs, 500Mi, rook-ceph-block-topology-ec, Retain, /data, /mnt/da04/dataset01/storage, false, ReadWriteMany, shared, N/A ]
+
+  statefulSetVolume:
+    storageClassOverride: rook-ceph-block-topology-ec
+
+  extraVolume:
+    enabled: false
+    mountsPVC:
+     #- [ "PVC name", "Folder" ]
+
+  configMap:
+    enabled: true
+    #WARN: Copy this files on charts/name/files not here in global level. Otherwise file will be empty.
+    #mounts:
+    #  - [ 1, "mpc-cert" , "files/certs.d/mpc-docker.gre.hpecorp.net..443", "/cert.d/ca.crt", "ca.crt" ]
+
+  images:
+    repository:
+    # Images
+    #- [ "Pod name", "registry", "image", "tag", "pullPolicy" ]
+    - [ "R7", "<DEFINED_IN_CICD_VARIABLES>", "<DEFINED_IN_CICD_VARIABLES>", "<DEFINED_IN_CICD_VARIABLES>", "<DEFINED_IN_CICD_VARIABLES>" ]
+    - [ "R10", "<DEFINED_IN_CICD_VARIABLES>", "<DEFINED_IN_CICD_VARIABLES>", "<DEFINED_IN_CICD_VARIABLES>", "<DEFINED_IN_CICD_VARIABLES>" ]
+
+  template:
+    annotations:
+      prometheus.io/scrape: 'true'
+      prometheus.io/path: '/metrics'
+      prometheus.io/port: '5556'
+      sidecar.istio.io/inject: 'true'
+      traffic.sidecar.istio.io/excludeOutboundPorts: "8158"
+
+  imagePullSecrets:
+   - name: "<DEFINED_IN_CICD_VARIABLES>"
+
+  #serviceAccount:
+  #  # Specifies whether a service account should be created
+  #  create: true
+  #  # Annotations to add to the service account
+  #
+  #  # The name of the service account to use.
+  #  # If not set and create is true, a name is generated using the fullname template
+  #  name: ""
+
+  podAnnotations: {}
+
+  podSecurityContext:
+    runAsUser: 10001
+    runAsGroup: 10001
+    fsGroup:   10001
+
+  # See: https://github.com/torvalds/linux/blob/master/include/uapi/linux/capability.h
+  # Valid options : CHOWN,DAC_OVERRIDE,DAC_READ_SEARCH,FOWNER,FSETID,KILL,SETGID,SETUID,SETPCAP,LINUX_IMMUTABLE,
+  #                 NET_BIND_SERVICE,NET_BROADCAST,NET_ADMIN,NET_RAW,IPC_LOCK,IPC_OWNER,SYS_MODULE,SYS_RAWIO,SYS_CHROOT,
+  #                 SYS_PTRACE,SYS_PACCT,SYS_ADMIN,SYS_BOOT,SYS_NICE,SYS_RESOURCE,SYS_TIME,SYS_TTY_CONFIG,MKNOD,LEASE
+  #                 AUDIT_WRITE,AUDIT_CONTROL,SETFCAP,MAC_OVERRIDE,MAC_ADMIN,SYSLOG,WAKE_ALARM,BLOCK_SUSPEND,AUDIT_READ
+  securityContext:
+    runAsUser: 10001
+    runAsGroup: 10001
+    #capabilities:
+    #  add: ["NET_ADMIN", "SYS_TIME"]
+    #allowPrivilegeEscalation: false
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: "20%"
+      maxUnavailable: "10%"
+    #type: Recreate
+
+  env:
+    ###########################################################
+    # App descriptor variables
+    ###########################################################
+    # Values for NAME: APP, STD_APP or EMS
+    NAME: "APP"
+    PKG_NAME: "App.jar"
+    #PKG_NAME: "http://${EIUMREPO}.${NAMESPACE}.svc.${CLUSTERDOMAIN}:8080/${SERVERNAME}.jar"
+    #confd: "/var/opt/SIU"
+    CONFIG_BUNDLE_MODE: "true"
+    CONFIG_BUNDLE: "true"
+    APP_DESCRIPTOR: "App.yaml"
+    #APP_LOGGING_TYPE: "not set" (classic logfile) or -Derr (stderr)
+    # APP_LOGGING_TYPE: "-Derr"
+    #APP_ADDITIONAL_OPTIONS_COL: "-nr"
+    APP_ADDITIONAL_OPTIONS_COL: "-logFormat json"
+    APP_ADDITIONAL_OPTIONS_SS: "-logFormat json"
+
+    ###########################################################
+    # Dynamic extension
+    ###########################################################
+    CONF_MOUNT_DIR: "/var/opt/SIU"
+    PRE_ENTRYPOINT_SCRIPT: "/var/opt/scripts/dynamic_environment.sh"
+    APP_CONF: "dynamic_environment.conf"
+    # These variables are dynamically recalculated using dynamic_environment.sh
+    # based on MAX_NUM_MYSQL --> CONTAINEX_INDEX and DB_INDEX
+    # We have marked these dynamically configured variables on env with "_" prefix
+    DYNAMIC_ARGUMENTS: "MAX_NUM_MYSQL=1"
+    DYNAMIC_ENVIRONMENT: "
+    "
+
+    ###########################################################
+    # Log entrypoint
+    ###########################################################
+    DEBUG: "0"
+
+    ###########################################################
+    # Default all stopped, started on sub charts/*/values.yaml
+    ###########################################################
+    R7_STARTUP: "false"
+    R10_STARTUP: "false"
+
+    ###########################################################
+    # DB application
+    ###########################################################
+    DBSIU_CLASS: "org.postgresql.Driver"
+    DATABASELOGCONSOLE: "true"
+    CT_DATABASECLASS: "org.postgresql.Driver"
+    DBREF_CLASS: "org.postgresql.Driver"
+
+    ###########################################################
+    # Common application
+    ###########################################################
+    AWS_CA_BUNDLE: "/etc/pki/ca-trust/source/anchors/cert03.pem"
+    REGISTRY: "eium-svc-management:8158"
+
+
+###########################################################
+# PODS
+###########################################################
+
+R7:
+#  nodeSelector:
+#    kubernetes.io/hostname: kw16-vso-pp
+  container:
+    hostName: "standalone"
+    serverName: "R7"
+    localTime: "Europe/Madrid"
+    rc: "statefulset"
+    persistentVolume:
+      createPV: false
+      enabled: true
+      mounts:
+        - [ 1, "ebs", "500Mi", "rook-ceph-block-topology-ec", "Retain", "/var/opt/bits", "N/A", false, "ReadWriteOnce", "emptydir", "N/A" ]
+        - [ 2, "ebs", "500Mi", "rook-ceph-block-topology-ec", "Retain", "/opt/SIU/plugins/cache", "N/A", false, "ReadWriteOnce", "emptydir", "N/A" ]
+        #- [ 3, "ebs", "500Mi", "rook-ceph-block-topology-ec", "Retain", "/var/opt/SIU", "N/A", false, "ReadWriteOnce", "persistent", "N/A" ]
+    statefulSetVolume:
+      #createPV: false
+      enabled: true
+      mounts:
+        - [ 1, "ebs", "2000Mi", "rook-ceph-block-topology-ec", "Retain", "/var/opt/SIU", "N/A", false, "ReadWriteOnce", "persistent", "N/A" ]
+    extraVolume:
+      enabled: true
+      mountsPVC:
+        #-[ "PVC name",       "Folder" ]
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+      requests:
+        cpu: 1000m
+        memory: 1Gi
+    env:
+      # Log Level
+      LOG_LEVEL: "4"
+      # Prometheus
+      METRICS_ENABLED: "true"
+      METRICS_PORT: "5556"
+      METRICS_PREFIX: "IMSR7_"
+      # Ressources
+      MAX_HEAP_SIZE: "1500m"
+      MIN_HEAP_SIZE: "8m"
+      # Application specific
+      COLLECTION_CHAIN: "IMS"
+      CRONTAB_RESETCOUNTERS: "0 0 * * *"
+      KAFKA_MAXPOLLRECORDS: "1"
+      KAFKA_MAXWAITTIME: "10000"
+      KAFKA_NUMINTERPODTOPICINDEXES: "0"
+      KAFKA_NUMPARTITIONS: "4"
+      PROCESS_TYPE: "IMSR7"
+      DISPATCH_MODE: "S3"
+
+R10:
+#  nodeSelector:
+#    kubernetes.io/hostname: kw16-vso-pp
+  container:
+    hostName: "standalone"
+    serverName: "R10"
+    localTime: "Europe/Madrid"
+    rc: "statefulset"
+    persistentVolume:
+      createPV: false
+      enabled: true
+      mounts:
+        - [ 1, "ebs", "500Mi", "rook-ceph-block-topology-ec", "Retain", "/var/opt/bits", "N/A", false, "ReadWriteOnce", "emptydir", "N/A" ]
+        - [ 2, "ebs", "500Mi", "rook-ceph-block-topology-ec", "Retain", "/opt/SIU/plugins/cache", "N/A", false, "ReadWriteOnce", "emptydir", "N/A" ]
+        #- [ 3, "ebs", "500Mi", "rook-ceph-block-topology-ec", "Retain", "/var/opt/SIU", "N/A", false, "ReadWriteOnce", "persistent", "N/A" ]
+    statefulSetVolume:
+      #createPV: false
+      enabled: true
+      mounts:
+        - [ 1, "ebs", "2000Mi", "rook-ceph-block-topology-ec", "Retain", "/var/opt/SIU", "N/A", false, "ReadWriteOnce", "persistent", "N/A" ]
+    extraVolume:
+      enabled: true
+      mountsPVC:
+        #-[ "PVC name",       "Folder" ]
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+      requests:
+        cpu: 1000m
+        memory: 1Gi
+    env:
+      # Log Level
+      LOG_LEVEL: "4"
+      # Prometheus
+      METRICS_ENABLED: "true"
+      METRICS_PORT: "5556"
+      METRICS_PREFIX: "IMSR10_"
+      # Ressources
+      MAX_HEAP_SIZE: "1500m"
+      MIN_HEAP_SIZE: "8m"
+      # Application specific
+      COLLECTION_CHAIN: "IMS"
+      CRONTAB_RESETCOUNTERS: "0 0 * * *"
+      KAFKA_MAXPOLLRECORDS: "1"
+      KAFKA_MAXWAITTIME: "10000"
+      KAFKA_NUMINTERPODTOPICINDEXES: "0"
+      KAFKA_NUMPARTITIONS: "4"
+      PROCESS_TYPE: "IMSR10"
+      DISPATCH_MODE: "S3"
+

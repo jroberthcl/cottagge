@@ -1,0 +1,1033 @@
+{{- if or ( eq .Values.global.create "AllExceptPVCPV" ) ( eq .Values.global.create "All" ) }}
+
+{{- if .Values.container }}
+{{- if eq .Values.container.rc "statefulset" }}
+{{- if .Values.container.serverName }}
+
+{{$replicas:= include "container.replicas" . }}
+{{- if ne $replicas "0" }}
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: "{{ .Release.Name }}-{{ .Values.container.serverName | camelcase | lower }}"
+  namespace: "{{ .Release.Namespace }}"
+  labels:
+    app: "{{ .Release.Name | lower }}-{{ .Values.container.serverName | lower }}"
+    release: "{{ .Release.Name }}"
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    heritage: "{{ .Release.Service }}"
+    app.kubernetes.io/managed-by: "{{ .Release.Service }}"
+    app.kubernetes.io/instance: "{{ .Release.Name }}"
+    app.kubernetes.io/version: "{{ .Chart.AppVersion }}"
+    app.kubernetes.io/component: "{{ .Values.container.serverName | camelcase | lower }}"
+    app.kubernetes.io/name: "{{ .Release.Name }}"
+
+    {{ include "eiumserver.labels" . | nindent 4 }}
+  annotations:
+    {{- if .Values.global.helmDebug }}
+    helmDebug: "{{ .Values.global.helmDebug }}"
+    {{- else }}
+    helmDebug: "false"
+    {{- end }}
+
+spec:
+
+# serviceName
+  serviceName: "{{ .Release.Name }}-{{ .Values.container.serverName | camelcase | lower }}"
+
+# pod management policy
+  podManagementPolicy: "{{ .Values.global.podManagementPolicy }}"
+#
+# Replicas
+  replicas: {{ include "container.replicas" .  | int }}
+
+# Application selectors
+  selector:
+    matchLabels:
+      app: "{{ .Release.Name | lower }}-{{ .Values.container.serverName | lower }}"
+
+# updateStrategy
+  {{- if .Values.container.updateStrategy}}
+    {{- with .Values.container.updateStrategy}}
+  updateStrategy:
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- else if .Values.global.updateStrategy}}
+    {{- with .Values.global.updateStrategy}}
+  updateStrategy:
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- end }}
+
+  template:
+    metadata:
+      labels:
+        app: "{{ .Release.Name | lower }}-{{ .Values.container.serverName | lower }}"
+        release: "{{ .Release.Name }}"
+        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        heritage: "{{ .Release.Service }}"
+        {{ include "eiumserver.labels" . | nindent 8 }}
+
+       {{- if .Values.global.template }}
+         {{- if .Values.global.template.annotations }}
+           {{- with .Values.global.template.annotations }}
+      annotations:
+             {{- toYaml . | nindent 8 }}
+           {{- end }}
+         {{- else }}
+      annotations:
+         {{- end }}
+       {{- else }}
+      annotations:
+       {{- end }}
+        checksum/config: {{ include (print $.Template.BasePath "/configmap_env.yaml") . | sha256sum }}
+        checksum/config: {{ include (print $.Template.BasePath "/configmap_lic.yaml") . | sha256sum }}
+
+    spec:
+
+# image pull secret
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
+
+# ServiceAccount
+      {{- if .Values.global.serviceAccount }}
+      {{- if .Values.global.serviceAccount.name }}
+      serviceAccount: {{ .Values.global.serviceAccount.name }}
+      serviceAccountName: {{ .Values.global.serviceAccount.name }}
+      {{- end }}
+      {{- end }}
+
+# Pod Level securityContext
+      {{- if .Values.container.podSecurityContext  }}
+      securityContext:
+        {{- toYaml .Values.container.podSecurityContext | nindent 8 }}
+      {{- else if .Values.global.podSecurityContext  }}
+      securityContext:
+        {{- toYaml .Values.global.podSecurityContext | nindent 8 }}
+      {{- end }}
+
+# InitContainers wait
+      {{- if .Values.global.initContainers }}
+      {{- if .Values.global.initContainers.enabled }}
+      {{- if eq .Values.global.initContainers.enabled true }}
+      initContainers:
+      - name: init
+        {{- $data := (dict "Values" .Values "Release" .Release "imagename" "busybox" ) }}
+        {{- include "container.getImage" $data | indent 8 -}}
+        {{- include "container.getImagePullPolicy" $data | indent 8 -}}
+        {{- include "container.waitServiceCommand" $data | indent 8 -}}
+      {{- end }}
+      {{- end }}
+      {{- end }}
+
+# InitContainers action
+      {{- if .Values.global.initContainers }}
+      {{- if .Values.global.initContainers.enabled }}
+      {{- if eq .Values.global.initContainers.enabled true }}
+      {{- if .Values.global.initContainers.actions }}
+        {{- $data := (dict "Values" .Values "Release" .Release "imagename" "busybox" ) }}
+        {{- $servername := .Values.container.serverName }}
+        {{- $releasename := .Release.Name }}
+        {{- $persistentVolumeGlobal := .Values.global.persistentVolume }}
+        {{- $persistentVolumeLocal := .Values.container.persistentVolume }}
+        {{- range .Values.global.initContainers.actions }}
+          {{- $root:= . }}
+          {{- $numb:=( index $root 0 ) }}
+          {{- $name:=( index $root 1 ) }}
+          {{- $cmd:=( index $root 2) }}
+            {{- if eq $servername $name }}
+
+      - name: action{{ $numb }}
+        {{- include "container.getImage" $data | indent 8 -}}
+        {{- include "container.getImagePullPolicy" $data | indent 8 -}}
+        {{- include "container.ActionCommand" $data | indent 8 -}}
+      # Volumes mounted for this container
+        volumeMounts:
+      {{- if $persistentVolumeGlobal }}
+      {{- if $persistentVolumeGlobal.enabled }}
+        {{- range $persistentVolumeGlobal.mounts }}
+          {{- $root:= . }}
+          {{- $numb:=( index $root 0 ) }}
+          {{- $ldir:=( index $root 5 ) }}
+          {{- $shar:=( index $root 9 | lower ) }}
+
+        {{- if eq $shar "shared" }}
+        - name: "pvc-g{{ $numb }}-{{ $releasename }}-shared"
+          mountPath: "{{ $ldir }}"
+        {{- else if eq $shar "dedicated" }}
+        - name: "pvc-g{{ $numb }}-{{ $releasename }}-{{ $servername | camelcase | lower}}"
+          mountPath: "{{ $ldir }}"
+        {{- end }}
+        {{- end }}
+      {{- end }}
+      {{- end }}
+
+      {{- if $persistentVolumeLocal }}
+      {{- if $persistentVolumeLocal.enabled }}
+        {{- range $persistentVolumeLocal.mounts }}
+          {{- $root:= . }}
+          {{- $numb:=( index $root 0 ) }}
+          {{- $ldir:=( index $root 5 ) }}
+          {{- $shar:=( index $root 9 | lower ) }}
+
+        {{- if eq $shar "shared" }}
+        - name: "pvc-l{{ $numb }}-{{ $releasename }}-shared"
+          mountPath: "{{ $ldir }}"
+        {{- else if eq $shar "dedicated" }}
+        - name: "pvc-l{{ $numb }}-{{ $releasename }}-{{ $servername | camelcase | lower}}"
+          mountPath: "{{ $ldir }}"
+        {{- end }}
+        {{- end }}
+      {{- end }}
+      {{- end }}
+
+
+      {{- end }}
+
+      {{- end }}
+
+      {{- end }}
+      {{- end }}
+      {{- end }}
+      {{- end }}
+
+
+      containers:
+
+# Main Container
+  # Name
+        {{- if .Values.container.serverName }}
+      - name: "{{ .Release.Name }}-{{ .Values.container.serverName | camelcase | lower }}"
+        {{- else }}
+      - name: "{{ .Release.Name }}"
+        {{- end }}
+
+        {{- if .Values.container.command }}
+        command:
+        {{- .Values.container.command | toYaml | nindent 10 }}
+        {{- end }}
+
+        {{- if .Values.container.args }}
+        args:
+        {{- .Values.container.args | toYaml | nindent 10 }}
+        {{- end }}
+
+  # Image
+        {{- $servername := .Values.container.serverName }}
+        {{- $data := (dict "Values" .Values "Release" .Release "imagename" $servername ) }}
+        {{- include "container.getImage" $data | nindent 8 }}
+        {{- include "container.getImagePullPolicy" $data | nindent 8 }}
+
+  # Container Level securityContext
+      {{- if .Values.container.securityContext }}
+        securityContext: {{ .Values.container.securityContext | toYaml | nindent 10 }}
+      {{- else if .Values.global.securityContext }}
+        securityContext: {{ .Values.global.securityContext | toYaml | nindent 10 }}
+      {{- end }}
+
+  # Env
+      {{- if eq .Values.global.envConfigMap true }}
+        env:
+        - name: CM
+          value: "{{ .Release.Name }}-{{ .Values.container.serverName | camelcase | lower }}-cm"
+        envFrom:
+        - configMapRef:
+            name: "{{ .Release.Name }}-{{ .Values.container.serverName | camelcase | lower }}-cm"
+        - secretRef:
+            name: "{{ .Values.global.secretname }}"
+      {{- else }}
+        env:
+        - name: RELEASENAME
+          value: "{{ .Release.Name }}"
+        - name: NAMESPACE
+          value: "{{ .Release.Namespace }}"
+        - name: CHARTNAME
+          value: "{{ .Chart.Name }}"
+        - name: HOSTNAME
+          value: "{{ .Values.container.hostName }}"
+        - name: SERVERNAME
+          value: "{{ .Values.container.serverName }}"
+
+        {{- if .Values.container.env }}
+          {{- if .Values.container.env.PKG_NAME }}
+        - name: PKG_NAME
+          value: "{{ .Values.container.env.PKG_NAME }}"
+          {{- else if .Values.global.env.PKG_NAME }}
+        - name: PKG_NAME
+          value: "{{ .Values.global.env.PKG_NAME }}"
+          {{- end }}
+        {{- end }}
+
+        {{- if .Values.container.env.CLUSTERDOMAIN }}
+        - name: CLUSTERDOMAIN
+          value: "{{ .Values.container.env.clusterdomain }}"
+        {{- else if .Values.global.env.CLUSTERDOMAIN }}
+          value: "{{ .Values.global.env.clusterdomain }}"
+        {{- else }}
+          value: cluster.local
+        {{- end }}
+
+        # Global level
+        ###############################################
+        {{- if .Values.global }}
+          {{- if .Values.global.env }}
+          {{- range $key, $value := .Values.global.env }}
+        - name: "{{ $key }}"
+            {{- if contains "{{" $value }}
+          value: "{{ tpl $value $  }}"
+            {{- else }}
+          value: "{{ $value }}"
+            {{- end }}
+          {{- end }}
+          {{- end }}
+        {{- end }}
+
+        # Container level
+        ###############################################
+        {{- if .Values.container }}
+          {{- if .Values.container.env }}
+          {{- range $key, $value := .Values.container.env }}
+        - name: "{{ $key }}"
+            {{- if contains "{{" $value }}
+          value: "{{ tpl $value $  }}"
+            {{- else }}
+          value: "{{ $value }}"
+            {{- end }}
+          {{- end }}
+          {{- end }}
+        {{- end }}
+
+        {{- if .Values.container.secretenv }}
+        envFrom:
+        - secretRef:
+            name: "secret-{{ .Release.Name }}-{{ .Values.container.serverName | camelcase | lower }}"
+        - secretRef:
+            name: "{{ .Values.global.secretname }}"
+        {{- else }}
+        envFrom:
+            name: "{{ .Values.global.secretname }}"
+        {{- end }}
+
+      {{- end }}
+
+  # Container Level securityContext
+        {{- if .Values.global.securityContext }}
+        {{- if .Values.container.securityContext }}
+        securityContext: {{ .Values.container.securityContext | toYaml | nindent 10 }}
+        {{- else }}
+        securityContext: {{ .Values.global.securityContaxt | toYaml | nindent 10 }}
+        {{- end }}
+        {{- end }}
+
+  # Ports
+        {{- if .Values.container.service }}
+          {{- if .Values.container.service.ports }}
+        ports:
+            {{- range .Values.container.service.ports }}
+          - name: {{ .name | quote }}
+            containerPort: {{ .targetPort }}
+            protocol: {{ .protocol }}
+            {{- end }}
+          {{- end }}
+        {{- end }}
+
+  # LivenessProbe
+	{{- if .Values.container.livenessProbe }}
+	 {{- if .Values.container.livenessProbe.enabled }}
+        livenessProbe:
+	  {{- if .Values.container.livenessProbe.httpGet }}
+          httpGet:
+            {{- toYaml .Values.container.livenessProbe.httpGet| nindent 14 }}
+	  {{- else if .Values.container.livenessProbe.exec }}
+          exec:
+            {{- toYaml .Values.container.livenessProbe.exec | nindent 14 }}
+	  {{- else if .Values.container.livenessProbe.tcpSocket }}
+          tcpSocket:
+            {{- toYaml .Values.container.livenessProbe.tcpSocket | nindent 14 }}
+          {{- end }}
+
+          {{- if .Values.container.livenessProbe.initialDelaySeconds }}
+          initialDelaySeconds: {{ .Values.container.livenessProbe.initialDelaySeconds }}
+          {{- end }}
+          {{- if .Values.container.livenessProbe.periodSeconds }}
+          periodSeconds: {{ .Values.container.livenessProbe.periodSeconds }}
+          {{- end }}
+          {{- if .Values.container.livenessProbe.timeoutSeconds }}
+          timeoutSeconds: {{ .Values.container.livenessProbe.timeoutSeconds }}
+          {{- end }}
+          {{- if .Values.container.livenessProbe.successThreshold }}
+          successThreshold: {{ .Values.container.livenessProbe.successThreshold }}
+          {{- end }}
+          {{- if .Values.container.livenessProbe.failureThreshold }}
+          failureThreshold: {{ .Values.container.livenessProbe.failureThreshold }}
+          {{- end }}
+         {{- end }}
+        {{- else if .Values.global.livenessProbe }}
+         {{- if .Values.global.livenessProbe.enabled }}
+        livenessProbe:
+          {{- if .Values.global.livenessProbe.httpGet }}
+          httpGet:
+            {{- toYaml .Values.global.livenessProbe.httpGet| nindent 14 }}
+          {{- else if .Values.global.livenessProbe.exec }}
+          exec:
+            {{- toYaml .Values.global.livenessProbe.exec | nindent 14 }}
+          {{- else if .Values.global.livenessProbe.tcpSocket }}
+          tcpSocket:
+            {{- toYaml .Values.global.livenessProbe.tcpSocket | nindent 14 }}
+          {{- end }}
+
+          {{- if .Values.global.livenessProbe.initialDelaySeconds }}
+          initialDelaySeconds: {{ .Values.global.livenessProbe.initialDelaySeconds }}
+          {{- end }}
+          {{- if .Values.global.livenessProbe.periodSeconds }}
+          periodSeconds: {{ .Values.global.livenessProbe.periodSeconds }}
+          {{- end }}
+          {{- if .Values.global.livenessProbe.timeoutSeconds }}
+          timeoutSeconds: {{ .Values.global.livenessProbe.timeoutSeconds }}
+          {{- end }}
+          {{- if .Values.global.livenessProbe.successThreshold }}
+          successThreshold: {{ .Values.global.livenessProbe.successThreshold }}
+          {{- end }}
+          {{- if .Values.global.livenessProbe.failureThreshold }}
+          failureThreshold: {{ .Values.global.livenessProbe.failureThreshold }}
+          {{- end }}
+         {{- end }}
+        {{- end }}
+
+
+
+  # readinessProbe
+        {{- if .Values.container.readinessProbe }}
+         {{- if .Values.container.readinessProbe.enabled }}
+        readinessProbe:
+          {{- if .Values.container.readinessProbe.httpGet }}
+          httpGet:
+            {{- toYaml .Values.container.readinessProbe.httpGet | nindent 14 }}
+          {{- else if .Values.container.readinessProbe.exec }}
+          exec:
+            {{- toYaml .Values.container.readinessProbe.exec | nindent 14 }}
+          {{- else if .Values.container.readinessProbe.tcpSocket }}
+          tcpSocket:
+            {{- toYaml .Values.container.readinessProbe.tcpSocket | nindent 14 }}
+          {{- end }}
+
+          {{- if  .Values.container.readinessProbe.initialDelaySeconds }}
+          initialDelaySeconds: {{ .Values.container.readinessProbe.initialDelaySeconds }}
+          {{- end }}
+          {{- if  .Values.container.readinessProbe.periodSeconds}}
+          periodSeconds: {{ .Values.container.readinessProbe.periodSeconds }}
+          {{- end }}
+          {{- if  .Values.container.readinessProbe.timeoutSeconds }}
+          timeoutSeconds: {{ .Values.container.readinessProbe.timeoutSeconds }}
+          {{- end }}
+          {{- if  .Values.container.readinessProbe.successThreshold }}
+          successThreshold: {{ .Values.container.readinessProbe.successThreshold }}
+          {{- end }}
+          {{- if  .Values.container.readinessProbe.failureThreshold }}
+          failureThreshold: {{ .Values.container.readinessProbe.failureThreshold }}
+          {{- end }}
+         {{- end }}
+        {{- else if .Values.global.readinessProbe }}
+         {{- if .Values.global.readinessProbe.enabled }}
+        readinessProbe:
+          {{- if .Values.global.readinessProbe.httpGet }}
+          httpGet:
+            {{- toYaml .Values.global.readinessProbe.httpGet | nindent 14 }}
+            {{- else if .Values.global.readinessProbe.exec }}
+          exec:
+            {{- toYaml .Values.global.readinessProbe.exec | nindent 14 }}
+          {{- else if .Values.global.readinessProbe.tcpSocket }}
+          tcpSocket:
+            {{- toYaml .Values.global.readinessProbe.tcpSocket | nindent 14 }}
+          {{- end }}
+
+          {{- if  .Values.global.readinessProbe.initialDelaySeconds }}
+          initialDelaySeconds: {{ .Values.global.readinessProbe.initialDelaySeconds }}
+          {{- end }}
+          {{- if  .Values.global.readinessProbe.periodSeconds}}
+          periodSeconds: {{ .Values.global.readinessProbe.periodSeconds }}
+          {{- end }}
+          {{- if  .Values.global.readinessProbe.timeoutSeconds }}
+          timeoutSeconds: {{ .Values.global.readinessProbe.timeoutSeconds }}
+          {{- end }}
+          {{- if  .Values.global.readinessProbe.successThreshold }}
+          successThreshold: {{ .Values.global.readinessProbe.successThreshold }}
+          {{- end }}
+          {{- if  .Values.global.readinessProbe.failureThreshold }}
+          failureThreshold: {{ .Values.global.readinessProbe.failureThreshold }}
+          {{- end }}
+         {{- end }}
+        {{- end }}
+
+
+  # Resources
+        {{- if .Values.container.resources }}
+        resources:
+          {{- toYaml .Values.container.resources | nindent 12 }}
+        {{- else if .Values.global.resources }}
+        resources:
+          {{- toYaml .Values.global.resources | nindent 12 }}
+        {{- end }}
+
+# Volume
+        volumeMounts:
+# License
+        {{- if .Values.global.licenseConfigMap }}
+          {{- if .Values.global.licenseConfigMapShared }}
+        - name: "{{ .Release.Name }}-common-license"
+          mountPath: "{{ .Values.global.env.CONF_MOUNT_DIR }}/license/license.config"
+          subPath: "license.config"
+          {{- else }}
+        - name: "{{ .Release.Name }}-{{ .Values.container.serverName | camelcase | lower }}-lic-cm"
+          mountPath: "{{ .Values.global.env.CONF_MOUNT_DIR }}/license/license.config"
+          subPath: "license.config"
+          {{- end }}
+        {{- end }}
+
+# downwardAPI
+        {{- if .Values.global.downwardAPI }}
+        - name: podinfo
+          mountPath: /etc/podinfo
+          readOnly: false
+        {{- end }}
+
+# ConfigMap Global
+      {{- if .Values.global.configMap }}
+      {{- if .Values.global.configMap.enabled }}
+        {{- $servername := .Values.container.serverName | camelcase | lower }}
+        {{- $releasename:= .Release.Name }}
+        {{- range .Values.global.configMap.mounts }}
+          {{- $root:= . }}
+          {{- $numb:=( index $root 0 ) }}
+          {{- $name:=( index $root 1 ) }}
+          {{- $ldir:=( index $root 2 ) }}
+          {{- $cdir:=( index $root 3 ) }}
+          {{- $file:=( index $root 4 ) }}
+
+        - name: "{{ $releasename }}-{{ $servername }}-map-g{{ $numb }}-cm"
+          mountPath: {{ $cdir }}
+          {{- if $file }}
+          {{- if ne $file "" }}
+          subPath: {{ $file }}
+          {{- end }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
+      {{- end }}
+
+# ConfigMap Local
+      {{- if .Values.container.configMap }}
+      {{- if .Values.container.configMap.enabled }}
+        {{- $servername := .Values.container.serverName | camelcase | lower }}
+        {{- $releasename:= .Release.Name }}
+        {{- range .Values.container.configMap.mounts }}
+          {{- $root:= . }}
+          {{- $numb:=( index $root 0 ) }}
+          {{- $name:=( index $root 1 ) }}
+          {{- $ldir:=( index $root 2 ) }}
+          {{- $cdir:=( index $root 3 ) }}
+          {{- $file:=( index $root 4 ) }}
+
+        - name: "{{ $releasename }}-{{ $servername }}-map-l{{ $numb }}-cm"
+          mountPath: {{ $cdir }}
+          {{- if $file }}
+          {{- if ne $file "" }}
+          subPath: {{ $file }}
+          {{- end }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
+      {{- end }}
+
+
+# Volumes mounted for this container
+      {{- if .Values.global.persistentVolume }}
+      {{- if .Values.global.persistentVolume.enabled }}
+        {{- $servername := .Values.container.serverName | camelcase | lower }}
+        {{- $releasename:= .Release.Name }}
+        {{- range .Values.global.persistentVolume.mounts }}
+          {{- $root:= . }}
+          {{- $numb:=( index $root 0 ) }}
+          {{- $ldir:=( index $root 5 ) }}
+          {{- $shar:=( index $root 9 | lower ) }}
+
+        {{- if eq $shar "shared" }}
+        - name: "pvc-g{{ $numb }}-{{ $releasename }}-shared"
+          mountPath: "{{ $ldir }}"
+        {{- else if eq $shar "dedicated" }}
+        - name: "pvc-g{{ $numb }}-{{ $releasename }}-{{ $servername | camelcase | lower}}"
+          mountPath: "{{ $ldir }}"
+        {{- else if eq $shar "emptydir" }}
+        - name: "pvc-g{{ $numb }}-{{ $releasename }}-{{ $servername | camelcase | lower}}"
+          mountPath: "{{ $ldir }}"
+        {{- end }}
+        {{- end }}
+
+        {{- $servername := .Values.container.serverName | camelcase | lower }}
+        {{- $releasename:= .Release.Name }}
+        {{- range .Values.container.persistentVolume.mounts }}
+          {{- $root:= . }}
+          {{- $numb:=( index $root 0 ) }}
+          {{- $ldir:=( index $root 5 ) }}
+          {{- $shar:=( index $root 9 | lower ) }}
+
+        {{- if eq $shar "shared" }}
+        - name: "pvc-l{{ $numb }}-{{ $releasename }}-shared"
+          mountPath: "{{ $ldir }}"
+        {{- else if eq $shar "dedicated" }}
+        - name: "pvc-l{{ $numb }}-{{ $releasename }}-{{ $servername | camelcase | lower}}"
+          mountPath: "{{ $ldir }}"
+        {{- else if eq $shar "emptydir" }}
+        - name: "pvc-l{{ $numb }}-{{ $releasename }}-{{ $servername | camelcase | lower}}"
+          mountPath: "{{ $ldir }}"
+        {{- end }}
+        {{- end }}
+
+      {{- end }}
+      {{- end }}
+
+
+# extra Volumes PVC global mounted for this container
+      {{- if .Values.global.extraVolume }}
+      {{- if .Values.global.extraVolume.enabled }}
+        {{- $servername := .Values.container.serverName | camelcase | lower }}
+        {{- $releasename:= .Release.Name }}
+        {{- range .Values.global.extraVolume.mountsPVC }}
+          {{- $root:= . }}
+          {{- $name:=( index $root 0 ) }}
+          {{- $cdir:=( index $root 1 ) }}
+        - name: "{{ $name }}"
+          mountPath: "{{ $cdir }}"
+        {{- end }}
+      {{- end }}
+      {{- end }}
+
+# extra Volumes PVC local mounted for this container
+      {{- if .Values.container.extraVolume }}
+      {{- if .Values.container.extraVolume.enabled }}
+        {{- $servername := .Values.container.serverName | camelcase | lower }}
+        {{- $releasename:= .Release.Name }}
+        {{- range .Values.container.extraVolume.mountsPVC }}
+          {{- $root:= . }}
+          {{- $name:=( index $root 0 ) }}
+          {{- $cdir:=( index $root 1 ) }}
+        - name: "{{ $name }}"
+          mountPath: "{{ $cdir }}"
+        {{- end }}
+      {{- end }}
+      {{- end }}
+
+
+# Mount volumeClaimTemplates for statefulset
+      {{- if .Values.container.rc }}
+        {{- if eq .Values.container.rc "statefulset" }}
+          {{- $servername := .Values.container.serverName | camelcase | lower }}
+          {{- $releasename:= .Release.Name }}
+          {{- if .Values.container.statefulSetVolume }}
+          {{- range .Values.container.statefulSetVolume.mounts }}
+            {{- $root:= . }}
+            {{- $numb:=( index $root 0 ) }}
+            {{- $type:=( index $root 1 ) }}
+            {{- $size:=( index $root 2 ) }}
+            {{- $sc  :=( index $root 3 ) }}
+            {{- $clam:=( index $root 4 ) }}
+            {{- $cdir:=( index $root 5 ) }}
+            {{- $ldir:=( index $root 6 ) }}
+            {{- $bind:=( index $root 7 ) }}
+            {{- $acce:=( index $root 8 ) }}
+            {{- $ephe:=( index $root 9 ) }}
+            {{- $othe:=( index $root 10 ) }}
+        - name: "pvc-st-{{ $servername | camelcase | lower}}"
+          mountPath: "{{ $cdir }}"
+          {{- end }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
+
+########################### volumeMounts end ####################
+
+
+
+# Resources
+      {{- if .Values.container.resources }}
+        {{- $resources := .Values.container.resources }}
+        resources: {{ .Values.container.resources | toYaml | nindent 10 }}
+      {{- else if .Values.global.resources }}
+        resources: {{ .Values.global.resources | toYaml | nindent 10 }}
+      {{- end }}
+
+# Sidecar containers
+{{- if .Values.global.sidecarAgents }}
+  {{- $servername := .Values.container.serverName }}
+  {{- $sidecarAgents := .Values.global.sidecarAgents }}
+  {{- $sidecarDetails := .Values.global.sidecarDetails }}
+  {{- $values:= .Values }}
+  {{- $release:= .Release }}
+  {{- range $sidecarAgents }}
+    {{- $root := . }}
+    {{- $name :=( index $root 0 ) }}
+    {{- $side :=( index $root 1 ) }}
+    {{- if eq $name $servername }}
+  #############################################################
+  # Name
+      - name: {{ $side }}
+  # Image
+      {{- range $sidecarDetails }}
+
+        {{- $root2 := . }}
+        {{- $name2 :=( index $root2 "name" ) }}
+{{- if eq $name2 $side }}
+        {{- $data := (dict "Values" $values "Release" $release "imagename" $name2 ) }}
+        {{- include "container.getImage" $data | indent 8 }}
+        {{- include "container.getImagePullPolicy" $data | indent 8 }}
+
+        {{- $args2 :=( index $root2 "args" ) }}
+          {{- if $args2 }}
+  # Args
+        args:
+          {{- $args2 | toYaml | nindent 10 }}
+        {{- end }}
+
+        {{- $env2 :=( index $root2 "env" ) }}
+          {{- if $env2 }}
+  # Env
+        env:
+          {{- $env2 | toYaml | nindent 10 }}
+        {{- end }}
+
+        {{- $securityContext2 :=( index $root2 "securityContext" ) }}
+  # SecurityContext
+          {{- if $securityContext2 }}
+        securityContext:
+          {{- $securityContext2 | toYaml | nindent 10 }}
+        {{- end }}
+
+  # Ports
+        {{- $ports2 :=( index $root2 "ports" ) }}
+        {{- if $ports2 }}
+        ports:
+          {{- $ports2 | toYaml | nindent 10 }}
+        {{- end }}
+
+  # volumeMounts
+        {{- $volumeMounts2 :=( index $root2 "volumeMounts" ) }}
+        {{- if $volumeMounts2 }}
+        volumeMounts:
+          {{- $volumeMounts2 | toYaml | nindent 10 }}
+        {{- end }}
+
+
+  # LivenessProbe
+        {{- $livenessProbe2 :=( index $root2 "livenessProbe" ) }}
+        {{- if $livenessProbe2 }}
+        livenessProbe:
+          {{- toYaml $livenessProbe2 | nindent 12 }}
+        {{- end }}
+
+  # readinessProbe
+        {{- $readinessProbe2 :=( index $root2 "readinessProbe" ) }}
+        {{- if $readinessProbe2 }}
+        readinessProbe:
+          {{- toYaml .readinessProbe | nindent 12 }}
+        {{- end }}
+
+  # Resources
+        {{- $resources2:=( index $root2 "resources" ) }}
+        {{- if $resources2 }}
+        resources:
+          {{- toYaml .resources | nindent 12 }}
+        {{- end }}
+
+      {{- end }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+
+###########################################################################
+# Volumes availables
+      volumes:
+      {{- if .Values.global.downwardAPI  }}
+      # Downward API
+      - name: podinfo
+        downwardAPI:
+          items:
+            - path: "name"
+              fieldRef:
+                fieldPath: metadata.name
+            - path: "namespace"
+              fieldRef:
+                fieldPath: metadata.namespace
+            - path: "labels"
+              fieldRef:
+                fieldPath: metadata.labels
+            - path: "annotations"
+              fieldRef:
+                fieldPath: metadata.annotations
+      {{- end }}
+
+      {{- if .Values.global.licenseConfigMap  }}
+      {{- if .Values.global.licenseConfigMapShared  }}
+      # Map license
+      - name: "{{ .Release.Name }}-common-license"
+        configMap:
+          name: "{{ .Release.Name }}-common-license"
+      {{- else }}
+      # Map license
+      - name: "{{ .Release.Name }}-{{ $servername | camelcase | lower }}-lic-cm"
+        configMap:
+          name: "{{ .Release.Name }}-{{ $servername | camelcase | lower }}-lic-cm"
+      {{- end }}
+      {{- end }}
+
+      {{- if .Values.global.persistentVolume }}
+      {{- if .Values.global.persistentVolume.enabled }}
+      # Global defined volumes
+        {{- if eq .Values.global.persistentVolume.enabled true }}
+        {{- $servername := .Values.container.serverName }}
+        {{- $releasename:= .Release.Name }}
+          {{- range .Values.global.persistentVolume.mounts }}
+          {{- $root:= . }}
+          {{- $numb:=(index $root 0 ) }}
+          {{- $shar:=( index $root 9 | lower ) }}
+
+        {{- if eq $shar "shared" }}
+      - name: "pvc-g{{ $numb }}-{{ $releasename }}-shared"
+        persistentVolumeClaim:
+          claimName: "pvc-g{{ $numb }}-{{ $releasename }}-shared"
+        {{- else if eq $shar "dedicated" }}
+      - name: "pvc-g{{ $numb }}-{{ $releasename }}-{{ $servername | camelcase | lower }}"
+        persistentVolumeClaim:
+          claimName: "pvc-g{{ $numb }}-{{ $releasename }}-{{ $servername | camelcase | lower }}"
+        {{- else if eq $shar "emptydir" }}
+      - name: "pvc-g{{ $numb }}-{{ $releasename }}-{{ $servername | camelcase | lower}}"
+        emptyDir: {}
+        {{- end }}
+
+        {{- end }}
+        {{- end }}
+      {{- end }}
+      {{- end }}
+
+      {{- if .Values.container.persistentVolume }}
+      {{- if .Values.container.persistentVolume.enabled }}
+      # Local defined volumes
+        {{- if eq .Values.container.persistentVolume.enabled true }}
+        {{- $servername := .Values.container.serverName }}
+        {{- $releasename:= .Release.Name }}
+          {{- range .Values.container.persistentVolume.mounts }}
+          {{- $root:= . }}
+          {{- $numb:=(index $root 0 ) }}
+          {{- $shar:=( index $root 9 | lower ) }}
+
+        {{- if eq $shar "shared" }}
+      - name: "pvc-l{{ $numb }}-{{ $releasename }}-shared"
+        persistentVolumeClaim:
+          claimName: "pvc-l{{ $numb }}-{{ $releasename }}-shared"
+        {{- else if eq $shar "dedicated" }}
+      - name: "pvc-l{{ $numb }}-{{ $releasename }}-{{ $servername | camelcase | lower }}"
+        persistentVolumeClaim:
+          claimName: "pvc-l{{ $numb }}-{{ $releasename }}-{{ $servername | camelcase | lower }}"
+        {{- else if eq $shar "emptydir" }}
+      - name: "pvc-l{{ $numb }}-{{ $releasename }}-{{ $servername | camelcase | lower}}"
+        emptyDir: {}
+        {{- end }}
+
+        {{- end }}
+        {{- end }}
+      {{- end }}
+      {{- end }}
+
+
+      {{- if .Values.container.extraVolume }}
+      {{- if .Values.container.extraVolume.enabled }}
+      # Local defined volumes
+        {{- $servername := .Values.container.serverName }}
+        {{- $releasename:= .Release.Name }}
+          {{- range .Values.container.extraVolume.mountsPVC }}
+          {{- $root:= . }}
+          {{- $name:=(index $root 0 ) }}
+          {{- $cdir:=( index $root 1 ) }}
+      - name: "{{ $name }}"
+        persistentVolumeClaim:
+          claimName: "{{ $name }}"
+          {{- end }}
+      {{- end }}
+      {{- end }}
+
+      {{- if .Values.global.extraVolume }}
+      {{- if .Values.global.extraVolume.enabled }}
+      # Global defined volumes
+        {{- $servername := .Values.container.serverName }}
+        {{- $releasename:= .Release.Name }}
+          {{- range .Values.global.extraVolume.mountsPVC }}
+          {{- $root:= . }}
+          {{- $name:=(index $root 0 ) }}
+          {{- $cdir:=( index $root 1 ) }}
+      - name: "{{ $name }}"
+        persistentVolumeClaim:
+          claimName: "{{ $name }}"
+          {{- end }}
+      {{- end }}
+      {{- end }}
+
+
+      {{- if .Values.global.configMap }}
+      {{- if .Values.global.configMap.enabled }}
+      {{- if eq .Values.global.configMap.enabled true }}
+      {{- if .Values.global.configMap.mounts }}
+      # ConfigMap Global
+        {{- $servername := .Values.container.serverName | camelcase | lower }}
+        {{- $releasename:= .Release.Name }}
+        {{- range .Values.global.configMap.mounts }}
+          {{- $root:= . }}
+          {{- $numb:=( index $root 0 ) }}
+          {{- $name:=( index $root 1 ) }}
+          {{- $ldir:=( index $root 2 ) }}
+          {{- $cdir:=( index $root 3 ) }}
+          {{- $file:=( index $root 4 ) }}
+      - name: "{{ $releasename }}-{{ $servername }}-map-g{{ $numb }}-cm"
+        configMap:
+          name: "{{ $releasename }}-{{ $servername }}-map-g{{ $numb }}-cm"
+        {{- end }}
+      {{- end }}
+      {{- end }}
+      {{- end }}
+      {{- end }}
+
+      {{- if .Values.container.configMap }}
+      {{- if .Values.container.configMap.enabled }}
+      {{- if eq .Values.container.configMap.enabled true }}
+      {{- if .Values.container.configMap.mounts }}
+      # ConfigMap Local
+        {{- $servername := .Values.container.serverName | camelcase | lower }}
+        {{- $releasename:= .Release.Name }}
+        {{- range .Values.container.configMap.mounts }}
+          {{- $root:= . }}
+          {{- $numb:=( index $root 0 ) }}
+          {{- $name:=( index $root 1 ) }}
+          {{- $ldir:=( index $root 2 ) }}
+          {{- $cdir:=( index $root 3 ) }}
+          {{- $file:=( index $root 4 ) }}
+      - name: "{{ $releasename }}-{{ $servername }}-map-l{{ $numb }}-cm"
+        configMap:
+          name: "{{ $releasename }}-{{ $servername }}-map-l{{ $numb }}-cm"
+        {{- end }}
+      {{- end }}
+      {{- end }}
+      {{- end }}
+      {{- end }}
+
+      {{- if .Values.global.sidecarAgents }}
+        {{- $helmdebug := .Values.global.helmDebug }}
+        {{- $servername := .Values.container.serverName }}
+        {{- $sidecarAgents := .Values.global.sidecarAgents }}
+        {{- $sidecarDetails := .Values.global.sidecarDetails }}
+        {{- $values:= .Values }}
+        {{- $release:= .Release }}
+        # Volumes Sidecar containers
+        {{- range $sidecarAgents }}
+          {{- $root := . }}
+          {{- $name :=( index $root 0 ) }}
+          {{- $side :=( index $root 1 ) }}
+          {{- if eq $name $servername }}
+            {{- range $sidecarDetails }}
+              {{- $root2 := . }}
+              {{- $name2 :=( index $root2 "name" ) }}
+              {{- if eq $name2 $side }}
+              {{- $volumes2 :=( index $root2 "volumes" ) }}
+                {{- if $volumes2 }}
+                 {{- if $helmdebug }}
+                   {{- if eq $helmdebug true }}
+          # DEBUG: volumens from {{ $servername }}: sidecarname:{{ $name2 }} name:{{ $name }} side:{{ $side }}
+                   {{- end }}
+                 {{- end }}
+          {{- $volumes2 | toYaml | nindent 6 }}
+                {{- end }}
+              {{- end }}
+            {{- end }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
+
+
+      {{- if .Values.container.statefulSetVolume }}
+      {{- if .Values.container.statefulSetVolume.enabled }}
+      {{- if eq .Values.container.statefulSetVolume.enabled true }}
+      {{- if .Values.container.statefulSetVolume.mounts }}
+      # StatefulSet global
+  volumeClaimTemplates:
+  - metadata:
+      {{- $servername := .Values.container.serverName | camelcase | lower }}
+      {{- $releasename:= .Release.Name }}
+      {{- $chartname := .Chart.Name }}
+      {{- $chartversion := .Chart.Version}}
+      {{- $releasenamespace := .Release.Namespace }}
+      {{- $releaseservice:= .Release.Service }}
+      {{- $statefulSetVolumeGlobal := .Values.global.statefulSetVolume }}
+      {{- $statefulSetVolumeLocal:= .Values.container.statefulSetVolume }}
+
+        {{- range .Values.container.statefulSetVolume.mounts }}
+          {{- $root:= . }}
+          {{- $numb:=( index $root 0 ) }}
+          {{- $type:=( index $root 1 ) }}
+          {{- $size:=( index $root 2 ) }}
+          {{- $sc  :=( index $root 3 ) }}
+          {{- $clam:=( index $root 4 ) }}
+          {{- $cdir:=( index $root 5 ) }}
+          {{- $ldir:=( index $root 6 ) }}
+          {{- $bind:=( index $root 7 ) }}
+          {{- $acce:=( index $root 8 ) }}
+          {{- $ephe:=( index $root 9 ) }}
+      name: "pvc-st-{{ $servername }}"
+    spec:
+      accessModes: [ "{{ $acce }}" ]
+      volumeMode: Filesystem
+      resources:
+        requests:
+          storage: "{{ $size }}"
+#Override
+{{- $sc:=default $sc $statefulSetVolumeGlobal.storageClassOverride }}
+      storageClassName: "{{ $sc }}"
+          {{- end }}
+        {{- end }}
+      {{- end }}
+      {{- end }}
+      {{- end }}
+
+
+###
+
+# NodeSelector
+    {{- with .Values.nodeSelector }}
+    nodeSelector:
+      {{- toYaml . | nindent 8 }}
+    {{- end }}
+
+# Affinity
+    {{- with .Values.affinity }}
+    affinity:
+      {{- toYaml . | nindent 8 }}
+    {{- end }}
+
+# Toleration
+    {{- with .Values.tolerations }}
+    tolerations:
+      {{- toYaml . | nindent 8 }}
+    {{- end }}
+
+
+
+{{- end }}
+
+
+{{- end }}
+
+{{- end }}
+
+{{- end }}
+
+{{- end }}
